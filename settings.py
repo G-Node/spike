@@ -148,10 +148,10 @@ INSTALLED_APPS = (
     # undecided
     'emailconfirmation', #??
     'friends', #??
-    'ajax_validation',
-    'tag_app',
-    'signup_codes',
-    'analytics',
+    'ajax_validation', #??
+    'tag_app', #??
+    'signup_codes', #??
+    'analytics', #??
     )
 
 ABSOLUTE_URL_OVERRIDES = {
