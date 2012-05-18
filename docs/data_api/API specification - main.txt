@@ -1,0 +1,918 @@
+= G-Node API Specification =
+----
+== Terminology used in this specification ==
+Throughout this specification, it's refered to a series of terms like section or datafile, which are intended to have specific meanings.
+
+''' Datafile '''[[BR]]
+Any data item maintained by G-Node. It can be either a binary/ascii file or a data structure, hosted in the native G-Node format. This could include a PDF file, MP3 file, TXT file, or a raw data structure in the NEO (native G-Node) format (see http://packages.python.org/neo/classes.html). A datafile is created by uploading an ordinary file to G-Node, and possibly converting it to the native G-Node format. That is to say, when you upload something like a MultichannelSystems® file, you have an option to convert it to the native format, and then it is considered as a native (raw) data structure in this specification. If you do not convert it when you upload, then it is considered as just "file".
+
+''' Section'''[[BR]]
+A container of other sections, properties or datafiles. It could be also named folder. These are basically used to "label" your datafiles with a variety of tags (like in GMail), with a difference that you can manage sections (tags) to organize them in a tree-like structure. The Section® is a prototype of the odML section (see http://www.g-node.org/projects/odml) and is implemented inline with odML concepts and methodology.
+
+''' Property '''[[BR]]
+A property is a flexible way to annotate your data (implemented in line with odML). Within these could be a model of your recording device, duration of the stimulus, a layer of the cell you record from. Some properties are provided by default when you create a section of either type. You just need to set values, appropriate for your research.
+
+''' NEO Raw Data Object '''[[BR]]
+NEO® objects are used to work with the raw recordings. NEO objects include Segments, Analog Signals, Spike Trains etc. (see http://packages.python.org/neo/classes.html) It is a flexible data structure, compartible with several well-known data-formats, and useful for data analysis. You may convert your files to the NEO (native G-Node) structure using API, when the file is convertable.
+< include here list of data formats >
+
+''' Resource ''' [[BR]]
+Any item maintained by the API, including sections, datafiles, and NEO objects.
+
+''' Resource ID '''[[BR]]
+A unique identifier for each resource. This is usually of the format <type>_<id>, e.g. section_12345. Throughout this specification, if not specified, a typed resource ID should be assumed.
+
+''' Untyped resource ID '''[[BR]]
+A resource ID, without the type prefix. Given the previous example, an untyped resource ID would be 12345.
+
+''Note. For all URLs, given later in this specification, you should add a G-Node prefix URL, which is:
+http://hal10.g-node.pri
+''
+
+----
+== 1. AUTHENTICATION ==
+To authentice at G-Node, please use the following methods:
+
+''' 1.1 Authentication'''[[BR]]
+{{{
+Request: POST /account/login/
+}}}
+
+parameters:
+ * username - user account name
+ * password - user password
+
+A successful response will contain a cookie called "sessionid". Use this cookie within every request to work with G-Node API.
+
+''Note. If you want to try out the API from the normal web-browser (like Firefox, Chrome, Safari etc.), you may not bother with sessionid parameter, a browser should take about that itself. You may go to the login page (GET /account/login/), fill in the login form, submit and authenticate. After successful authentication sessionid will be stored in the browser, while you may use the address bar to query the API.''
+
+
+----
+== 2. DATAFILE MANAGEMENT ==
+
+''' 2.1 Getting list of datafiles'''[[BR]]
+{{{
+Request: GET /datafiles/list/[<section_id>]/?params
+}}}
+
+parameters:
+ * [section_id] - files in a specific section (root by default)
+ * [visibility] - private, public, shared, all (default) - which types of files to return
+ * [scope] - full (default), restricted - amount information about each file to return
+ * [filter_criteria] - ere you can also apply different filter criteria, adding them as POST parameters. 
+
+TBD
+(as q in Google API)
+
+{{{
+Response:
+TBD
+}}}
+
+''' 2.2 Getting file details '''[[BR]]
+{{{
+Request: GET /datafiles/<datafile_id>
+}}}
+
+{{{
+Response:
+TBD
+}}}
+
+(Conversion status (not able to convert, not converted, NEO))
+(if convertable, provide additional statistics)
+
+''' 2.3 Create datafile with a native format (NEO) '''[[BR]]
+{{{
+Request: POST /datafiles/create/[section_id]/?params
+}}}
+
+ * parameters:
+ * [section_id] - a section id where to put the file (root by default)
+ * name - file name
+ * [description] - description
+
+(be careful with ACL!! should be by default like for parent section)
+
+{{{
+Response:
+TBD
+}}}
+
+''' 2.4. Upload a datafile (with or without conversion) '''[[BR]]
+{{{
+Request: POST /datafile/upload/[section_id]/?params
+}}}
+
+parameters:
+ * [convert] - true (default), false - whether try to convert the file into native format
+
+''Note. ACL for the new file is by default assigned as for the parent section.''
+
+{{{
+Response:
+TBD
+}}}
+
+''' 2.5 Modify datafile attributes '''[[BR]]
+{{{
+Request: POST /datafile/<datafile_id>/?params
+}}}
+
+parameters:
+ * [name] - file name
+ * [description] - description
+ * [convert] - true, false - if true, a request to convert the file to native format is made (asynchronous)
+
+''Note. The conversion operation is asynchronous, which means you'll not see the status of the conversion in the response. You may use a details request (2.2) to check whether the file was converted successfully or not.''
+
+{{{
+Response:
+TBD
+}}}
+
+'''2.6 Export datafile'''[[BR]]
+When the file is not converted, it simply returns the originally uploaded file for download. When file is in native format, it can convert all underlying data into a file with the format specified and return it for download.[[BR]]
+
+{{{
+Request: GET /datafiles/download/<datafile_id>/?params
+}}}
+
+parameters:
+ * [format] - required file format
+
+{{{
+Response:
+TBD
+}}}
+
+'''2.7 Delete datafile'''[[BR]]
+{{{
+Request: DELETE /datafile/<datafile_id>/?params
+}}}
+
+parameters:
+ * [force] - true, false (default) - use "true" to delete the file even if there are other users with collaboration role (able to write). If "false" or omitted, the file will not be deleted being in the state having collaborators.
+
+{{{
+Response:
+TBD
+}}}
+
+----
+== 3. ORGANIZE YOUR DATA - MANAGING SECTIONS & PROPERTIES ==
+
+'''3.1 Getting list of sections'''[[BR]]
+
+{{{
+Request: GET /sections/list/[<section_id>]
+}}}
+parameters:
+ * [section_id] - sections in a specific section (root by default)
+ * [visibility] - private, public, shared, all (default) - which types of sections to return
+ * [scope] - full (default), restricted - amount information about each section to return
+ * [filter_criteria] - here you can also apply different filter criteria, adding them as POST parameters. TBD (as q in Google API)
+ * [recursive] - true, false (default) - do a recursive export
+
+{{{
+Response:
+TBD
+}}}
+
+'''3.2 Getting list of properties in a section'''[[BR]]
+
+{{{
+Request: GET /properties/list/[<section_id>]
+}}}
+parameters:
+ * [section_id] - properties in a specific section (root by default)
+ * [scope] - full (default), restricted - amount information about each property to return
+ * [filter_criteria] - here you can also apply different filter criteria, adding them as POST parameters. TBD (as q in Google API)
+
+{{{
+Response:
+TBD
+}}}
+
+'''3.3 Create or update a section'''
+{{{
+Request: POST /sections/<section_id>/?params
+}}}
+
+parameters:
+ * [where] - a section id where to put new section (root by default)
+ * [section_id] - if provided, update is performed (when found); new object is created otherwise in [where]
+ * name - section name, required if creating new section
+ * type - type of the section according to the odML methodology. Required when creating new section. The list of types TBD here.
+ * [link]       = some odML parameter
+ * [repository] = some odML parameter
+ * [mapping]    = some odML parameter
+ * [reference]  = some odML parameter
+
+''Note. ACL for the file is by default assigned as for the parent section.''
+
+{{{
+Response:
+TBD
+}}}
+
+'''3.4 Getting section details'''
+
+{{{
+Request: GET /sections/<section_id>
+}}}
+
+{{{
+Response:
+TBD
+}}}
+
+'''3.5 Delete section'''
+
+{{{
+Request: DELETE /sections/<section_id>/?params
+}}}
+
+parameters:
+ * [force] - true, false (default) - use "true" to delete the file even if there are other users with collaboration role (able to write). If "false" or omitted, the file will not be deleted being in the state having collaborators.
+
+
+{{{
+Response:
+TBD
+}}}
+
+
+'''3.6 Create or update a property in section'''
+
+{{{
+Request: POST /properties/[section_id]/?params
+}}}
+
+parameters:
+ * [where] - a section id where to put new property (root by default)
+ * [property_id] - if provided, update is performed (when found); new object is created otherwise in [where]
+ * name - property name
+ * type - type of the property values, according to the odML methodology. The list of types TBD here.
+ * value[, value] - value(s) of the property
+ * [unit] - units of the property
+ * [definition] - some odML property attribute
+ * [mapping] - some odML property attribute
+ * [dependency] - some odML property attribute
+
+
+{{{
+Response:
+TBD
+}}}
+
+
+'''3.7 Getting property'''
+
+{{{
+Request: GET /properties/<property_id>
+}}}
+
+
+{{{
+Response:
+TBD
+}}}
+
+
+'''3.8 Delete property'''
+
+{{{
+Request: DELETE /properties/<property_id>
+}}}
+
+{{{
+Response:
+TBD
+}}}
+
+'''3.9 Section - copy & move'''
+
+{{{
+Request: POST /sections/copy/?params
+}}}
+
+parameters:
+ * source_section_id - section to copy
+ * target_section_id - a section to copy into
+ * [mode] - move (default), copy - whether to move or copy
+ * [with_properties] - whether or not to copy properties, which belong to the section (in copy mode)
+ * [with_datafiles] - whether or not to copy links (!!) to datafiles, which belong to the section (in copy mode).
+ * [recursive] - true, false - copy all subsections recursively (in copy mode)
+
+''Note. Files themselves are never duplicated while using copy/move function.''
+
+
+{{{
+Response:
+TBD
+}}}
+
+
+'''3.10 Get the root of the section? TBD'''[[BR]]
+
+'''3.11 Get all sections as a tree? TBD'''[[BR]]
+
+
+----
+
+== 4. MANAGE PERMISSIONS ==
+
+Datafiles and sections sharing is controlled via the access control lists. Access control lists are just basic lists that show who has access to a given resource. In the ACLs, the following roles are available for a given document or folder:
+ * owner — the owner of the resource (section or file). As an owner you have the ability to modify the ACL, delete the file, etc.
+ * writer — a collaborator.
+ * reader — a viewer (equivalent to read-only access).
+A resource (datafile or section) by itself has also a sharing state, which can be 
+ * public — all users may see the contents of the resource.
+ * friendly — all friends have a reader role, with no need to assign them for every resource.
+ * private — noone, except users, specified explicitly, may see the resource.
+With no dependence on the state, people, assigned explicitly by owner of the resource as readers or writers, have corresponding access to the resource.
+
+By <resource_type> in this paragraph we assume either "sections", either "datafiles".
+
+'''4.1 Getting resource permissions'''
+
+{{{
+Request: GET /<resource_type>/acl/<resource_id>/
+}}}
+
+{{{
+Response:
+TBD
+}}}
+
+'''4.2 Set resource state (public, friendly, private)'''
+
+{{{
+Request: POST /<resource_type>/acl/<resource_id>/?param
+}}}
+
+parameters:
+ * state - public, friendly, private - resource safety level
+ * [recursive] - true, false (default) - apply to all resources recursivery (when resource_type is sections)
+
+{{{
+Response:
+TBD
+}}}
+
+'''4.3 Share resource with a user'''
+
+{{{
+Request: POST /<resource_type>/acl/share/<resource_id>/?param
+}}}
+
+parameters:
+ * user_id - a user to add to the share
+ * role - reader, writer - a role for this user
+ * [recursive] - true, false (default) - apply to all resources recursivery (when resource_type is sections)
+
+''Note. A user specified will be added to the list of collaborators (readers).''
+
+
+{{{
+Response:
+TBD
+}}}
+
+
+'''4.4 Retreat resource to completely private state'''
+
+{{{
+Request: POST /<resource_type>/acl/retreat/<resource_id>/?param
+}}}
+
+parameters:
+ * [recursive] - true, false (default) - apply to all resources recursivery (when resource_type is sections)
+
+
+{{{
+Response:
+TBD
+}}}
+
+
+'''4.5 Remove a user from resource share'''
+
+{{{
+Request: POST /<resource_type>/acl/unshare/<resource_id>/?param
+}}}
+
+parameters:
+ * user_id - a user to remove from the share
+ * [recursive] - true, false (default) - apply to all resources recursivery (when resource_type is sections)
+
+
+{{{
+Response:
+TBD
+}}}
+
+
+'''4.6 Remove a user from ALL shares'''
+
+{{{
+Request: POST /<resource_type>/acl/disgrace/<user_id>
+}}}
+
+parameters:
+ * user_id - a user for total remove from any sharing
+
+
+{{{
+Response:
+TBD
+}}}
+
+----
+
+== 5. SEARCH USING G-NODE API ==
+
+TBD
+
+
+----
+
+== 6. COLLABORATION & DATA ANALYSIS (draft) ==
+
+Data analysis and collaboration are possible within the (shared) datafiles, stored in the native format. You may work with raw data objects, stored in the native datafile - Spike Trains, Analog Signals, combining them in Segments, performing computations with analog signals and spike trains (sum, mean, fft etc.), and store new results in the same (or another) native datafile. The following types of raw data objects are supported:
+
+''Table 6.1''
+|| '''Object Type''' || '''Attributes''' ||
+|| block || ['name', 'filedatetime', 'index'] ||
+|| segment || ['name', 'filedatetime', 'index'] ||
+|| event || ['time', 'label'] ||
+|| eventarray || [] ||
+|| epoch || ['time', 'label', 'duration'] ||
+|| epocharray || [] ||
+|| unit || ['name',] ||
+|| spiketrain || ['t_start', 't_stop'] ||
+|| analogsignal || ['name', 'sampling_rate', 't_start'] ||
+|| analogsignalarray || ['sampling_rate', 't_start'] ||
+|| irsaanalogsignal || ['name', 'channel_name'] ||
+|| spike || ['time', 'sampling_rate', 'left_sweep'] ||
+|| recordingchannelgroup || ['name',] ||
+|| recordingchannel || ['name', 'index']}
+
+
+To manage objects, listed above, the functions described in sections 6.1 - 6.8 are supported within G-Node API.
+
+''Note. Besides other parameters, mentioned below, all requests also contain "authorization" parameter, that you have to provide in the Header ot the request. You have to authenticate and supply authentication key as a value for this parameter to request data from the server.''
+
+'''6.1 Create or update data object'''
+
+Send an authorized HTTP request with the body (in JSON format), providing object data (attributes, arrays and relationships), to
+
+{{{
+Request: POST /neo/
+}}}
+
+in order to create a new NEO object. You should specify required parameters in the request body, starting with an object type, followed by its attributes, data arrays (if exist), and relationships, if needed.
+
+For example, send an authorized HTTP POST request to the "/neo/" with the following body
+
+{{{
+HTTP POST /neo/
+
+[{
+    "obj_type": "segment",
+    "filedatetime": "10/05/2011",
+    "index": 1
+}]
+}}}
+
+to create a new segment. If the response status is OK (200) a client receives a new ID of a segment from the response. 
+
+{{{
+[{
+    "neo_id": "segment_213", 
+    "message": "Object created successfully."
+}]
+}}}
+
+As the name was not provided in the request, the default name will be assigned by the system, for instance, "segment1". A full set of examples for all supported NEO object can be found here ([wiki:APINEOExamples NEO API Examples]). 
+
+''Note. To understand, which attributes, arrays and relationships, are supported for which NEO object please consider Tables ([wiki:APINEOExamples NEO API Examples]) as well as the NEO specification (http://packages.python.org/neo/classes.html).
+
+To update the segment, changing some ot its parameters, you need to send an authorized HTTP POST to the same URL but providing the NEO_ID of the segment at the end of the URL. Assuming the segment we've just created was assigned an ID = 213, send an HTTP POST to the "/neo/segment_213/" with the following body
+
+{{{
+HTTP POST /neo/segment_213/
+
+[{
+    "name": "Trial 18",
+    "block": "block_1234"
+}]
+}}}
+
+to update the name of the segment from "segment1" to "Trial 18" and link it to the Block with ID 1234. When update is required, you may specify only those parameters that you want to update. All other attributes, arrays and relationships will stay as they were.
+
+A response should look similar to this:
+{{{
+[{
+    "id": "segment_213", 
+    "logged_in_as": "bob",
+    "message": "Object updated successfully."
+}]
+}}}
+
+Here we saw, that some objects may be connected to others, like a segment may be connected to a block. The full list of supported connections can be found in Tables 6.3 - 6.4. Please provide the relationships inside the POST request to save appropriate data structure of your recordings. Consider the examples page ([wiki:APINEOExamples NEO API Examples]).
+
+As mentioned earlier, some objects have data, associated with it (Analog Signals, Spike Trains, Spikes etc). To save or update the associated object data, provide object data in the request body under a corresponding parameter, as shown in examples page ([wiki:APINEOExamples NEO API Examples]). You may find the whole list of data-related objects with corresponding parameters in the table below:
+
+''Table 6.2''
+|| '''Object Type''' || '''Data arrays''' ||
+|| "spiketrain" || ["spike_times", "waveforms"] ||
+|| "analogsignal" || ["signal",] ||
+|| "irsaanalogsignal" || ["signal", "times"] ||
+|| "spike" || ["waveform",] ||
+
+Use the same type of POST request to create or update object arrays and relationships. 
+
+''Note. While working with values, please consider http://packages.python.org/quantities/user/tutorial.html for supported unit types.''
+
+'''6.2 Getting a single object'''
+
+To get a NEO object with its attributes send a following GET request 
+{{{
+Request: GET /neo/<neo_id>/
+}}}
+
+You'll get the response, similar to:
+
+{{{
+Response:
+[{
+    "neo_id": "epoch_43", 
+    "time": {
+        "data": 17.5,
+        "units": "ms"
+    }, 
+    "duration": {
+        "data": 0.3,
+        "units": "s"
+    },
+    "label": "Displaying blue screen"
+    "segment": "segment_1234",
+    "author": "andrey",
+    "date_created": "01.05.2011",
+    "file_origin": "monkey recordings 16-35.mcs",
+    "logged_in_as": "bob",
+    "message": "Object retrieved successfully."
+}]
+}}}
+
+Response will contain full information about an object, including its attributes, data arrays, downstream and upstream relationships. When you need only partial information (say, data or relationships only) please use requests described in the following sections.
+
+
+'''6.3 Getting object data'''
+
+If an object contains data, you may want to request object data only (see list of objects and their data in the Table 6.2). To do this, send an HTTP GET request to 
+
+{{{
+Request: GET /neo/data/<neo_id>/
+}}}
+
+the following parameters can be used:
+ * [t_start] - when only a specific data range is needed, provide this value as a starting point
+ * [t_stop] - when only a specific data range is needed, provide this value as an end point
+ * [downsample] - false/number of datapoints (default = 5000) - this parameter is used to indicate whether downsampling is needed. If the whole data array need to be requested, provide downsample=false, otherwise only 5000 datapoints (or less, if no more data available in the t_start - t_stop range), downsampled, will be provided. If the range requested (t_start - t_stop) is greater than data in the existing array the whole array, downsampled if requested, will be returned.
+
+For example, send the following GET request
+
+{{{
+Request: GET /neo/analogsignal_15/?t_start=200&t_stop=210
+}}}
+
+to get the Analog Signal with datapoints as of time t_start = 200ms to t_stop = 210ms:
+
+{{{
+[{
+    "neo_id": "analogsignal_15", 
+    "signal": {
+        "units": "mV", 
+        "data": [11.2, 12.3, 12.7, 19.0, 7.81, 3.42, 9.28, -5.86, 12.2, 12.7, 19.5]
+    },
+    "author": "andrey",
+    "date_created": "01.05.2011",
+    "file_origin": "monkey recordings 16-35.mcs",
+    "message": "Data retrieved successfully."
+}]
+}}}
+
+Basically, for Analog Signal the range, provided in the request parameters, is just two sequential numbers, between which the requested data array will be retrieved. However, for Irregularly Sampled Analog Signal, this will work in a slightly different way. The range requested will be calculated using "times" array, attached to the object.
+
+When a SpikeTrain is requested, that range of waveforms (if defined) will be retrieved, which fall into the requested range. The comparison is made matching each waveform to the time, provided in the time array.
+
+
+'''6.4 Getting object relationships only'''
+
+According to the NEO data model, all objects in the scheme are connected. You may get the both "parent-to-child" (like which Segments are contained in a Block) and "child-to-parent" (like from which Recording Point an Analog Signal was recorded) relations by sending request to /neo/children/<neo_id>/ or /neo/parents/<neo_id>/ accordingly. In the tables below you may find supported objects of either type:
+
+''Table 6.3''
+|| '''Object Type''' || '''Children''' ||
+|| "block" || ['segment','recordingchannelgroup']
+|| "segment" || ['analogsignal', 'irsaanalogsignal', 'analogsignalarray', 'spiketrain', 'spike', 'event', 'eventarray', 'epoch', 'epocharray'] 
+|| "eventarray" || ['event',] ||
+|| "epocharray" || ['epoch',] ||
+|| "recordingchannelgroup" || ['recordingchannel','analogsignalarray']
+|| "recordingchannel" || ['unit','analogsignal', 'irsaanalogsignal']
+|| "unit" || ['spiketrain','spike']
+|| "analogsignalarray" || ['analogsignal',]
+
+
+''Table 6.4''
+|| '''Object Type''' || '''Parents''' ||
+|| "segment" || ['block',] ||
+|| "eventarray" || ['segment',] ||
+|| "event" || ['segment','eventarray'] ||
+|| "epocharray" || ['segment',] ||
+|| "epoch" || ['segment','epocharray'] ||
+|| "recordingchannelgroup" || ['block',] ||
+|| "recordingchannel" || ['recordingchannelgroup',] ||
+|| "unit" || ['recordingchannel',]
+|| "spiketrain" || ['segment','unit']
+|| "analogsignalarray" || ['segment',]
+|| "analogsignal" || ['segment','analogsignalarray','recordingchannel']
+|| "irsaanalogsignal" || ['segment','recordingchannel']
+|| "spike" || ['segment','unit'] ||
+
+
+For example, to request a list of parents for Analog Signal, send the following GET request
+
+{{{
+Request: GET /neo/parents/analogsignal_34
+}}}
+
+A response should look similar to this:
+
+{{{
+[{
+    "neo_id": analogsignal_34, 
+    "segment": "segment_1",
+    "recordingchannel": "recordingchannel_12",
+    "message": "Here is the list of object parents."
+}]
+}}}
+
+Accordingly, if you want to receive a contents of the certain block, send an HTTP request to "/neo/children/block_87" (assuming block has id=87). If the block contains both segments and recording channel groups, you'll get the following response:
+
+{{{
+[{
+    "neo_id": "block_87", 
+    "segment": [
+        "segment_193",
+        "segment_194",
+        "segment_195"
+    ],
+    "recordingchannelgroup": [
+        "recordingchannelgroup_1",
+        "recordingchannelgroup_2",
+    ],
+    "message": "Here are the contents of the requested object."
+}]
+}}}
+
+''Note. When some of the parents / children are not set up, an empty string / list will appear in the response.''
+''Note. While updating objects, please use only child-to-parent relationships (like specify to which segment (parent) particular event (child)  belongs). Parent-to-child relations will not be parsed and saved.''
+
+
+'''6.5 Query data objects - get an object list'''
+
+Use the following HTTP GET 
+
+{{{
+Request: GET /neo/select/<object_type>/?params
+}}}
+
+to query NEO objects of a specific type. For example, if you want to get all Analog Signals available for a specific user, send the following request 
+
+{{{
+Request: GET /neo/select/analogsignal/
+}}}
+
+You receive a list of Analog Signals IDs as a response:
+
+{{{
+[{
+    "selected": [
+        "analogsignal_10",
+        "analogsignal_11", 
+        "analogsignal_12", 
+        "analogsignal_13", 
+        "analogsignal_14", 
+        "analogsignal_15", 
+        "analogsignal_16", 
+        "analogsignal_17", 
+        "analogsignal_18", 
+        "analogsignal_19", 
+        "analogsignal_20", 
+        "analogsignal_21"
+    ]
+    "object_total": 21,
+    "object_selected": 12,
+    "selected_as_of": 10,
+    "message": "Here is the list of requested objects."
+}]
+}}}
+
+By default the API will return the first 1000 data objects in the response. This saves bandwidth and improves performance. A response will contain "object_total" parameter, with the total number of available objects. Use the "range_start" parameter indicating the starting point of the range of the whole list of objects (for example, 0 or 1499) to retrieve the rest of the objects. Just send a "range_start" parameter in the GET request, like 
+
+{{{
+Request: GET /neo/select/analogsignals/?range_start=844
+}}}
+
+
+'''6.6 Tagging raw data objects with metadata'''
+
+{{{
+Request: POST /neo/assign/<obj_id>/?params
+}}}
+
+parameters:
+ * obj_id - an object to assign a tag (Section, AnaogSignal etc.)
+ * value_id - a value from the values of properties, defined up the hierarchy of the section tree you work in.
+
+''Note. For example, you have an experiment with stimulus, changing its color across trials. You have several Analog Signals recorded, and you want to indicate, which of those were recorded under which stimulus condition. Assume in the experiment section tree you already defined a property, say, "StimulusColor" with values "red, green, blue". In that case, you use this function (being described) to "tag" all required Analog Signals with appropriate metadata value, assigning a "red" value to, let's say, first five hundred Analog Signals, "green" - to the second five hundred time series etc.''
+
+
+{{{
+Response:
+TBD
+}}}
+
+
+
+'''6.7 Computations with specified objects'''
+
+{{{
+Request: POST /neo/<operation>/?params
+}}}
+
+parameters:
+ * operation - an operation to perform
+ * object_type - analogsignal or spiketrain
+ * object_list - a tuple of object ids
+ * [query_string] - if defined, a query string will be used to select object for computation. object_list will be ignored.
+ * datafile_id - where to save the results
+
+
+{{{
+Response:
+TBD
+}}}
+
+
+'''6.8 Delete an object'''
+
+{{{
+Request: DELETE /neo/?params
+}}}
+
+parameters:
+ * obj_type - type of the object
+ * obj_id - object id
+
+
+{{{
+Response:
+TBD
+}}}
+
+
+----
+
+== 7. RESOURCE ACTION HISTORY (draft) ==
+
+In order not to forget, how certain scientific computations were achieved, or what is the source of a certain analog signal, you may request a history of an action with objects. An action history is a table indicating a source for an operation, description of an operation made and a result.
+
+'''7.1 Get object action history'''
+
+{{{
+Request: GET /history/object/?params
+}}}
+
+parameters:
+ * obj_type - type of the object
+ * obj_id - object id
+ * [start_date] - start date of the history
+ * [end_date] - start date of the history
+
+
+{{{
+Response:
+TBD
+}}}
+
+
+'''7.2 Get user action history'''
+
+{{{
+Request: GET /history/user/?params
+}}}
+
+parameters:
+ * user_id - object id
+ * [start_date] - start date of the history
+ * [end_date] - start date of the history
+
+
+{{{
+Response:
+TBD
+}}}
+
+
+''Note. Usually you will deal with the following HTTP status codes:''
+
+201 - "Created" - new object was successfully created.
+200 - "OK" - the object was successfully updated or GET operation performed successfully.
+404 - "Not Found" - you have provided an [obj_id], however, such an object does not exist. Or URL is wrond and not supported.
+403 - "Forbidden" - you don't have access to create, modify or view an object.
+400 - "Bad request" - some of the request parameters are not provided correctly. Consider the "message" contents.
+401 - "Unauthorized" - authorization key not provided.
+
+
+----
+
+----
+
+FUTURE:
+ * archiving mechanisms
+ * caching!! see google
+ * version management!!!
+ * import / conversion using Google Refine technologies
+ * NEO: /neo/info/<neo_id>/ - short info: think about what kind of info could there be, like number of segments/signals in a block, total data in MB etc.
+ * NEO: as above, in /neo/select/<obj_type>/ - provide short info about every object + a summary about all (total volume, for example)
+ * NEO: /neo/select/<obj_type>/ add query mechanism
+ * NEO: if an array data is missing for data-related objects, should we throw an error? or just allow a user to create it? Throw an error
+ * NEO: should we assign units by default, if not provided?
+ * NEO security: based on files? or not?
+
+
+CHanges:
+1)
+[{
+    "obj_type": "irsaanalogsignal",
+    "name": "AS-1",
+    "data": {
+        "sampling_rate": {
+            "units": "Hz",
+            "data": 20000
+        },
+        "t_start": {
+            "units": "ms", 
+            "data": 300.0,
+        },
+        "signal": {
+            "units": "mV", 
+            "data": [12.2, 12.7, 19.0, 7.81, 3.42, 9.28, -5.86]
+        }
+    },
+    "segment": "segment_1234",
+    "recordingchannel": "recordingchannel_69"
+}]
+
+2)
+[{
+    "obj_type": "spiketrain",
+    "t_start": -200.0,
+    "t_start__unit": "ms", 
+    "t_stop": 500.0,
+    "t_stop__unit": "ms", 
+    "times": {
+        "units": "ms", 
+        "data": [-4.88, 3.42, 2.44]
+    },
+    "waveforms": [{
+            "channel_index": 0,
+            "time_of_spike": {
+                "unit": "ms",
+                "data": "2011-10-05"
+            },
+            "data": {
+                "units": "mV", 
+                "data": [5.86, -1.46, -0.488, -7.32, -9.77, -12.7, -12.7]
+            }
+        },
+        {
+            "channel_index": 1,
+            "time_of_spike": {
+                "unit": "ms",
+                "data": "2011-10-05"
+            },
+            "data": {
+                "units": "mV", 
+                "data": [-63.0, -63.0, -65.9, -69.8, -72.8, -79.6, -65.3]
+            }
+        }
+    ],
+    "segment": "segment_1234",
+    "unit": "unit_22"
+}]
+

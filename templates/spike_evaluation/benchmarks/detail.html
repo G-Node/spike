@@ -1,0 +1,284 @@
+{% extends "spike_evaluation/benchmarks/base.html" %}
+
+{% load i18n %}
+{% load uni_form %}
+{% load pagination_tags %}
+{% load extra_tagging_tags %}
+{% load truncate_filter %}
+{% load avatar_tags %}
+{% load evalhelper_tags %}
+{% load theme_tags %}
+
+{% block head_title %}{B:{{ b.id }}}&nbsp;{{ b.name }}{% endblock %}
+
+{% block body %}
+
+  {% comment %}
+
+  <div class="right_panel">
+    <div class="members">
+      {% if b.evaluations %}
+        <h2>{% trans "Submitted evaluations" %}</h2>
+        <table width="100%">
+          {% for e in b.evaluations %}
+            {% if forloop.counter0|divisibleby:"3" %}
+              <tr>
+            {% endif %}
+          <td>
+            <div class="avatar">{% avatar e.owner 32 %}</div>
+            <div class="details">
+              <a href="{% url profile_detail e.owner.username %}"
+                 title="{{ e.owner.username }}">
+                {{ e.owner.username }}
+              </a>
+            </div>
+          </td>
+          {% if forloop.counter0|add:"1"|divisibleby:"3" %}
+            </tr>
+          {% endif %}
+          {% endfor %}
+          {% if not e_list|length|divisibleby:"3" %}</tr>{% endif %}
+        </table>
+        <p>
+          <a href="{% url e_list bid=b.id %}">
+            {% trans "View all submissions " %}({{ b.eval_count }})
+          </a>
+        </p>
+      {% else %}
+        <p>No evaluations submitted yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="left_panel">
+  {% endcomment %}
+
+  <div class="photo-title">
+    <h1>{{ b }}{% ifequal b.state "C" %}&nbsp;(CLOSED){% endifequal %}</h1>
+  </div>
+
+  <div id="datasethead">
+    <table>
+      <tbody>
+      <tr>
+        <td><strong>Description:</strong></td>
+        <td>{{ b.description }}</td>
+      </tr>
+      <tr>
+        <td><strong>Date Created:</strong></td>
+        <td>{{ b.date_created|date }}</td>
+      </tr>
+      <tr>
+        <td><strong>Owner:</strong></td>
+        <td>
+          <a href="{% url profile_detail b.owner.username %}">
+            {{ b.owner.username }}
+          </a>
+          {% ifequal b.owner request.user %}
+            &nbsp;(YOU)
+          {% endifequal %}
+        </td>
+      </tr>
+      {% ifequal b.owner request.user %}
+        <tr>
+          <td><strong>Status:</strong></td>
+          <td>
+            {% if b.is_active %}
+              <b style="color: green">ACTIVE</b> - available for user
+              download
+            {% else %}
+              <b style="color: red">INACTIVE</b> - for your eyes only
+            {% endif %}
+          </td>
+        </tr>
+      {% endifequal %}
+      <tr>
+        <td><strong>Tags:</strong></td>
+        <td>{% show_tags_for b %}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  {% if user.is_authenticated %}
+    {% ifequal b.owner user %}
+      <div class="form-toggle">
+        <p>
+          <span id="edit-benchmark-toggle">{% trans "edit benchmark" %}</span>
+          <span id="create-record-toggle">{% trans "create record" %}</span>
+        </p>
+
+        <form class="uniForm" id="edit-benchmark" method="POST" action=""
+              style="display:none">
+          <fieldset class="inlineLabels">
+            {{ b_form|as_uni_form }}
+            <div class="form_block">
+              <input type="submit" value="{% trans 'edit benchmark' %}"/>
+            </div>
+          </fieldset>
+        </form>
+        <form class="uniForm" id="create-record" method="POST"
+              enctype="multipart/form-data" action="" style="display:none">
+          <fieldset class="inlineLabels">
+            {{ r_form|as_uni_form }}
+            <div class="form_block">
+              <input type="submit" value="{% trans 'create record' %}"/>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+    {% endifequal %}
+  {% endif %}
+
+  <div class="eval">
+    <h2>Record Set</h2>
+
+    <p>Benchmark contain several datafile records. You may download this
+      Benchmark data and use it to test your spike sorting algorithm.
+      After the sorting, you may upload sorted data here for evaluation.
+      Evaluation results will be computed automatically and will be also
+      available on this website.</p>
+
+    {% if r_list %}
+      <table class="messages">
+        <thead>
+        <tr align="center">
+          <th>{% trans "Name" %}</th>
+          <th>{% trans "Created" %}</th>
+          <th>{{ b.parameter_desc }}</th>
+          <th>{% trans "Description" %}</th>
+          <th>{% trans "Evaluations" %}</th>
+          <th>{% trans "Download" %}</th>
+          {% ifequal b.owner user %}
+            <th>{% trans "Status" %}</th>
+          {% endifequal %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for r in r_list %}
+          <tr>
+            <td>
+              {% ifequal b.owner user %}
+                <a href="{{ r.get_absolute_url }}">
+              {% endifequal %}
+              <b>{{ r }}</b>
+              {% ifequal b.owner user %}
+                </a>
+              {% endifequal %}
+            </td>
+            <td>
+              <nobr>{{ r.date_created|date }}</nobr>
+            </td>
+            <td>
+              {{ r.parameter_value }}
+            </td>
+            <td>
+              {{ r.description|truncate_dot:100|escape }}
+            </td>
+            <td>
+              {% if r.eval_count %}
+                <a href="{% url e_list bid=b.id rid=r.id %}">
+                  {% trans "view evaluations" %}({{ r.eval_count }})
+                </a>
+              {% else %}
+                {% trans "no evaluations yet" %}
+              {% endif %}
+            </td>
+            {% with r.get_active_rfile as f %}
+              <td>
+                <nobr>
+                  <a href="{{ f.get_absolute_url }}">
+                    {{ f.name }} - {{ f.size }}
+                  </a>
+                </nobr>
+                {% if r.gt_is_public %}
+                  {% with r.get_active_gfile as f %}
+                    </br>
+                    <nobr>
+                      <a href="{{ f.get_absolute_url }}">
+                        {{ f.name }} - {{ f.size }}
+                      </a>
+                    </nobr>
+                  {% endwith %}
+                {% endif %}
+              </td>
+            {% endwith %}
+            {% ifequal b.owner user %}
+              <td>
+                {% if r.last_validation_state == "S" %}
+                  {% silk "tick" %}
+                {% else %}
+                  {% if r.last_validation_state == "F" %}
+                    {% silk "exclamation" %}
+                  {% else %}
+                    {% silk "clock" %}
+                  {% endif %}
+                {% endif %}
+              </td>
+            {% endifequal %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>This Benchmark has no records yet.</p>
+      {% ifequal b.owner request.user %}
+        <p>You can add new Records by clicking on the "Add Record" button
+          above.</p>
+      {% endifequal %}
+    {% endif %}
+  </div>
+
+  {% if user.is_authenticated and e_forms %}
+    <div class="eval">
+      <h2>Submit Evaluation</h2>
+
+      <div>
+        <form class="uniForm" id="submit-evaluation" method="POST"
+              enctype="multipart/form-data" action="">
+          <fieldset class="inlineLabels">
+            {% for e_form in e_forms %}
+              <b>Record: {{ e_form.record }}</b>
+              {{ e_form|as_uni_form }}
+            {% endfor %}
+            <div class="form_block">
+              <input type="hidden" name="action" value="e_submit"/>
+              <input type="submit" value="{% trans 'submit' %}"/>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  {% endif %}
+
+  {% comment %}
+  </div>
+  {% endcomment %}
+{% endblock %}
+
+{% block extra_body %}
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('#edit-benchmark-toggle').click(function() {
+        $('#create-record').hide();
+        $('#edit-benchmark').toggle();
+        return false;
+      });
+      if($('#edit-benchmark .error').length) {
+        $('#edit-benchmark').show();
+        $('#edit-benchmark .error').autoscroll();
+      }
+      ;
+      $('#create-record-toggle').click(function() {
+        $('#edit-benchmark').hide();
+        $('#create-record').toggle();
+        return false;
+      });
+      if($('#create-record .error').length) {
+        $('#create-record').show();
+        $('#create-record .error').autoscroll();
+      }
+      ;
+    });
+  </script>
+{% endblock %}

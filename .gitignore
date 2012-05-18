@@ -1,0 +1,8 @@
+apache/
+cron/
+deploy/
+logs/
+patches/
+local_settings.py
+*~
+*.pyc

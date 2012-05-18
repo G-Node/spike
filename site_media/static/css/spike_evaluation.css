@@ -1,0 +1,49 @@
+/* TEST */
+
+/* docu */
+
+div.toc div {
+  letter-spacing : 0px;
+  padding-left   : 10px;
+}
+
+div.section-content {
+  padding-left : 10px;
+}
+
+/* eval details */
+
+table.results tr th {
+  text-align : center;
+}
+
+table.results tr td {
+  text-align    : left;
+  border-bottom : 1px solid #DDD;
+}
+
+table.results tr td, table.results tr th {
+  padding        : 5px;
+  vertical-align : top;
+  border-left    : 1px solid #333;
+  border-right   : 1px solid #333;
+}
+
+/* general decorators */
+
+.last {
+  border-bottom : 1px solid #333 !important;
+}
+
+.alt {
+  background : none repeat scroll 0 0 #E7E8EB !important;
+}
+
+/* containers */
+
+div.eval {
+  border-top    : 0.25em solid #999999;
+  margin-bottom : 5em;
+  margin-top    : 2em;
+  margin-right  : 10px;
+}

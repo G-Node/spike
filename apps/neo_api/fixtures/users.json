@@ -1,0 +1,98 @@
+[
+    {
+        "pk": 1,
+        "model": "auth.user",
+        "fields": {
+            "username": "bob",
+            "first_name": "Bob",
+            "last_name": "Roberts",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2010-02-19 19:11:56",
+            "groups": [],
+            "user_permissions": [],
+            "password": "sha1$f0efc$2f2d5d0ce98fea36d3ac5f0499fe6d1da5640782",
+            "email": "",
+            "date_joined": "2010-02-18 09:10:01"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "auth.user",
+        "fields": {
+            "username": "joe",
+            "first_name": "Joe",
+            "last_name": "Smith",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2010-02-19 18:11:56",
+            "groups": [],
+            "user_permissions": [],
+            "password": "sha1$f0efc$2f2d5d0ce98fea36d3ac5f0499fe6d1da5640782",
+            "email": "",
+            "date_joined": "2010-02-18 09:10:01"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "auth.user",
+        "fields": {
+            "username": "jane",
+            "first_name": "Jane",
+            "last_name": "Ostin",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2010-02-19 18:11:56",
+            "groups": [],
+            "user_permissions": [],
+            "password": "sha1$f0efc$2f2d5d0ce98fea36d3ac5f0499fe6d1da5640782",
+            "email": "",
+            "date_joined": "2010-02-18 09:10:01"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "profiles.profile",
+        "fields": {
+            "user": 1,
+            "name": "Bob Roberts",
+            "about": "The problem with Bob is that he doesn't like beer",
+            "location": "Someplace dull",
+            "website": "http://www.g-node.org"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "profiles.profile",
+        "fields": {
+            "user": 2,
+            "name": "Joe Smith",
+            "about": "Joe like beer",
+            "location": "Germany perhaps?",
+            "website": "http://www.g-node.org"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "profiles.profile",
+        "fields": {
+            "user": 3,
+            "name": "Jane Ostin",
+            "about": "Jane prefers wine",
+            "location": "Italy",
+            "website": "http://www.g-node.org"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "friends.friendship",
+        "fields": {
+            "to_user": 2,
+            "from_user": 3,
+            "added": "2010-02-15"
+        }
+    }
+]

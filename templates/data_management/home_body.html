@@ -1,0 +1,21 @@
+{% load ifsetting_tag %}
+
+<p>
+    For more information about G-Node, see
+    <a href="http://www.g-node.org/">http://www.g-node.org/</a>.
+</p>
+
+<hr />
+{% if user.is_authenticated %}
+    {% url what_next as what_next_url %}
+    <p class="center what_next">Wondering <a href="{{ what_next_url }}">What Next</a>?</p>
+{% else %}
+    {% url acct_login as login_url %}
+    {% ifsetting ACCOUNT_OPEN_SIGNUP %}
+        {% url acct_signup as signup_url %}
+        <p  class="center">You can <a href="{{ signup_url }}">Sign up</a> and <a href="{{ login_url }}">Log in</a> to try out the site.</p>
+    {% else %}
+        <p  class="center">You can <a href="{{ login_url }}">Log in</a> to try out the site.</p>
+    {% endifsetting %}
+{% endif %}
+

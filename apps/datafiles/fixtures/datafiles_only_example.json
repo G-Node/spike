@@ -1,0 +1,92 @@
+[
+  {
+        "pk": 200,
+        "model": "state_machine.ObjectState",
+        "fields": {
+            "current_state": 10
+        }
+  },
+  {
+        "pk": 201,
+        "model": "state_machine.ObjectState",
+        "fields": {
+            "current_state": 10
+        }
+  },
+  {
+        "pk": 202,
+        "model": "state_machine.ObjectState",
+        "fields": {
+            "current_state": 10
+        }
+  },
+  {
+        "pk": 200,
+        "model": "state_machine.SafetyLevel",
+        "fields": {
+            "safety_level": 3,
+            "shared_with": []
+        }
+  },
+  {
+        "pk": 201,
+        "model": "state_machine.SafetyLevel",
+        "fields": {
+            "safety_level": 2,
+            "shared_with": [2]
+        }
+  },
+  {
+        "pk": 202,
+        "model": "state_machine.SafetyLevel",
+        "fields": {
+            "safety_level": 1,
+            "shared_with": [2, 3]
+        }
+  },
+  {
+        "pk": 200,
+        "model": "datafiles.datafile",
+        "fields": {
+            "title": "FirstFile",
+            "caption": "File description should go here",
+            "date_added": "2010-02-15 19:11:56",
+            "owner": 1,
+            "in_datasets": [],
+            "in_expts": [],
+            "raw_file": "data/Bach_WTC1_Richter_01.mp3",
+            "tags": "",
+            "recording_date": "2010-02-15 19:11"
+        }
+  },
+  {
+        "pk": 201,
+        "model": "datafiles.datafile",
+        "fields": {
+            "title": "Second",
+            "caption": "File description should go here",
+            "date_added": "2010-02-15 19:11:56",
+            "owner": 1,
+            "in_datasets": [],
+            "in_expts": [],
+            "raw_file": "data/Bach_WTC1_Richter_01___.mp3",
+            "tags": "",
+            "recording_date": "2010-02-15 19:11"
+        }
+  },
+  {
+        "pk": 202,
+        "model": "datafiles.datafile",
+        "fields": {
+            "title": "Third",
+            "caption": "File description should go here",
+            "date_added": "2010-02-15 19:11:56",
+            "owner": 1,
+            "in_datasets": [],
+            "in_expts": [],
+            "raw_file": "data/Bach_WTC1_Richter_01__.mp3",
+            "tags": "",
+            "recording_date": "2010-02-15 19:11"
+        }
+  }
+]

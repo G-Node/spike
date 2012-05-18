@@ -1,0 +1,66 @@
+{% extends "experiments/base.html" %}
+
+{% load i18n %}
+{% load humanize %}
+{% load pagination_tags %}
+{% load tagging_tags %}
+{% load group_tags %}
+{% load threadedcommentstags %}
+{% load theme_tags %}
+{% load sorting_tags %}
+
+{% block head_title %}{% blocktrans %}Friends' Experiments{% endblocktrans %}{% endblock %}
+
+{% block body %}
+  
+    <h1>{% trans "Friends' Experiments" %}</h1>
+    
+    {% if user.is_authenticated %}
+        <p><a href="{% url experiment_create %}">Create</a> an Experiment. Or <a href="#">Upload</a> an <a href="#">odML</a> file with experimental data.</p>
+
+    {% if experiments %}
+
+	    {% regroup experiments by owner.username as names_list %}
+	    {% autosort experiments %}
+	    {% autopaginate experiments %}
+		<p>{% trans "Order by:" %}
+		    {% anchor owner Owner %}
+		    {% anchor safety_level Privacy %}
+		    {% anchor date_created Date %}
+		</p>
+		<table class="messages">
+		    <thead>
+		        <tr><th>{% trans "Title" %}</th><th>{% trans "Related to Projects" %}</th><th>{% trans "Created" %}</th><th>{% trans "Privacy" %}</th></tr>
+		    </thead>
+		    <tbody>
+		    {% for c_name in names_list %}
+			<tr><td>Experiments of <a href="{% url profile_detail c_name.grouper %}">{{ c_name.grouper }}</a></td></tr>
+		        
+			{% for item in c_name.list %}
+		            <tr>
+		                <td><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></td>
+		                <td>
+				{% for proj in item.in_projects.all %}
+					<span><a href="{{ proj.get_absolute_url }}">{{ proj.slug }}</a>, </span>
+				{% endfor %}
+				</td>
+		                <td>{{ item.date_created }}</td>
+		                <td>{% if item.is_Public %}<b style="color: green">Public</b>{% endif %}{% if item.is_Friendly %}Friendly{% endif %}{% if item.is_Private %}Private{% endif %}</td>
+		            </tr>
+		        {% endfor %}
+	            {% endfor %}
+		    </tbody>
+		</table>
+	    {% paginate %}
+
+    {% else %}
+    <p>No experiments were found.</p>
+    {% endif %}
+
+    {% else %}
+        {% url acct_signup as signup_url %}
+        {% url acct_login as login_url %}
+        <p>{% blocktrans %}<a href="{{ signup_url }}">Sign up</a> and <a href="{{ login_url }}">log in </a> to create experiments and organize or share your own datafiles.{% endblocktrans %}</p>
+    {% endif %}
+    
+{% endblock %}

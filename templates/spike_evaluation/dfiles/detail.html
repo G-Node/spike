@@ -1,0 +1,76 @@
+{% load i18n %}
+{% load uni_form %}
+{% load evalhelper_tags %}
+{% load theme_tags %}
+
+<div>
+
+  <div>
+    <h3>{{ d.name }} ({{ d.get_filetype_display }})</h3>
+  </div>
+
+  <div>
+    {% with d.versions as v_list %}
+      {% if v_list %}
+        <table class="messages">
+          <thead>
+          <tr>
+            <th>{% trans "Version" %}</th>
+            <th>{% trans "Name" %}</th>
+            <th>{% trans "Created" %}</th>
+            <th>{% trans "Download" %}</th>
+            <th>{% trans "Validation" %}</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for v in v_list %}
+            <tr>
+              <td>{{ v.version }}</td>
+              <td>{{ v.title }}</td>
+              <td>
+                <nobr>
+                  {{ v.date_created|date }}
+                </nobr>
+              </td>
+              <td>
+                <nobr>
+                  <a href="{{ v.get_absolute_url }}">
+                    {{ v.title }} - {{ v.size }}
+                  </a>
+                </nobr>
+              </td>
+              <td>
+                <b style={% if v.validation_state == 'S' %}
+                  "color: green">
+                {% else %}
+                  "color: red">
+                {% endif %}
+                   {{ v.get_validation_state_display }}
+                </b>
+                <br>
+                {{ v.validation_log }}
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <div id="create-version-{{ d.id }}">
+          <form class="uniForm" method="POST" enctype="multipart/form-data"
+                action="">
+            <fieldset class="inlineLabels">
+              {{ v_form|populate:d.get_last_version|as_uni_form }}
+              <div class="form_block">
+                <input type="hidden" name="vid"
+                       value="{{ d.get_last_version.id }}"/>
+                <input type="submit" value="{% trans "create version" %}"/>
+              </div>
+            </fieldset>
+          </form>
+        </div>
+      {% else %}
+        <p>This datafile has no versions yet.</p>
+      {% endif %}
+    {% endwith %}
+  </div>
+
+</div>

@@ -1,0 +1,196 @@
+[
+    {
+        "pk": 1,
+        "model": "neo_api.Block",
+        "fields": {
+            "name": "Block of recordings from May, 10",
+            "filedatetime": "2011-10-05 19:11:56",
+            "index": 1,
+            "author": 1,
+            "date_created": "2011-10-05 19:11:56"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "neo_api.Segment",
+        "fields": {
+            "name": "Attention effects, Trial 34 recordings, monkey V1 January.",
+            "filedatetime": "2011-11-01 19:11:56",
+            "index": 1,
+            "block": 1,
+            "author": 1,
+            "date_created": "2011-10-05 19:11:56"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "neo_api.EventArray",
+        "fields": {
+            "segment": 1,
+            "author": 1,
+            "date_created": "2011-10-05 19:11:56"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "neo_api.Event",
+        "fields": {
+            "label": "Fixation start time",
+            "time": 35.0,
+            "time__unit": "ms",
+            "segment": 1,
+            "eventarray": 1,
+            "author": 1,
+            "date_created": "2011-10-05 19:11:56"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "neo_api.EpochArray",
+        "fields": {
+            "segment": 1,
+            "author": 1,
+            "date_created": "2011-10-05 19:11:56"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "neo_api.Epoch",
+        "fields": {
+            "label": "Drug application period",
+            "time": 35.0,
+            "time__unit": "ms",
+            "duration": 1455.0,
+            "duration__unit": "ms",
+            "segment": 1,
+            "epocharray": 1,
+            "author": 1,
+            "date_created": "2011-10-05 19:11:56"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "neo_api.RecordingChannelGroup",
+        "fields": {
+            "block": 1,
+            "author": 1,
+            "date_created": "2011-10-05 19:11:56"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "neo_api.RecordingChannel",
+        "fields": {
+            "name": "Channel 1",
+            "index": 1,
+            "recordingchannelgroup": 1,
+            "author": 1,
+            "date_created": "2011-10-05 19:11:56"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "neo_api.Unit",
+        "fields": {
+            "name": "V1 Left Simple Neuron, +/-2",
+            "recordingchannel": [1],
+            "author": 1,
+            "date_created": "2011-10-05 19:11:56"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "neo_api.SpikeTrain",
+        "fields": {
+            "t_start": 0.0,
+            "t_start__unit": "ms",
+            "t_stop": 270.0,
+            "t_stop__unit": "ms",
+            "segment": 1,
+            "unit": 1,
+            "times_data": "0.270807049069,0.886031975034,0.752855254815,0.627842219243,0.72594719485,0.115917131311,0.438538107766,0.843409372998,0.712181201801,0.550852603097",
+            "times__unit": "ms",
+            "times_size": 30,
+            "author": 1,
+            "date_created": "2011-10-05 19:11:56"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "neo_api.AnalogSignal",
+        "fields": {
+            "name": "AS-1",
+            "t_start": 0.0,
+            "t_start__unit": "ms",
+            "sampling_rate": 20000,
+            "sampling_rate__unit": "hz",
+            "segment": 1,
+            "recordingchannel": 1,
+            "signal_data": "0.270807049069,0.886031975034,0.752855254815,0.627842219243,0.72594719485,0.115917131311,0.438538107766,0.843409372998,0.712181201801,0.550852603097",
+            "signal__unit": "mv",
+            "signal_size": 30,
+            "author": 1,
+            "date_created": "2011-10-05 19:11:56"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "neo_api.IrSaAnalogSignal",
+        "fields": {
+            "name": "AS-1",
+            "t_start": 0.0,
+            "t_start__unit": "ms",
+            "segment": 1,
+            "recordingchannel": 1,
+            "signal_data": "0.270807049069,0.886031975034,0.752855254815,0.627842219243,0.72594719485,0.115917131311,0.438538107766,0.843409372998,0.712181201801,0.550852603097",
+            "signal__unit": "mv",
+            "times_data": "0.270807049069,0.886031975034,0.752855254815,0.627842219243,0.72594719485,0.115917131311,0.438538107766,0.843409372998,0.712181201801,0.550852603097",
+            "times__unit": "ms",
+            "object_size": 30,
+            "author": 1,
+            "date_created": "2011-10-05 19:11:56"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "neo_api.AnalogSignalArray",
+        "fields": {
+            "segment": 1,
+            "author": 1,
+            "date_created": "2011-10-05 19:11:56"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "neo_api.Spike",
+        "fields": {
+            "time": 0.0,
+            "time__unit": "ms",
+            "sampling_rate": 20000,
+            "sampling_rate__unit": "hz",
+            "left_sweep": 40.0,
+            "left_sweep__unit": "ms",
+            "segment": 1,
+            "unit": 1,
+            "author": 1,
+            "date_created": "2011-10-05 19:11:56"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "neo_api.WaveForm",
+        "fields": {
+            "channel_index": 1,
+            "time_of_spike_data": 0.0,
+            "time_of_spike__unit": "ms",
+            "waveform_data": "0.270807049069,0.886031975034,0.752855254815,0.627842219243,0.72594719485,0.115917131311,0.438538107766,0.843409372998,0.712181201801,0.550852603097",
+            "waveform__unit": "mv",
+            "waveform_size": 30,
+            "spiketrain": 1,
+            "spike": 1,
+            "author": 1,
+            "date_created": "2011-10-05 19:11:56"
+        }
+    }
+]
+

@@ -1,0 +1,91 @@
+{% extends "spike_evaluation/evaluations/base.html" %}
+
+{% load i18n %}
+{% load uni_form %}
+{% load humanize %}
+{% load pagination_tags %}
+{% load order_by %}
+{% load extra_tagging_tags %}
+{% load sorting_tags %}
+{% load truncate_filter %}
+{% load evalhelper_tags %}
+
+{% block head_title %}{% trans "Evaluations" %}{% endblock %}
+
+{% block body %}
+  <div class="photo-title">
+    <h1>{% trans "Evaluations" %}</h1>
+  </div>
+
+  {% if not user.is_authenticated %}
+    {% url acct_signup as signup_url %}
+    {% url acct_login as login_url %}
+    <p>{% blocktrans %}<a href="{{ signup_url }}">Sign up</a> and
+      <a href="{{ login_url }}">log in </a> to create your own benchmark or
+      submit an evaluation for an existing one.{% endblocktrans %}</p>
+  {% else %}
+    <p>You may select a Benchmark and download files for your algorithm
+      evaluation <a href="{% url b_list %}">here</a>.</p>
+  {% endif %}
+
+  {% if not e_list %}
+    <p>There is no evaluations yet available.</p>
+  {% else %}
+    {% autosort e_list %}
+    {% autopaginate e_list 20 %}
+
+    <p>{% trans "Order by:" %}
+      {% anchor owner__username Author %}
+      {% anchor original_file__datafile__record__benchmark__name Benchmark %}
+      {% anchor algorithm Algorithm %}
+      {% anchor date_created Date %}
+    </p>
+
+    <table class="messages">
+      <thead>
+      <tr>
+        <th>{% trans "Author" %}</th>
+        <th>{% trans "ID, Algorithm" %}</th>
+        <th>{% trans "Benchmark" %}</th>
+        <th>{% trans "Description" %}</th>
+        <th>{% trans "Created" %}</th>
+        <th>{% trans "State" %}</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for e in e_list %}
+        {% with e.owner as uname %}
+          <tr>
+            <td>
+              <a href="{% url profile_detail uname %}"
+                 title="{{ uname }}">{{ uname }}</a>
+            </td>
+            <td>
+              <a href="{{ e.get_absolute_url }}">
+                <b style="{% zero_red e.publication_state %}">
+                  #{{ e.id }}, {{ e.algorithm }}
+                </b>
+              </a>
+            </td>
+            <td>
+              <a href="{{ e.benchmark.get_absolute_url }}">
+                {{ e.benchmark.name }}</a>({{ e.record.name }})
+            </td>
+            <td>
+              <nobr>{{ e.description|truncate_dot:100|escape }}</nobr>
+            </td>
+            <td>
+              <nobr>{{ e.date_created|date }}</nobr>
+            </td>
+            <td>
+              <b style="{% state_color e.processing_state %}">
+                {{ e.get_processing_state_display }}</b>
+            </td>
+          </tr>
+        {% endwith %}
+      {% endfor %}
+      </tbody>
+    </table>
+    {% paginate %}
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "messages/base.html" %}
+
+{% load i18n %}
+{% load oembed_tags %}
+{% load timezone_filters %}
+
+{% block body %}
+    <h1>{% trans "View Message" %}</h1>
+    
+    <div id="messagehead">
+        <table >
+          <tr>
+            <td><strong>{% trans "Sender" %}:</strong></td>
+            <td><a href="{% url profile_detail message.sender %}">{{ message.sender }}</a></td>
+          </tr>
+          <tr>
+            <td><strong>{% trans "Subject" %}:</strong> </td>
+            <td>{{ message.subject }}</td>
+          </tr>
+          <tr>
+            <td><strong>{% trans "Date" %}:</strong></td>
+            <td>{{ message.sent_at|localtime:account.timezone|date:_("DATETIME_FORMAT")}}</td>
+          </tr>
+          <tr>
+            <td><strong>{% trans "Recipient" %}:</strong></td>
+            <td> {{ message.recipient }}</td>
+          </tr> 
+         </table>
+    </div>
+    
+    <div class="hr"> </div>
+    
+    <p>{% oembed %}{{ message.body|linebreaksbr }}{% endoembed %}</p>
+    
+    
+   <div class="hr"> </div>
+    
+    <p>
+      {% ifequal message.recipient user %}
+        <a href="{% url messages_reply message.id %}">{% trans "Reply" %}</a>&nbsp;|&nbsp;
+      {% endifequal %}
+      <a href="{% url messages_delete message.id %}">{% trans "Delete" %}</a>
+    </p>
+{% endblock %}
