@@ -87,30 +87,21 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.request',
     'context_processors.pinax_settings',
-    ##---DELETE-start
-    #'notification.context_processors.notification',
-    ##---DELETE-end
     'announcements.context_processors.site_wide_announcements',
     'account.context_processors.openid',
     'account.context_processors.account',
     'messages.context_processors.inbox',
     'friends_app.context_processors.invitations',
     'context_processors.combined_inbox_count',
-    ##---DELETE-start
-    #'service_manager.service_selector',
-    ##---DELETE-start
     )
 
 COMBINED_INBOX_COUNT_SOURCES = (
     'messages.context_processors.inbox',
     'friends_app.context_processors.invitations',
-    ##---DELETE-start
-    #'notification.context_processors.notification',
-    ##---DELETE-end
     )
 
 INSTALLED_APPS = (
-    # django and pinax core
+    # django core
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -118,74 +109,41 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'django.contrib.markup',
     'django.contrib.admin',
+
+    # pinax legacy
     'pinax.templatetags',
 
-    # schema migration tool
+    # schema migration
     'south',
 
     # external
-    ##---DELETE-start
-    #'notification', # must be first
-    ##---DELETE-end
-    'django_openid',
-    'emailconfirmation',
-    #'django_extensions',
-    #'robots',
-    'friends',
-    #'mailer',
-    'messages',
-    'announcements',
-    'oembed',
-    'djangodblog',
-    'pagination',
-    'gravatar',
-    'threadedcomments',
-    'threadedcomments_extras',
-    #'wiki',
-    #'swaps',
-    'timezones',
-    #'voting',
-    #'voting_extras',
-    'tagging',
-    #'bookmarks',
-    #'blog',
-    'ajax_validation',
-    #'photologue',
-    'avatar',
-    #'flag',
-    #'microblogging',
-    #'locations',
-    'uni_form',
-    'django_sorting',
-    #'django_markup',
-    'staticfiles',
-    'captcha',
-
-    # internal (for now)
-    'projects',
-    #'tasks',
-    'experiments',
-    'datasets',
-    'datafiles',
-    'analytics',
-    'profiles',
     'account',
-    'signup_codes',
-    #'tribes',
-    #'photos',
-    'tag_app',
-    'topics',
-    'groups',
-    ##---DELETE-start
-    #'state_machine',
-    #'trash_folder',
-    #'ldap_backend',
-    #'system_dashboard',
-    #'metadata',
-    #'timeseries',
-    #'neo_api',
-    ##---DELETE-end
+    'avatar',
+    'captcha',
+    'djangodblog',
+    'django_sorting',
     'djcelery',
+    'gravatar',
+    'groups',
+    'messages',
+    'pagination',
+    'profiles',
+    'staticfiles',
+    'tagging',
+    'timezones',
+    'uni_form',
+
+    # undecided
+    'django_openid', #??
+    'emailconfirmation', #??
+    'friends', #??
+    'announcements', #??
+    'oembed', #??
+    'ajax_validation',
+    'tag_app',
+    'signup_codes',
+    'analytics',
+    #'ldap_backend',
 
     # spike_evaluation
     'spike_evaluation',
@@ -261,25 +219,6 @@ DEFAULT_SORT_DOWN = '&uarr;'
 AVATAR_GRAVATAR_BACKUP = True
 AVATAR_DEFAULT_URL = os.path.join(STATIC_URL,
                                   'pinax/images/avatar_default.jpeg')
-
-##---DELETE-start
-LOGIN_REDIRECT_URLNAMES = {
-    'data_management':'what_next',
-    'spike_evaluation':'home'
-}
-LOGIN_REDIRECT_URL = '/about/what_next/'
-
-DEFAULT_REDIRECT_URLNAMES = {
-    'data_management':'home',
-    'spike_evaluation':'home'
-}
-
-SUPPORTED_SERVICES = (
-    ('spike_evaluation', 'Spike Sorting Evaluation'),
-    #('data_management', 'Data Management'),
-    )
-DEFAULT_SERVICE = SUPPORTED_SERVICES[0][0]
-##---DELETE-end
 
 # maximum size, in bytes, of a request before it will be streamed to the
 # file system instead of into memory.
