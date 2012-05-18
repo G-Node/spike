@@ -54,7 +54,7 @@ LANGUAGE_CODE = 'en'
 
 TEMPLATE_DIRS = (
     os.path.join(PROJECT_ROOT, 'templates'),
-    os.path.join(PROJECT_ROOT, 'templates', 'default'),
+    #os.path.join(PROJECT_ROOT, 'templates', 'default'),
     os.path.join(PROJECT_ROOT, 'site_media', 'static'),
     os.path.join(PINAX_ROOT, 'templates', PINAX_THEME),
     )
