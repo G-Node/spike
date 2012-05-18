@@ -19,8 +19,11 @@ from account.forms import SignupForm, AddEmailForm, LoginForm, \
     ChangeTimezoneForm, ChangeLanguageForm, TwitterForm, ResetPasswordKeyForm
 from emailconfirmation.models import EmailAddress, EmailConfirmation
 
-from neo_api.views import BadRequest, BasicJSONResponse, Unauthorized
-from neo_api.meta import meta_messages
+##---DELETE-start
+#from neo_api.views import BadRequest, BasicJSONResponse, Unauthorized
+#from neo_api.meta import meta_messages
+##---DELETE-end
+
 try:
     import json
 except ImportError:
@@ -71,7 +74,7 @@ def login(request, form_class=LoginForm, template_name="account/login.html",
 
 def api_authenticate(request):
     """
-    Authentication gateway for th Data API. Wraps the normal login method 
+    Authentication gateway for th Data API. Wraps the normal login method
     bypassing the request through and identifying the successful authentication
     by the response type. The responses are implemented in line with the Data
     API (JSON, REST-ful).
@@ -234,11 +237,11 @@ def password_reset(request, form_class=ResetPasswordForm,
             }, context_instance=RequestContext(request))
     else:
         password_reset_form = form_class()
-    
+
     return render_to_response(template_name, {
         "password_reset_form": password_reset_form,
     }, context_instance=RequestContext(request))
-    
+
 def password_reset_from_key(request, key, form_class=ResetPasswordKeyForm,
         template_name="account/password_reset_from_key.html"):
     if request.method == "POST":
@@ -248,11 +251,11 @@ def password_reset_from_key(request, key, form_class=ResetPasswordKeyForm,
             password_reset_key_form = None
     else:
         password_reset_key_form = form_class(initial={"temp_key": key})
-    
+
     return render_to_response(template_name, {
         "form": password_reset_key_form,
     }, context_instance=RequestContext(request))
-    
+
 @login_required
 def timezone_change(request, form_class=ChangeTimezoneForm,
         template_name="account/timezone_change.html"):

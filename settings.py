@@ -87,7 +87,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.request',
     'context_processors.pinax_settings',
-    'announcements.context_processors.site_wide_announcements',
+    #'announcements.context_processors.site_wide_announcements',
     'account.context_processors.openid',
     'account.context_processors.account',
     'messages.context_processors.inbox',
@@ -110,18 +110,23 @@ INSTALLED_APPS = (
     'django.contrib.markup',
     'django.contrib.admin',
 
+    # django additions
+    'django_openid',
+    'django_sorting',
+
     # pinax legacy
     'pinax.templatetags',
 
     # schema migration
     'south',
 
+    # ldap, !! keep for later !!
+    #'ldap_backend',
+
     # external
     'account',
     'avatar',
     'captcha',
-    'djangodblog',
-    'django_sorting',
     'djcelery',
     'gravatar',
     'groups',
@@ -133,24 +138,20 @@ INSTALLED_APPS = (
     'timezones',
     'uni_form',
 
-    # undecided
-    'django_openid', #??
-    'emailconfirmation', #??
-    'friends', #??
-    'announcements', #??
-    'oembed', #??
-    'ajax_validation',
-    'tag_app',
-    'signup_codes',
-    'analytics',
-    #'ldap_backend',
-
     # spike_evaluation
     'spike_evaluation',
     'spike_evaluation.benchmarks',
     'spike_evaluation.dfiles',
     'spike_evaluation.evaluations',
     'spike_evaluation.evaldocs',
+
+    # undecided
+    'emailconfirmation', #??
+    'friends', #??
+    'ajax_validation',
+    'tag_app',
+    'signup_codes',
+    'analytics',
     )
 
 ABSOLUTE_URL_OVERRIDES = {
