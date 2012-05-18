@@ -1,7 +1,0 @@
-stupid in diagram
-
-- IrSaAnalogSignal, AnalogSignal: channel_name - why do we need this attribute if we have a link to recording channel?
-- why t_start is optional in IrSaAnalogSignal?
-- why IrSaAnalogSignal has 2 1D arrays, instead of 1 2D array?
-- why do waveforms have a property "channel index" instead of a link to recordingchannel?
-- why don't we want to have Spiketrains containing spikes (with waveforms) and not 3D waveform array?

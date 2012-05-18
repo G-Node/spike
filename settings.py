@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 # Common Django settings for G-Node project.
+#
 # Customized for Spikesorting Evaluation Website
 # 2012/5/18 - Philipp Meier <pmeier82@googlemail.com>
+#
 
 ##---IMPORTS
 
 import os.path
-import posixpath
 import pinax
 from django.conf import global_settings
-from logging.handlers import SysLogHandler
-#import firepython
 
 ##---LOCAL_SETTINGS
 
@@ -32,10 +31,12 @@ CACHES = {
 }
 
 ##---DELETE-start
-FILE_UPLOAD_HANDLERS = ('datafiles.upload_handlers.UploadProgressCachedHandler'
-                        , ) + global_settings.FILE_UPLOAD_HANDLERS
+#FILE_UPLOAD_HANDLERS = ('datafiles.upload_handlers
+# .UploadProgressCachedHandler'
+#                        , ) + global_settings.FILE_UPLOAD_HANDLERS
 ##---DELETE-end
 
+# TODO: what is it good for?!
 MANAGERS = ADMINS
 
 # Local time zone for this installation. Choices can be found here:
@@ -52,10 +53,10 @@ TIME_ZONE = 'Europe/Berlin'
 LANGUAGE_CODE = 'en'
 
 TEMPLATE_DIRS = (
-    os.path.join(PROJECT_ROOT, "templates"),
-    os.path.join(PROJECT_ROOT, "templates", "default"),
-    os.path.join(PROJECT_ROOT, "site_media", "static"),
-    os.path.join(PINAX_ROOT, "templates", PINAX_THEME),
+    os.path.join(PROJECT_ROOT, 'templates'),
+    os.path.join(PROJECT_ROOT, 'templates', 'default'),
+    os.path.join(PROJECT_ROOT, 'site_media', 'static'),
+    os.path.join(PINAX_ROOT, 'templates', PINAX_THEME),
     )
 
 # List of callables that know how to import templates from various sources.
@@ -76,37 +77,40 @@ MIDDLEWARE_CLASSES = (
     'djangodblog.middleware.DBLogMiddleware',
     'pinax.middleware.security.HideSensistiveFieldsMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
-    #'firepython.middleware.FirePythonDjango',
-
-    # 2012/4/16 - pmeier
     'django.contrib.messages.middleware.MessageMiddleware',
     )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.core.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.request",
-    "context_processors.pinax_settings",
-    "notification.context_processors.notification",
-    "announcements.context_processors.site_wide_announcements",
-    "account.context_processors.openid",
-    "account.context_processors.account",
-    "messages.context_processors.inbox",
-    "friends_app.context_processors.invitations",
-    "context_processors.combined_inbox_count",
-    "service_manager.service_selector",
+    'django.core.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.request',
+    'context_processors.pinax_settings',
+    ##---DELETE-start
+    #'notification.context_processors.notification',
+    ##---DELETE-end
+    'announcements.context_processors.site_wide_announcements',
+    'account.context_processors.openid',
+    'account.context_processors.account',
+    'messages.context_processors.inbox',
+    'friends_app.context_processors.invitations',
+    'context_processors.combined_inbox_count',
+    ##---DELETE-start
+    #'service_manager.service_selector',
+    ##---DELETE-start
     )
 
 COMBINED_INBOX_COUNT_SOURCES = (
-    "messages.context_processors.inbox",
-    "friends_app.context_processors.invitations",
-    "notification.context_processors.notification",
+    'messages.context_processors.inbox',
+    'friends_app.context_processors.invitations',
+    ##---DELETE-start
+    #'notification.context_processors.notification',
+    ##---DELETE-end
     )
 
 INSTALLED_APPS = (
-    # included
+    # django and pinax core
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -116,8 +120,13 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'pinax.templatetags',
 
+    # schema migration tool
+    'south',
+
     # external
-    'notification', # must be first
+    ##---DELETE-start
+    #'notification', # must be first
+    ##---DELETE-end
     'django_openid',
     'emailconfirmation',
     #'django_extensions',
@@ -129,10 +138,10 @@ INSTALLED_APPS = (
     'oembed',
     'djangodblog',
     'pagination',
-    #'gravatar',
+    'gravatar',
     'threadedcomments',
     'threadedcomments_extras',
-    'wiki',
+    #'wiki',
     #'swaps',
     'timezones',
     #'voting',
@@ -167,13 +176,15 @@ INSTALLED_APPS = (
     'tag_app',
     'topics',
     'groups',
-    'state_machine',
-    'trash_folder',
-    'ldap_backend',
-    'system_dashboard',
-    'metadata',
-    'timeseries',
-    'neo_api',
+    ##---DELETE-start
+    #'state_machine',
+    #'trash_folder',
+    #'ldap_backend',
+    #'system_dashboard',
+    #'metadata',
+    #'timeseries',
+    #'neo_api',
+    ##---DELETE-end
     'djcelery',
 
     # spike_evaluation
@@ -182,13 +193,10 @@ INSTALLED_APPS = (
     'spike_evaluation.dfiles',
     'spike_evaluation.evaluations',
     'spike_evaluation.evaldocs',
-
-    # added by pmeier 3/30/12
-    'south', # schema migration tool
     )
 
 ABSOLUTE_URL_OVERRIDES = {
-    "auth.user":lambda o:"/profiles/profile/%s/" % o.username,
+    'auth.user':lambda o:'/profiles/profile/%s/' % o.username,
     }
 
 MARKUP_FILTER_FALLBACK = 'none'
@@ -203,8 +211,8 @@ WIKI_MARKUP_CHOICES = MARKUP_CHOICES
 AUTH_PROFILE_MODULE = 'profiles.Profile'
 NOTIFICATION_LANGUAGE_MODULE = 'account.Account'
 
-LOGIN_URL = "/account/login/"
-LOGIN_REDIRECT_URLNAME = "what_next"
+LOGIN_URL = '/account/login/'
+LOGIN_REDIRECT_URLNAME = 'home'
 
 INTERNAL_IPS = (
     '127.0.0.1',
@@ -217,7 +225,7 @@ LANGUAGES = (
 
 # URCHIN_ID = "ua-..."
 
-YAHOO_MAPS_API_KEY = "..."
+YAHOO_MAPS_API_KEY = '...'
 
 class NullStream(object):
     def write(*args, **kwargs):
@@ -250,18 +258,20 @@ WIKI_REQUIRES_LOGIN = True
 DEFAULT_SORT_UP = '&darr;'
 DEFAULT_SORT_DOWN = '&uarr;'
 
-AVATAR_GRAVATAR_BACKUP = False
-AVATAR_DEFAULT_URL = STATIC_URL + "pinax/images/avatar_default.jpeg"
+AVATAR_GRAVATAR_BACKUP = True
+AVATAR_DEFAULT_URL = os.path.join(STATIC_URL,
+                                  'pinax/images/avatar_default.jpeg')
 
+##---DELETE-start
 LOGIN_REDIRECT_URLNAMES = {
-    'data_management':"what_next",
-    'spike_evaluation':"home"
+    'data_management':'what_next',
+    'spike_evaluation':'home'
 }
-LOGIN_REDIRECT_URL = "/about/what_next/"
+LOGIN_REDIRECT_URL = '/about/what_next/'
 
 DEFAULT_REDIRECT_URLNAMES = {
-    'data_management':"home",
-    'spike_evaluation':"home"
+    'data_management':'home',
+    'spike_evaluation':'home'
 }
 
 SUPPORTED_SERVICES = (
@@ -269,8 +279,9 @@ SUPPORTED_SERVICES = (
     #('data_management', 'Data Management'),
     )
 DEFAULT_SERVICE = SUPPORTED_SERVICES[0][0]
+##---DELETE-end
 
-# Maximum size, in bytes, of a request before it will be streamed to the
+# maximum size, in bytes, of a request before it will be streamed to the
 # file system instead of into memory.
 FILE_UPLOAD_MAX_MEMORY_SIZE = 1024 # i.e. 1 KB
 
