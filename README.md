@@ -1,4 +1,0 @@
-spike
-=====
-
-Spike Evaluation Website
