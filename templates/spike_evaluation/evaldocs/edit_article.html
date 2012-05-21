@@ -1,0 +1,69 @@
+{% load i18n %}
+{% load uni_form %}
+{% load evalhelper_tags %}
+{% load theme_tags %}
+
+{% if f_edit_a %}
+  <div class="form-toggle">
+    ({{ article.sort }})
+    <a href="#" onclick="$('#switch-a-{{ article.id }}').toggle();
+     return false">
+      {% if article.published %}
+        {% silk "eye" %}
+      {% else %}
+        {% silk "disconnect" %}
+      {% endif %}
+    </a>
+    <a href="#" onclick="$('#edit-a-{{ article.id }}').toggle();
+     return false">
+      {% silk "layout_edit" %}
+    </a>
+    <a href="#" onclick="$('#delete-a-{{ article.id }}').toggle();
+     return false">
+      {% silk "layout_delete" %}
+    </a>
+    <a href="#" onclick="$('#section-a-{{ article.id }}').toggle();
+     return false">
+      {% silk "page_add" %}
+    </a>
+
+    <form class="uniForm" id="switch-a-{{ article.id }}" action=""
+          method="POST" style="display: none;">
+      <input type="hidden" name="action" value="switch"/>
+      <input type="hidden" name="type" value="article"/>
+      <input type="hidden" name="id" value="{{ article.id }}"/>
+      <input type="submit" value="{% trans "switch" %}"/>
+    </form>
+    <form class="uniForm" id="edit-a-{{ article.id }}" action=""
+          method="POST" style="display: none;">
+      <fieldset class="inlineLabels">
+        {{ f_edit_a|populate:article|as_uni_form }}
+        <div class="form_block">
+          <input type="hidden" name="action" value="edit"/>
+          <input type="hidden" name="type" value="article"/>
+          <input type="hidden" name="id" value="{{ article.id }}"/>
+          <input type="submit" value="{% trans "edit" %}"/>
+        </div>
+      </fieldset>
+    </form>
+    <form class="uniForm" id="delete-a-{{ article.id }}" action=""
+          method="POST" style="display: none;">
+      <input type="hidden" name="action" value="delete"/>
+      <input type="hidden" name="type" value="article"/>
+      <input type="hidden" name="id" value="{{ article.id }}"/>
+      <input type="submit" value="{% trans "delete" %}"/>
+    </form>
+    <form class="uniForm" id="section-a-{{ article.id }}" action=""
+          method="POST" style="display: none;">
+      <fieldset class="inlineLabels">
+        {{ f_edit_s|as_uni_form }}
+        <div class="form_block">
+          <input type="hidden" name="action" value="create"/>
+          <input type="hidden" name="type" value="section"/>
+          <input type="hidden" name="id" value="{{ article.id }}"/>
+          <input type="submit" value="{% trans "create" %}"/>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+{% endif %}

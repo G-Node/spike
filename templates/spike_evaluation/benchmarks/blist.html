@@ -1,0 +1,94 @@
+{% extends "spike_evaluation/benchmarks/base.html" %}
+
+{% load i18n %}
+{% load uni_form %}
+{% load humanize %}
+{% load pagination_tags %}
+{% load order_by %}
+{% load extra_tagging_tags %}
+{% load sorting_tags %}
+{% load truncate_filter %}
+{% load benchmarks_tags %}
+
+{% block head_title %}{% blocktrans %}Benchmarks{% endblocktrans %}{% endblock %}
+
+{% block body %}
+    <h1>{% trans "Benchmarks" %}</h1>
+
+    {% if not request.user.is_authenticated %}
+        {% url acct_signup as signup_url %}
+        {% url acct_login as login_url %}
+        <p>{% blocktrans %}<a href="{{ signup_url }}">Sign up</a> and <a href="{{ login_url }}">log in </a> to create your own benchmark or submit an evaluation for an existing one.{% endblocktrans %}</p>
+    {% else %}
+        <p>You may <a href="#" onclick="$('#add-benchmark').toggle();">Create</a> a new Benchmark right here.</p>
+            <form class="uniForm" id="add-benchmark" method="POST" action="" style="display:none">
+                <fieldset class="inlineLabels">
+                    {{ b_form|as_uni_form }}
+                    <div class="form_block">
+                        <input type="hidden" name="action" value="add" />
+                        <input type="submit" value="{% trans 'create' %}"/>
+                    </div>
+                </fieldset>
+            </form>
+    {% endif %}
+
+    {% if not blist %}
+        <p>You don't have any Benchmarks, and there are no public Benchmarks available.</p>
+    {% else %}
+
+        <p>Here you can search for the available Benchmarks. Select a Benchmark
+to view it's details. From the details page you may download files with raw
+(unsorted) data and use it to test your spike sorting algorithm.</p>
+
+        <form method="GET" action="">
+            <input type="text" name="search" value="{{ search_terms }}" />
+            <input type="submit" value="Search" />
+            {% if search_terms %}
+                <a href="{% clear_search_url request %}">Clear Search Terms</a>
+            {% endif %}
+        </form>
+
+        {% autosort blist %}
+        {% autopaginate blist 20 %}
+
+	    <p>{% trans "Order by:" %}
+	        {% anchor name Name %}
+	        {% anchor owner.username Author %}
+	        {% anchor date_created Date %}
+	    </p>
+
+        <table class="messages">
+            <thead>
+                <tr>
+                    <th>{% trans "Title" %}</th>
+                    <th>{% trans "Created" %}</th>
+                    <th>{% trans "Author" %}</th>
+                    <th>{% trans "Description" %}</th>
+                    <th>{% trans "Action" %}</th>
+                    <th>{% trans "Summary" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for benchmark in blist %}
+            {% with benchmark.owner.username as uname %}
+                <tr>
+                    <td><a href="{{ benchmark.get_absolute_url }}">
+                        {% if benchmark.is_active %}
+                            <b style="color: green">{{ benchmark.name }}</b>
+                        {% else %}
+                            <b style="color: red">{{ benchmark.name }}</b>
+                        {% endif %}</a>
+                    </td>
+                    <td><nobr>{{ benchmark.date_created|date }}</nobr></td>
+                    <td><a href="{% url profile_detail uname %}" title="{{ uname }}">{{ uname }}</a></td>
+                    <td>{{ benchmark.description|truncate_dot:100|escape }}</td>
+                    <td>{% ifequal benchmark.owner request.user %}<nobr><a href="{% url b_delete benchmark.id %}">{% trans "delete" %}</a></nobr>{% endifequal %}</td>
+                    <td><a href="{% url b_summary benchmark.id %}" title="Summary">{% trans "Summary" %}</a></td>
+                </tr>
+            {% endwith %}
+            {% endfor %}
+            </tbody>
+        </table>
+	    {% paginate %}
+    {% endif %}
+{% endblock %}

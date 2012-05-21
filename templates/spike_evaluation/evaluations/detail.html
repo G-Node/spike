@@ -1,0 +1,247 @@
+{% extends "spike_evaluation/evaluations/base.html" %}
+
+{% load i18n %}
+{% load uni_form %}
+{% load pagination_tags %}
+{% load extra_tagging_tags %}
+{% load truncate_filter %}
+{% load theme_tags %}
+{% load evalhelper_tags %}
+
+{% block head_title %}{E:{{ e.id }}}&nbsp;{{ e.benchmark }}{% endblock %}
+
+{% block body %}
+  <div class="right_panel">
+    <div class="members">
+      {% if e.processed %}
+        {% with e.summary_short as e_sum %}
+          <p>True positive: {{ e_sum.TP }}%</p>
+          <p>False positive: {{ e_sum.FP }}%</p>
+        {% endwith %}
+      {% else %}
+        <p>The evaluation results are not available yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {#<div class="left_panel">#}
+  <div class="photo-title">
+    <h1>
+      Evaluation {{ e.id }} ({{ e.benchmark.name }})
+      {% if e.is_public %} - published{% endif %}
+    </h1>
+  </div>
+
+  <div id="datasethead">
+    <table>
+      <tbody>
+      <tr>
+        <td><strong>Algorithm:</strong></td>
+        <td>{{ e.algorithm }}</td>
+      </tr>
+      <tr>
+        <td><strong>Description:</strong></td>
+        <td>{{ e.description }}</td>
+      </tr>
+      <tr>
+        <td><strong>Date Created:</strong></td>
+        <td>{{ e.date_created|date }}</td>
+      </tr>
+      </tbody>
+      <tbody>
+      {% ifnotequal e.owner request.user %}
+        <tr>
+          <td><strong>Owner:</strong></td>
+          <td>
+            <a href="{% url profile_detail e.owner.username %}">
+              {{ e.owner.username }}
+            </a>
+          </td>
+        </tr>
+      {% endifnotequal %}
+
+      <tr>
+        <td><strong>Processing state:</strong></td>
+        <td>
+          <b style="{% state_color e.processing_state %}">
+            {{ e.get_processing_state_display }}</b>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  {% if user.is_authenticated %}
+    {% ifequal e.owner user %}
+
+      <div>
+        <p>
+          {% if e.processed %}
+            <span>
+              {% if e.is_public %}
+                {% silk "eye" %}
+                <a href="#"
+                   onclick="$('#change_privacy_form').toggle();return false;">
+                  {% trans "Retreat to Private" %}
+                </a>
+              {% else %}
+                {% silk "disconnect" %}
+                <a href="#"
+                   onclick="$('#change_privacy_form').toggle();return false;">
+                  {% trans "Publish this evalulation." %}
+                </a>
+              {% endif %}
+            </span>&nbsp;-&nbsp;
+          {% endif %}
+          <span>
+            <a href="#"
+               onclick="$('#show_log').toggle();return false;">
+              {% trans "show log" %}
+            </a>
+          </span>
+        </p>
+
+        {% if e.processed %}
+          {% if not e.is_public %}
+            <form class="delete_form" id="change_privacy_form" action=""
+                  method="POST" style="display: none;">
+              <input type="hidden" name="action" value="switch"/>
+              <input type="submit" value="{% trans "Public" %}"/>
+            </form>
+          {% else %}
+            <form class="delete_form" id="change_privacy_form" action=""
+                  method="POST" style="display: none;">
+              <input type="hidden" name="action" value="switch"/>
+              <input type="submit" value="{% trans "Private" %}"/>
+            </form>
+          {% endif %}
+        {% endif %}
+        <div id="show_log"
+             {% if e.processed %}style="display:none"{% endif %}>
+          <pre>{{ e.evaluation_log }}</pre>
+        </div>
+      </div>
+
+    {% endifequal %}
+  {% endif %}
+
+  {% if e.processed %}
+
+    <div class="eval">
+      <h2>Evaluation summary:</h2>
+
+      <table class="results">
+        <thead>
+        <tr>
+          <th colspan=4>{% trans "Detection Errors" %}</th>
+          <th colspan=3>{% trans "Classification Errors" %}</th>
+        </tr>
+        <tr>
+          <th colspan=1>{% trans "False Positives" %}</th>
+          <th colspan=3>{% trans "False Negatives" %}</th>
+          <th colspan=3></th>
+        </tr>
+        <tr class="last">
+          <th>{% trans "Total" %}</th>
+          <th>{% trans "Total" %}</th>
+          <th>{% trans "Non-Overlaps" %}</th>
+          <th>{% trans "Overlaps" %}</th>
+          <th>{% trans "Total" %}</th>
+          <th>{% trans "Non-Overlaps" %}</th>
+          <th>{% trans "Overlaps" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          {% with e.summary_table as e_sum %}
+            <td>{{ e_sum.FP }}</td>
+            <td>{{ e_sum.FN }}</td>
+            <td>{{ e_sum.FNno }}</td>
+            <td>{{ e_sum.FNo }}</td>
+            <td>{{ e_sum.FPAE }}</td>
+            <td>{{ e_sum.FPAEno }}</td>
+            <td>{{ e_sum.FPAEo }}</td>
+          {% endwith %}
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="eval">
+      <h2>Evaluation results:</h2>
+
+      <table class="results"> ​
+        <thead>
+        <tr>
+          <th rowspan=3 style="">{% trans "GT Unit" %}</th>
+          <th rowspan=3>{% trans "Found Unit" %}</th>
+          <th colspan=3>{% trans "Ground Truth" %}</th>
+          <th colspan=3>{% trans "Found Spikes of Unit" %}</th>
+          <th colspan=3>{% trans "False Positives" %}</th>
+          <th colspan=4>{% trans "False Negatives" %}</th>
+        </tr>
+        <tr>
+          <th colspan=3>{% trans "(True Spikes)" %}</th>
+          <th colspan=3>{% trans "(True Positives)" %}</th>
+          <th colspan=2>{% trans "Other Spikes" %}</th>
+          <th colspan=1>{% trans "Noise" %}</th>
+          <th colspan=2>{% trans "Found by other Unit" %}</th>
+          <th colspan=2>{% trans "Not detected" %}</th>
+        </tr>
+        <tr class="last">
+          <th>{% trans "Total" %}</th>
+          <th>{% trans "N-O" %}</th>
+          <th>{% trans "O" %}</th>
+          <th>{% trans "Total" %}</th>
+          <th>{% trans "N-O" %}</th>
+          <th>{% trans "O" %}</th>
+          <th>{% trans "N-O" %}</th>
+          <th>{% trans "O" %}</th>
+          <th>{% trans "FP" %}</th>
+          <th>{% trans "N-O" %}</th>
+          <th>{% trans "O" %}</th>
+          <th>{% trans "N-O" %}</th>
+          <th>{% trans "O" %}</th>
+        </tr>
+        </thead>
+        <tfoot>
+        <tr>
+          <td colspan="15">
+            GT = Ground Truth, O = Overlaps, N-O = Non-Overlaps
+          </td>
+        </tr>
+        </tfoot>
+        <tbody>
+        {% for r in er %}
+          <tr class="{% cycle "" "alt" %}">
+            {% for v in r.display %}
+              <td class="{% if forloop.parentloop.last %} last{% endif %}">
+                {{ v }}
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if image_results %}
+      <div class="eval">
+        <h2>Evaluation Plots</h2>
+        <table class="messages">
+          <tbody>
+          {% for img_obj in image_results %}
+            <tr>
+              <td>
+                <h2>{{ img_obj.img_type }}</h2><br>
+                <img src="{{ img_obj.img_data.url }}"/>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+  {% endif %}
+  {# </div> #}
+{% endblock %}

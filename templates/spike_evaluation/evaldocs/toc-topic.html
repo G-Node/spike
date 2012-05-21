@@ -1,0 +1,28 @@
+{% load i18n %}
+{% load uni_form %}
+{% load evalhelper_tags %}
+
+<div class="toc">
+  <h2 class="toc">
+    <a href="{% url evaldocs %}">{{ topic }}</a>
+    {% include "spike_evaluation/evaldocs/edit_topic.html" %}
+  </h2>
+  {% for article in topic.articles %}
+    <div class="toc">
+      <h3 class="toc">
+        <a href="{% url evaldocs-article article.id %}">{{ article }}</a>
+        {% include "spike_evaluation/evaldocs/edit_article.html" %}
+      </h3>
+      {% for section in article.sections %}
+        <div class="toc">
+          <h4 class="toc">
+            <a href="{% url evaldocs-section section.id %}">
+              {{ section }}
+            </a>
+            {% include "spike_evaluation/evaldocs/edit_section.html" %}
+          </h4>
+        </div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>

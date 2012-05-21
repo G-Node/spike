@@ -1,0 +1,139 @@
+{% extends "trash_folder/base.html" %}
+
+{% load i18n %}
+{% load humanize %}
+{% load pagination_tags %}
+{% load sorting_tags %}
+
+{% block body %}
+    <p>You may restore objects. Please select which you want to restore. Objects, deleted more than 30 days ago will be automatically removed from the system.</p>
+    
+    {% if not exp_objects %}
+        <p>You don't have deleted experiments.</p>
+    {% else %}
+
+    <h1>Experiments</h1>
+
+    {% autosort exp_objects %}
+    {% autopaginate exp_objects 10 %}
+	<p>{% trans "Order by:" %}
+	    {% anchor title Name %}
+	    {% anchor safety_level Privacy %}
+	    {% anchor date_created Date %}
+	</p>
+
+        <form method="POST" action="">
+
+        <table class="messages">
+            <thead>
+                <tr><th>{% trans "Title" %}</th><th>{% trans "In Projects" %}</th><th>{% trans "Created" %}</th><th>{% trans "State" %}</th><th>{% trans "Select" %}</th></tr>
+            </thead>
+            <tbody>
+                {% for experiment in exp_objects %}
+                    <tr>
+                        <td><a href="{{ experiment.get_absolute_url }}">{{ experiment.title }}</a></td>
+                        <td>
+			{% for proj in experiment.in_projects.all %}
+				<span><a href="{{ proj.get_absolute_url }}">{{ proj.slug }}</a>, </span>
+			{% endfor %}
+			</td>
+                        <td>{{ experiment.date_created }}</td>
+                        <td>{% if experiment.is_Public %}<b style="color: green">Public</b>{% endif %}{% if experiment.is_Friendly %}Friendly{% endif %}{% if experiment.is_Private %}Private{% endif %}</td>
+                        <td><input id="id_exp_choices_{{ experiment.id }}" type="checkbox" value="{{ experiment.id }}" name="exp_choices"/></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+	{% paginate %}
+
+        <input type="submit" value="Restore These" />
+
+        </form>
+    {% endif %}
+    
+    {% if not set_objects %}
+        <p>You don't have deleted datasets.</p>
+    {% else %}
+
+    <h1>Datasets</h1>
+
+    {% autosort set_objects %}
+    {% autopaginate set_objects 10 %}
+	<p>{% trans "Order by:" %}
+	    {% anchor title Name %}
+	    {% anchor safety_level Privacy %}
+	    {% anchor date_added Date %}
+	</p>
+
+        <form method="POST" action="">
+
+        <table class="messages">
+            <thead>
+                <tr><th>{% trans "Title" %}</th><th>{% trans "In Experiments" %}</th><th>{% trans "Created" %}</th><th>{% trans "State" %}</th><th>{% trans "Select" %}</th></tr>
+            </thead>
+            <tbody>
+                {% for dataset in set_objects %}
+                    <tr>
+                        <td><a href="{{ dataset.get_absolute_url }}">{{ dataset.title }}</a></td>
+                        <td>
+			{% for expt in dataset.in_experiments.all %}
+				<span><a href="{{ expt.get_absolute_url }}">{{ expt.title }}</a>, </span>
+			{% endfor %}
+			</td>
+                        <td>{{ dataset.date_added }}</td>
+                        <td>{% if dataset.is_Public %}<b style="color: green">Public</b>{% endif %}{% if dataset.is_Friendly %}Friendly{% endif %}{% if dataset.is_Private %}Private{% endif %}</td>
+                        <td><input id="id_set_choices_{{ dataset.id }}" type="checkbox" value="{{ dataset.id }}" name="set_choices"/></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+	{% paginate %}
+
+        <input type="submit" value="Restore These" />
+
+        </form>
+    {% endif %}
+    
+    {% if not fil_objects %}
+        <p>You don't have deleted files.</p>
+    {% else %}
+
+    <h1>Files</h1>
+
+    {% autosort fil_objects %}
+    {% autopaginate fil_objects 10 %}
+	<p>{% trans "Order by:" %}
+	    {% anchor file_title Name %}
+	    {% anchor file_safety_level Privacy %}
+	    {% anchor file_date_added Date %}
+	</p>
+
+        <form method="POST" action="">
+
+        <table class="messages">
+            <thead>
+                <tr><th>{% trans "Title" %}</th><th>{% trans "In Experiments" %}</th><th>{% trans "Created" %}</th><th>{% trans "State" %}</th><th>{% trans "Select" %}</th></tr>
+            </thead>
+            <tbody>
+                {% for datafile in fil_objects %}
+                    <tr>
+                        <td><a href="{{ datafile.get_absolute_url }}">{{ datafile.title }}</a></td>
+                        <td>
+			{% for expt in datafile.in_experiments.all %}
+				<span><a href="{{ expt.get_absolute_url }}">{{ expt.title }}</a>, </span>
+			{% endfor %}
+			</td>
+                        <td>{{ datafile.date_added }}</td>
+                        <td>{% if datafile.is_Public %}<b style="color: green">Public</b>{% endif %}{% if datafile.is_Friendly %}Friendly{% endif %}{% if datafile.is_Private %}Private{% endif %}</td>
+                        <td><input id="id_fil_choices_{{ datafile.id }}" type="checkbox" value="{{ datafile.id }}" name="fil_choices"/></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+	{% paginate %}
+
+        <input type="submit" value="Restore These" />
+
+        </form>
+    {% endif %}
+{% endblock %}

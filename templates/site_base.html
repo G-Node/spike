@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load openid_tags %}
+{% load ifsetting_tag %}
+{% load analytics %}
+
+{% block extra_head_base %}
+    <!-- <link rel="stylesheet" href="{{ STATIC_URL }}css/site_tabs.css" /> -->
+    <link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/avatar.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/blogs.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/comments.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/friends.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/groups.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/locations.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/messages.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/microblogging.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/pagination.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/photos.css" />
+    <!-- <link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/tabs.css" />  -->
+    <link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/topics.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/wiki.css" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}pinax/css/jquery.autocomplete.css" />
+    <!-- <link rel="stylesheet" href="{{ STATIC_URL }}bookmarks/css/bookmarks.css" />  -->
+    <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}pinax/images/favicon.ico" />
+    {% block extra_head %}{% endblock %}
+{% endblock %}
+
+
+
+{% block logo_link_image %}
+	<!-- HEADER -->
+	<div id="header">
+
+		<!-- LOGO -->
+		<div id="logo">
+			<a href="/"><img src="{{ STATIC_URL }}pinax/images/img/logo.gif" alt="G-Node" border="0" /></a>
+		</div>
+
+		<!-- LOGO PARTNER -->
+		<div id="logo_partner">
+			<a href="http://www.incf.org/" target="_blank"><img src="{{ STATIC_URL }}pinax/images/img/logopartner.gif" alt="INCF" border="0" /></a>
+		</div>
+
+    {% comment %}
+    {% block service_selector %}
+      <div id="selector_box">
+        <form action="{% url service_selector %}" method="post"
+              id="service_selector">
+          You are in:
+          <select class="selector_box" name="service"
+                  onchange="$('#service_selector').submit()">
+            {% for service in SUPPORTED_SERVICES %}
+              <option value="{{ service.0 }}"
+               {% ifequal service.0 ACTUAL_SERVICE %}
+                      selected="selected"
+               {% endifequal %}>
+                {{ service.1 }}
+              </option>
+            {% endfor %}
+          </select>
+        </form>
+      </div>
+    {% endblock %}
+    {% endcomment %}
+
+    <!-- HEADERNAVIGATION -->
+		<div id="headernavigation">
+			<ul>
+				{% block login %}
+                   {% if user.is_authenticated %}
+                     {% openid_icon openid user %}
+                       <li>
+                         <a href="{% url acct_email %}">{{ user }}</a>
+                       </li>
+                       {% if user.is_staff %}
+                         <li>
+                           <a href="/admin/">{% trans "Admin" %}</a>
+                         </li>
+                       {% endif %}
+                       <li>
+                       {% comment %}
+                           <a href="{% url home %}openid/logout/?next={% url acct_logout %}">{% trans "Logout" %}</a>
+                       {% endcomment %}
+                           <a href="{% url acct_logout %}?next={% url acct_login %}">{% trans "Logout" %}</a>
+                       </li>
+                   {% else %}
+                     <li>
+                       <a href="{% url acct_login %}">{% trans "Login" %}</a>
+                     </li>
+                     <li>
+                       {% ifsetting ACCOUNT_OPEN_SIGNUP %}
+                         <a href="{% url acct_signup %}">{% trans "Sign up" %}</a>
+                       {% endifsetting %}
+                   {% endif %}
+                {% endblock %}
+
+                {% block locale_switcher %}
+                  <li>
+                    <form action="{% if request.user.is_authenticated %}{% url acct_language_change %}{% else %}/i18n/setlang/{% endif %}" method="post" id="locale_switcher">
+                      <select name="language" onchange="$('#locale_switcher').submit()">
+                      {% for lang in LANGUAGES %}
+                        <option value="{{ lang.0 }}"{% ifequal lang.0 LANGUAGE_CODE %} selected="selected"{% endifequal %}>{{ lang.1 }}</option>
+                      {% endfor %}
+                      </select>
+                    </form>
+                  </li>
+                {% endblock %}
+			</ul>
+			<div class="clear"></div>
+		</div>
+
+		<!-- KEYVISUAL -->
+		<div id="keyvisual">
+			<img src="{{ STATIC_URL }}pinax/images/keyvisuals/default.jpg" alt="" border="0" />
+		</div>
+
+	</div>
+	<!-- /HEADER -->
+    <!-- <a href="{% url home %}"><img src="{{ STATIC_URL }}pinax/images/Logo_G-Node_small.jpeg" alt="G-Node"/></a>  -->
+{% endblock %}
+
+{% block right_tabs %}
+        <div class="seitenbreite">
+        <ul class="tabs">
+          {% spaceless %}
+          <li class="{% block navi_home_class %}{% endblock %}" id="tab_home"><a href="{% url home %}">{% trans "Introduction" %}</a></li>
+          <li class="{% block navi_benchmarks_class %}{% endblock %}" id="tab_benchmarks"><a href="{% url b_list %}">{% trans "Benchmarks" %}</a></li>
+          <li class="{% block navi_evaluations_class %}{% endblock %}" id="tab_evaluations"><a href="{% url e_list %}">{% trans "Evaluations" %}</a></li>
+          <li class="{% block navi_docs_class %}{% endblock %}" id="tab_docs"><a href="#">{% trans "Documentation" %}</a></li>
+          <li class="{% block navi_disclaimer_class %}{% endblock %}" id ="tab_dislaimer"><a href="{% url disclaimer %}">{% trans "Disclaimer" %}</a></li>
+
+          {% if user.is_authenticated %}
+            {% comment %}
+              {% ifequal ACTUAL_SERVICE 'data_management' %}
+	          <li class="{% block navi_projects_class %}{% endblock %}" id="tab_projects"><a href="{% url your_projects %}">{% trans "Projects" %}</a></li>
+	          <li class="{% block navi_experiments_class %}{% endblock %}" id="tab_experiments"><a href="{% url your_experiments %}">{% trans "Experiments" %}</a></li>
+	          <li class="{% block navi_datasets_class %}{% endblock %}" id="tab_datasets"><a href="{% url start %}">{% trans "Data" %}</a></li>
+              {% endifequal %}
+              {% endcomment %}
+
+              <li class="{% block navi_profile_class %}{% endblock %}" id="tab_profile"><a href="{% url profile_detail user %}">{% trans "Profile" %}</a></li>
+              <li class="{% block navi_inbox_class %}{% endblock %}" id="tab_inbox"><a href="{% url messages_inbox %}">{% trans "Inbox" %} ({{ combined_inbox_count }})</a></li>
+
+            {% comment %}
+              {% if user.is_staff %}
+                  <li class="{% block navi_dashboard_class %}{% endblock %}" id="tab_dashboard"><a href="{% url state_overview %}">{% trans "Dashboard" %}</a></li>
+              {% endif %}
+            {% endcomment %}
+          {% endif %}
+          {% if not user.is_authenticated %}{% ifequal ACTUAL_SERVICE 'data_management' %}
+           <li class="last">
+		     <a href="/" title='{% trans "G-NODE PORTAL" %}'>{% trans "G-NODE PORTAL" %}</a>
+		   </li>
+          {% endifequal %}{% endif %}
+          {% endspaceless %}</ul>
+        </div>
+{% endblock %}
+
+{% block footer %}
+<!-- FOOTER -->
+<div id="footer">
+  <div id="navigation_footer">
+    {% ifequal ACTUAL_SERVICE 'data_management' %}
+    &copy; 2010 The G-Node
+    {% endifequal %}
+
+    {% ifequal ACTUAL_SERVICE 'spike_evaluation' %}
+    &copy; 2010 The G-Node &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="http://www.ni.cs.tu-berlin.de/" title="Valid XHTML 1.0 Strict" rel="nofollow">Neural Information Processing</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="{% url spike_disclaimer %}">Disclaimer</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Felix Franke ff [at] cs [dot] tu-berlin [dot] de
+    {% endifequal %}
+
+    {% comment %}
+    &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="{% url about %}">About</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="{% url terms %}">Terms of Service</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="{% url privacy %}">Privacy Policy</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="{% url dmca %}">Copyright Notice</a>
+    {% endcomment %}
+  </div>
+</div>
+<!-- /FOOTER -->
+{% endblock %}
+
+{% block extra_body_base %}
+    {% urchin %}
+    <script type="text/javascript" src="{{ STATIC_URL }}pinax/js/topics.js"></script>
+    <script src="{{ STATIC_URL }}pinax/js/tasks.js" type="text/javascript"></script>
+    {% block extra_body %}{% endblock %}
+{% endblock %}

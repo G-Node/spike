@@ -1,0 +1,71 @@
+{% extends "spike_evaluation/evaluations/base.html" %}
+
+{% load i18n %}
+{% load uni_form %}
+{% load humanize %}
+{% load pagination_tags %}
+{% load order_by %}
+{% load extra_tagging_tags %}
+{% load sorting_tags %}
+{% load truncate_filter %}
+
+{% block head_title %}{% blocktrans %}Evaluations{% endblocktrans %}{% endblock %}
+
+{% block body %}
+    <h1>{% trans "Evaluations" %}</h1>
+
+    {% if not user.is_authenticated %}
+        {% url acct_signup as signup_url %}
+        {% url acct_login as login_url %}
+        <p>{% blocktrans %}<a href="{{ signup_url }}">Sign up</a> and <a href="{{ login_url }}">log in </a> to create your own benchmark or submit an evaluation for an existing one.{% endblocktrans %}</p>
+    {% else %}
+        <p>You may select a Benchmark and download files for your algorithm evaluation <a href="{% url blist %}">here</a>.</p>
+    {% endif %}
+
+    {% if not elist %}
+        <p>There is no evaluations yet available.</p>
+    {% else %}
+        {% autosort elist %}
+        {% autopaginate elist 20 %}
+
+	    <p>{% trans "Order by:" %}
+	        {% anchor owner.username Author %}
+	        {% anchor algorithm Algorithm %}
+	        {% anchor date_created Date %}
+	    </p>
+
+        <table class="messages">
+            <thead>
+                <tr>
+                    <th>{% trans "Author" %}</th>
+                    <th>{% trans "ID, Algorithm" %}</th>
+                    <th>{% trans "Benchmark" %}</th>
+                    <th>{% trans "Description" %}</th>
+                    <th>{% trans "Created" %}</th>
+                    <th>{% trans "State" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for e in elist %} {% comment %} List is already security-filtered, only allowed records available {% endcomment %}
+            {% with e.owner.username as uname %}
+                <tr>
+                    <td><a href="{% url profile_detail uname %}" title="{{ uname }}">{{ uname }}</a></td>
+                    <td><a href="{{ e.get_absolute_url }}">
+                        <b {% if not e.is_public %}style="color: red"{% endif %}>#{{ e.id }}, {{ e.algorithm }}</b>
+                    </a></td>
+                    <td><a href="{{ e.benchmark.get_absolute_url }}">{{ e.benchmark.name }}</a> ({{ e.record.name }})</td>
+                    <td><nobr>{{ e.description|truncate_dot:100|escape }}</nobr></td>
+                    <td><nobr>{{ e.date_created|date }}</nobr></td>
+                    <td>
+                    {% ifequal e.processing_state 0 %}<b style="color: blue">in progress</b>{% endifequal %}
+                    {% ifequal e.processing_state 1 %}<b style="color: green">success</b>{% endifequal %}
+                    {% ifequal e.processing_state 2 %}<b style="color: red">failed</b> with the message "{{ e.error }}"{% endifequal %}
+                    </td>
+                </tr>
+            {% endwith %}
+            {% endfor %}
+            </tbody>
+        </table>
+	    {% paginate %}
+    {% endif %}
+{% endblock %}

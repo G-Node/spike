@@ -1,0 +1,51 @@
+{% extends "spike_evaluation/dfiles/base.html" %}
+
+{% load i18n %}
+{% load uni_form %}
+{% load pagination_tags %}
+
+{% block head_title %}{{ dfile.name }}{% endblock %}
+
+{% block body %}
+<div class="photo-title">
+    <h2>
+        <a href="{% url b_details dfile.record.benchmark.id %}">{{ dfile.record.benchmark.name }}</a>|{{ dfile.name }}
+        {% ifequal dfile.filetype "R" %}(RAW Benchmark File){% endifequal %}
+        {% ifequal dfile.filetype "G" %}(Groundtruth File){% endifequal %}
+    </h2>
+</div>
+
+<p>Here you may find all previous versions of a Datafile. You may download a file, or find out, if anyone had submitted an evaluation.</p>
+
+{% if versions %}
+<table class="messages">
+    <thead>
+        <tr>
+            <th>{% trans "Version" %}</th>
+            <th>{% trans "Name" %}</th>
+            <th>{% trans "Created" %}</th>
+            <th>{% trans "Evaluations" %}</th>
+            <th>{% trans "Download" %}</th>
+            <th>{% trans "Validation" %}</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for v in versions %}
+        <tr>
+            <td>{{ v.version }}</td>
+            <td>{{ v.title }}</td>
+            <td><nobr>{{ v.date_created|date }}</nobr></td>
+            <td>
+                {% comment %}insert link to evaluations here{% endcomment %}
+            </td>
+            <td><nobr><a href="{{ v.get_absolute_url }}">{{ v.title }} - {{ v.size }}</a></nobr></td>
+            <td>{{ v.validation_state_text }}<br>{{ v.validation_log }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>This Benchmark has no records yet.</p>
+{% endif %}
+</div>
+{% endblock %}

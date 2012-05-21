@@ -1,0 +1,50 @@
+{% extends "spike_evaluation/benchmarks/base.html" %}
+
+{% load i18n %}
+{% load uni_form %}
+{% load pagination_tags %}
+{% load evalhelper_tags %}
+
+{% block head_title %}{R:{{ r.id }}}&nbsp;{{ r.name }}{% endblock %}
+
+{% block body %}
+  <div class="photo-title">
+    <h1>
+      <a
+       href="{% url b_detail bid=r.benchmark.id %}">{{ r.benchmark.name }}</a>
+      &nbsp;|&nbsp;{{ r.name }}
+    </h1>
+  </div>
+
+  <div class="eval">
+    <h2>Record Details</h2>
+
+    <form class="uniForm" method="POST" action="">
+      <fieldset class="inlineLabels">
+        {{ r_form|as_uni_form }}
+        <div class="form_block">
+          <input type="submit" value="{% trans 'edit record' %}"/>
+        </div>
+      </fieldset>
+    </form>
+    <form class="uniForm" method="POST" action="">
+      <input type="hidden" name="action" value="r_delete"/>
+      <input type="submit" value="{% trans "delete record" %}"/>
+    </form>
+  </div>
+
+  {# <p>Here you may find the current version and history of a Record. #}
+  {#  You may download a file and find out if anyone has submitted an #}
+  {# evaluation.</p>#}
+  <div class="eval">
+    <h2>Version History</h2>
+
+    {% with r.get_active_rfile as d %}
+      {% include 'spike_evaluation/dfiles/detail.html' %}
+    {% endwith %}
+
+    {% with r.get_active_gfile as d %}
+      {% include 'spike_evaluation/dfiles/detail.html' %}
+    {% endwith %}
+  </div>
+{% endblock %}
