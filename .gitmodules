@@ -1,3 +1,6 @@
 [submodule "SpikEval"]
     path = include/SpikEval
     url = git@github.com:pmeier82/SpikEval.git
+[submodule "include/SpikEval"]
+	path = include/SpikEval
+	url = git@github.com:pmeier82/SpikEval.git
