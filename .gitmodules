@@ -1,6 +1,9 @@
 [submodule "include/SpikEval"]
 	path = include/SpikEval
-	url = git@github.com:pmeier82/SpikEval.git
+	url = https://pmeier82@github.com/pmeier82/SpikEval.git
 [submodule "include/SpikePlot"]
 	path = include/SpikePlot
-	url = git@github.com:pmeier82/SpikePlot.git
+	url = https://pmeier82@github.com/pmeier82/SpikePlot.git
+[submodule "include/docutils"]
+	path = include/docutils
+	url = https://github.com/qsnake/docutils.git
