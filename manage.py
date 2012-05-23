@@ -1,8 +1,15 @@
 #!/usr/bin/env python
 
+##---IMPORTS
+
 import os
 import sys
+from django.core.management import execute_manager
+
+# monkey pathing the environment
 import django_access
+
+##---PINAX TEST
 
 try:
     import pinax

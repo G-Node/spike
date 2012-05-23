@@ -10,25 +10,16 @@
 
 import os
 import pinax
-from django.core.urlresolvers import reverse
 from django.conf.global_settings import *
 
+##---SETTINGS-LOCAL
+
+try:
+    from settings_local import *
+except ImportError:
+    pass
+
 ##---GENERAL
-
-PINAX_ROOT = os.path.abspath(os.path.dirname(pinax.__file__))
-PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
-
-SITE_NAME = 'G-Node'
-ROOT_URLCONF = 'urls'
-PINAX_THEME = 'default'
-USE_I18N = False
-TIME_ZONE = 'Europe/Berlin'
-
-SERVE_MEDIA = True
-PRODUCTION_MODE = False
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
-SECRET_KEY = '0osjm6r8sb(+y@b)oy4&h=8(ge-!ckn$1p$9#6yabukc_e%9gi'
 
 ABSOLUTE_URL_OVERRIDES = {
     'auth.user':lambda o:'/profiles/profile/%s/' % o.username,
@@ -62,6 +53,19 @@ LANGUAGES = (
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 NOTIFICATION_LANGUAGE_MODULE = 'account.Account'
+
+##---DATABASE
+
+DATABASES = {
+    'default':{
+        'ENGINE':'django.db.backends.mysql',
+        'NAME':'',
+        'USER':'',
+        'PASSWORD':'',
+        'HOST':'',
+        'PORT':'',
+        }
+}
 
 ##---CACHE
 
@@ -223,7 +227,7 @@ INSTALLED_APPS = (
 ##---LOGIN
 
 LOGIN_URL = '/account/login/'
-LOGIN_REDIRECT_URLNAME = reverse('home')
+LOGIN_REDIRECT_URLNAME = '/'
 
 ##---MARKUP
 
@@ -259,10 +263,3 @@ SOUTH_DATABASE_ADAPTER = 'south.db.mysql'
 SOUTH_DATABASE_ADAPTERS = {
     'default':'south.db.mysql'
 }
-
-##---SETTINGS-LOCAL
-
-try:
-    from settings_local import *
-except ImportError:
-    pass
