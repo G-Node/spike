@@ -1,5 +1,5 @@
 # common imports
-from ext.SpikEval.spikeval.django_entry_point import check_record
+from ext.spikeval.django_entry_point import check_record
 from celery.decorators import task
 
 @task
