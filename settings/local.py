@@ -34,7 +34,7 @@ DATABASES = {
     'default':{
         'ENGINE':'django.db.backends.mysql',
         'HOST':'127.0.0.1',
-        'PORT':'33306',
+        'PORT':'3306',
         'NAME':'g-node-spike',
         'USER':'portal',
         'PASSWORD':'pass',
@@ -81,20 +81,31 @@ AUTHENTICATION_BACKENDS = (
     )
 AUTH_LDAP_SWITCHED_ON = True
 AUTH_LDAP_SERVER = 'gate.g-node.org'            # Hostname if in the web
-#AUTH_LDAP_SERVER = 'dstest.g-node.pri'			# Hostname if inside G-Node network
-AUTH_LDAP_BASE_USER = 'cn=Directory Manager'        # Administrative User's Username
+#AUTH_LDAP_SERVER = 'dstest.g-node.pri'			# Hostname if inside
+# G-Node network
+AUTH_LDAP_BASE_USER = 'cn=Directory Manager'        # Administrative User's
+# Username
 AUTH_LDAP_BASE_PASS = 'xEkl91Q'                # Administrative User's Password
-AUTH_LDAP_BASE_DN = 'o=g-node.org,o=g-node'        # Base DN (also accepts o=example.com format)
-AUTH_LDAP_FIELD_DOMAIN = 'g-node.pri'            # Domain from which users will take the domain for dummy e-mail generation (it keeps Django happy!)
-AUTH_LDAP_GROUP_NAME = 'ldap_people'            # Django group for LDAP users (helps us manage them for password changing, etc.)
+AUTH_LDAP_BASE_DN = 'o=g-node.org,o=g-node'        # Base DN (also accepts
+# o=example.com format)
+AUTH_LDAP_FIELD_DOMAIN = 'g-node.pri'            # Domain from which users
+# will take the domain for dummy e-mail generation (it keeps Django happy!)
+AUTH_LDAP_GROUP_NAME = 'ldap_people'            # Django group for LDAP
+# users (helps us manage them for password changing, etc.)
 AUTH_LDAP_VERSION = 3                    # LDAP version
-AUTH_LDAP_OLDPW = True                    # Can the server take the old password? True/False
+AUTH_LDAP_OLDPW = True                    # Can the server take the old
+# password? True/False
 
 # Optional
-AUTH_LDAP_FIELD_USERAUTH = 'uid'            # The field from which the user authentication shall be done.
-AUTH_LDAP_FIELD_AUTHUNIT = 'People'            # The organisational unit in which your users shall be found.
-AUTH_LDAP_FIELD_USERNAME = 'uid'            # The field from which to draw the username (Default 'uid'). (Allows non-uid/non-dn custom fields to be used for login.)
-AUTH_LDAP_WITHDRAW_EMAIL = True            # Should django try the directory for the user's email ('mail')? True/False.
+AUTH_LDAP_FIELD_USERAUTH = 'uid'            # The field from which the user
+# authentication shall be done.
+AUTH_LDAP_FIELD_AUTHUNIT = 'People'            # The organisational unit in
+# which your users shall be found.
+AUTH_LDAP_FIELD_USERNAME = 'uid'            # The field from which to draw
+# the username (Default 'uid'). (Allows non-uid/non-dn custom fields to be
+# used for login.)
+AUTH_LDAP_WITHDRAW_EMAIL = True            # Should django try the directory
+# for the user's email ('mail')? True/False.
 
 ##---EMAIL
 

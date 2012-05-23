@@ -11,13 +11,6 @@
 import os
 import pinax
 
-##---LOCAL-OVERWRITE
-
-try:
-    from local import *
-except ImportError, e:
-    print e
-
 ##---GENERAL
 
 ABSOLUTE_URL_OVERRIDES = {
@@ -129,9 +122,9 @@ MIDDLEWARE_CLASSES = (
 ##---COMBINED-INBOX
 
 COMBINED_INBOX_COUNT_SOURCES = (
-    "messages.context_processors.inbox",
-    "friends_app.context_processors.invitations",
-    "notification.context_processors.notification",
+    'messages.context_processors.inbox',
+    'friends_app.context_processors.invitations',
+    'notification.context_processors.notification',
     )
 
 ##---INSTALLED-APPS
@@ -213,8 +206,8 @@ INSTALLED_APPS = (
 
 ##---LOGIN
 
-LOGIN_URL = "/account/login/"
-LOGIN_REDIRECT_URLNAME = "home"
+LOGIN_URL = '/account/login/'
+LOGIN_REDIRECT_URLNAME = 'home'
 
 ##---AVATARS
 
@@ -249,11 +242,3 @@ RESTRUCTUREDTEXT_FILTER_SETTINGS = {
     'warning_stream':NullStream(),
     'strip_comments':True,
     }
-
-##---LOCAL-SETTINGS
-# now to actually set things
-
-try:
-    from local import *
-except ImportError, e:
-    print e
