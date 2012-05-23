@@ -1,12 +1,13 @@
-"""
-requirements for the g-node
+"""requirements for the spikesorting evaluation website
 
+## OLD ##
 1. Progress bar and upload solution
-- you need mod_wsgi + apache (configuration as daemon - check multithread is true)
-- python-memcached lib has to be installed
-- memcached - should be started (memcached -d -m 2048 -M -p 11211, telnet localhost 11211 to check)
+- you need apache2 + mod_wsgi (configuration as daemon - with threading)
+- memcached + python-memcached lib
+- memcached running: "memcached -d -m 2048 -M -p 11211"
+                     "telnet localhost 11211 to check"
 
-2. 
+2.
 a) Changes in Notification (pinax-source/lib/python2.6/site-packages/notification)
 ??? Not yet done.. to be completed, Phase II?
 
@@ -20,32 +21,31 @@ c) Changes in pinax-source/lib/python2.6/site-packages/wiki:
 
 3. Before going live check whether project files do not contain empty # links!!
 
-
+## NEW ##
 """
+
 --find-links=http://pypi.pinaxproject.com
 --find-links=http://pypi2.pinaxproject.com
 
-# Get all requirements formerly known as "external_libs" explicitly
-# hashlib
-python-dateutil==1.4.1
-docutils==0.5
-elementtree==1.2.7-20070827-preview
+## general python
+docutils>=0.5
+python-dateutil>=1.4.1
+simplejson>=2.0.9
 
-gdata==1.3.3
-Pygments==1.0
-python-openid==2.2.4
-python-twitter==0.5
-python-yadis==1.1.0
-simplejson==2.0.9
-textile==2.1.3
-vobject==0.8.1c
-BeautifulSoup==3.0.7a
-ybrowserauth==1.2
+## markup
+textile>=2.1.3
+creole==1.0.1
 Markdown==2.0.1
+
+## friends_app
+gdata>==1.3.3
+
+## others
+BeautifulSoup==3.0.7a
 diff-match-patch==20090804
 geopy==0.93dev-r0
 pytz==2009l
-creole==1.0.1
+
 
 django-ajax-validation==0.1.3
 django-announcements==0.1.0
@@ -56,7 +56,6 @@ django-db-log==1.0.1
 django-debug-toolbar==0.7.0
 django-email-confirmation==0.1.3
 django-extensions==0.4.1
-django-flag==0.1.1
 django-friends==0.1.4
 django-gravatar==0.1.0
 django-locations==0.1.1
@@ -79,5 +78,15 @@ django-wikiapp==0.2.0
 django-photologue==2.3
 django-attachments==0.3
 django-markup==0.3
-template_utils==0.4p2
+template_utils>=0.4p2
 django-staticfiles==0.1.2
+
+## UNSURE
+Pygments==1.0
+python-openid>=2.2.4
+python-twitter==0.5
+python-yadis==1.1.0
+
+## LEGACY
+#elementtree>=1.2.7
+#vobject==0.8.1c
