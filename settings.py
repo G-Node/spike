@@ -254,6 +254,7 @@ RESTRUCTUREDTEXT_FILTER_SETTINGS = {
 
 ##---SOUTH
 
+SOUTH_DATABASE_ADAPTER = 'south.db.mysql'
 SOUTH_DATABASE_ADAPTERS = {
     'default':'south.db.mysql'
 }
