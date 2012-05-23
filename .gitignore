@@ -3,7 +3,7 @@ cron/
 deploy/
 logs/
 patches/
-local_settings*.py
+settings_*.py
 *~
 *.pyc
 .idea
