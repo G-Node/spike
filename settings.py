@@ -54,19 +54,6 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 NOTIFICATION_LANGUAGE_MODULE = 'account.Account'
 
-##---DATABASE
-
-DATABASES = {
-    'default':{
-        'ENGINE':'django.db.backends.mysql',
-        'NAME':'',
-        'USER':'',
-        'PASSWORD':'',
-        'HOST':'',
-        'PORT':'',
-        }
-}
-
 ##---CACHE
 
 CACHES = {
