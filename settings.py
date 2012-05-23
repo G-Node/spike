@@ -252,6 +252,12 @@ RESTRUCTUREDTEXT_FILTER_SETTINGS = {
     'strip_comments':True,
     }
 
+##---SOUTH
+
+SOUTH_DATABASE_ADAPTERS = {
+    'default':'south.db.mysql'
+}
+
 ##---SETTINGS-LOCAL
 
 try:
