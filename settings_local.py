@@ -124,3 +124,30 @@ DEFAULT_FROM_EMAIL = 'support@'
 MAX_REGISTR_FROM_IP_DAILY = 20
 MAX_FILE_PROCESSING_SIZE = 20971520 # in bytes
 MAX_DATAPOINTS_DISPLAY = 300
+
+##---AVATARS
+
+AVATAR_GRAVATAR_BACKUP = False
+AVATAR_DEFAULT_URL = os.path.join(
+    STATIC_URL, 'pinax/images/avatar_default.jpeg')
+
+
+##---CELERY
+
+try:
+    import djcelery
+
+    djcelery.setup_loader()
+
+    # celery task broker settings
+    BROKER_HOST = 'localhost'
+    BROKER_PORT = 5672
+    BROKER_USER = 'portal'
+    BROKER_PASSWORD = 'pass'
+    BROKER_VHOST = 'localhost'
+
+    # celery task broker result storage settings.
+    CELERY_RESULT_BACKEND = 'database'
+    CELERY_RESULT_DBURI = 'mysql://portal:pass@localhost:3306/g-node-spike'
+except ImportError:
+    pass

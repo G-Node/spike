@@ -10,8 +10,23 @@
 
 import os
 import pinax
+from django.conf.global_settings import *
 
 ##---GENERAL
+
+PINAX_ROOT = os.path.abspath(os.path.dirname(pinax.__file__))
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+
+SITE_NAME = 'G-Node'
+ROOT_URLCONF = 'urls'
+PINAX_THEME = 'default'
+USE_I18N = False
+
+SERVE_MEDIA = True
+PRODUCTION_MODE = False
+DEBUG = True
+TEMPLATE_DEBUG = DEBUG
+SECRET_KEY = '0osjm6r8sb(+y@b)oy4&h=8(ge-!ckn$1p$9#6yabukc_e%9gi'
 
 ABSOLUTE_URL_OVERRIDES = {
     'auth.user':lambda o:'/profiles/profile/%s/' % o.username,
@@ -22,6 +37,7 @@ ADMINS = (
     ('Philipp', 'pmeier82@googlemail.com'),
     # ('Your Name', 'your_email@domain.com'),
     )
+MANAGERS = ADMINS
 
 AUTH_PROFILE_MODULE = 'profiles.Profile'
 
@@ -40,8 +56,6 @@ LANGUAGE_CODE = 'en-gb'
 LANGUAGES = (
     ('en', u'English'),
     )
-
-MANAGERS = ADMINS
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
@@ -209,12 +223,6 @@ INSTALLED_APPS = (
 LOGIN_URL = '/account/login/'
 LOGIN_REDIRECT_URLNAME = 'home'
 
-##---AVATARS
-
-AVATAR_GRAVATAR_BACKUP = False
-AVATAR_DEFAULT_URL = os.path.join(
-    STATIC_URL, 'pinax/images/avatar_default.jpeg')
-
 ##---MARKUP
 
 MARKUP_FILTER_FALLBACK = 'none'
@@ -242,3 +250,10 @@ RESTRUCTUREDTEXT_FILTER_SETTINGS = {
     'warning_stream':NullStream(),
     'strip_comments':True,
     }
+
+##---SETTINGS-LOCAL
+
+try:
+    from settings_local import *
+except ImportError:
+    pass
