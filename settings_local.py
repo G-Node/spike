@@ -20,6 +20,7 @@ SITE_NAME = 'G-Node'
 ROOT_URLCONF = 'urls'
 PINAX_THEME = 'default'
 USE_I18N = False
+TIME_ZONE = 'Europe/Berlin'
 
 SERVE_MEDIA = True
 PRODUCTION_MODE = False
