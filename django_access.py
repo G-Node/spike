@@ -7,11 +7,14 @@ PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 PROJECT_NAME = PROJECT_PATH[PROJECT_PATH.rfind('/') + 1:] # just in case
 
 # some path settings - order matters
+
+
 to_pythonpath = (
     './',
     PROJECT_PATH,
     os.path.join(PROJECT_PATH, 'apps/'),
     os.path.join(PROJECT_PATH, 'apps/ext/'),
+    os.path.join(PROJECT_PATH, 'apps/spike_evaluation/'),
     os.path.join(PROJECT_PATH, 'apps/ext/pinax/'),
     os.path.join(PROJECT_PATH, 'apps/ext/pinax/apps/'),
     )

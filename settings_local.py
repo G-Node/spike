@@ -34,7 +34,7 @@ DATABASES = {
     'default':{
         'ENGINE':'django.db.backends.mysql',
         'HOST':'127.0.0.1',
-        'PORT':'3306',
+        'PORT':'33306',
         'NAME':'g-node-spike',
         'USER':'portal',
         'PASSWORD':'pass',
@@ -65,6 +65,8 @@ STATICFILES_DIRS = (
     ('g-node-portal', os.path.join(PROJECT_ROOT, 'media')),
     ('pinax', os.path.join(PINAX_ROOT, 'media', PINAX_THEME)),
     )
+
+ADDED_URL = ''
 
 ##---ACCOUNTS
 
@@ -148,6 +150,6 @@ try:
 
     # celery task broker result storage settings.
     CELERY_RESULT_BACKEND = 'database'
-    CELERY_RESULT_DBURI = 'mysql://portal:pass@localhost:3306/g-node-spike'
+    CELERY_RESULT_DBURI = 'mysql://portal:pass@localhost:33306/g-node-spike'
 except ImportError:
     pass

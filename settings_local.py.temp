@@ -66,6 +66,8 @@ STATICFILES_DIRS = (
     ('pinax', os.path.join(PINAX_ROOT, 'media', PINAX_THEME)),
     )
 
+ADDED_URL = ''
+
 ##---ACCOUNTS
 
 ACCOUNT_OPEN_SIGNUP = True
