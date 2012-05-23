@@ -8,15 +8,18 @@
 
 ##---GENERAL
 
-from config.general import *
+from .general import *
 
 ##---LOCAL
 
-from config.local import *
+try:
+    from .local import *
+except ImportError:
+    pass
 
 ##---CELERY
 
 try:
-    from celeryconfig import *
-except ImportError, e:
-    print e
+    from .celery import *
+except ImportError:
+    pass
