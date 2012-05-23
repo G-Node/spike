@@ -11,6 +11,7 @@
 import os
 import pinax
 from django.core.urlresolvers import reverse
+from django.conf.global_settings import *
 
 ##---GENERAL
 
