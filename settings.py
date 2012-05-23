@@ -10,7 +10,7 @@
 
 import os
 import pinax
-from django.conf.global_settings import *
+from django.core.urlresolvers import reverse
 
 ##---GENERAL
 
@@ -222,7 +222,7 @@ INSTALLED_APPS = (
 ##---LOGIN
 
 LOGIN_URL = '/account/login/'
-LOGIN_REDIRECT_URLNAME = 'home'
+LOGIN_REDIRECT_URLNAME = reverse('home')
 
 ##---MARKUP
 
