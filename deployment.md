@@ -9,6 +9,11 @@ spikesorting evaluation website application.
 2. other
 
 
-# requirements #
+# 1) requirements #
 
+In this section the server requirements will be detailed.
+
+## 1.1) webserver
+
+I will assume an apache2 webserver is used.
 
