@@ -83,6 +83,8 @@ def detail(request, eid):
         if action == 'switch':
             if e.owner == request.user:
                 e.switch()
+        elif action == 'restart':
+            s
 
     # response
     return {'e':e,

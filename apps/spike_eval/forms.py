@@ -182,7 +182,6 @@ class EvaluationForm(forms.ModelForm):
             self.instance.task_state = 10
             self.instance.access = 10
             e = super(EvaluationForm, self).save(*args, **kwargs)
-            e.save()
 
             # datafile
             ev_file = Datafile(
@@ -198,9 +197,8 @@ class EvaluationForm(forms.ModelForm):
                 rval = start_eval.delay(e.id)
                 e.task_id = str(rval.task_id)
             else:
-                start_eval(e.id)
+                rval = start_eval(e.id)
                 e.task_id = '00'
-            e.save()
 
         except Exception, ex:
             print 'shit happened during save'

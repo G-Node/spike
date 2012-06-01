@@ -82,7 +82,6 @@ def validate_rawdata_file(did):
     finally:
         d.task_state = state
         d.task_log = logger.get_content()
-        print logger.get_content()
         d.save()
         return state
 
@@ -127,7 +126,6 @@ def validate_groundtruth_file(did):
     finally:
         d.task_state = state
         d.task_log = logger.get_content()
-        print logger.get_content()
         d.save()
         return state
 
@@ -264,10 +262,10 @@ def start_eval(eid, **kwargs):
         logger.log('Exception: %s' % str(ex))
         state = 30 # Failure
     finally:
-        e.task_log = logger.get_content()
-        print logger.get_content()
         e.task_state = state
+        e.task_log = logger.get_content()
         e.save()
+        print e.task_log
         return state
 
 
