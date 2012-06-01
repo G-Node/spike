@@ -71,6 +71,9 @@ class TrialForm(forms.ModelForm):
             self.initial['action'] = 't_create'
         else:
             self.initial['action'] = 't_edit'
+            self.initial['rd_file'] = self.instance.rd_file
+            if self.instance.gt_file:
+                self.initial['gt_file'] = self.instance.gt_file
         if pv_label is not None:
             self.fields['parameter'].label = pv_label
 

@@ -7,6 +7,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
 
 import matplotlib
+
 matplotlib.use('Agg')
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -34,14 +35,11 @@ def list(request):
         b_form = BenchmarkForm(request.POST)
         if b_form.is_valid():
             b = b_form.save(user=request.user)
-            messages.info(
-                request,
-                'Benchmark successfully created: \'%s\'' % b.name)
+            messages.success(
+                request, 'Benchmark successfully created: \'%s\'' % b.name)
             return redirect(b)
         else:
-            messages.warning(
-                request,
-                'Benchmark creation failed!')
+            messages.warning(request, 'Benchmark creation failed!')
 
     # get request
     else:
@@ -92,7 +90,7 @@ def detail(request, bid):
                 b_form = BenchmarkForm(request.POST, instance=b)
                 if b_form.is_valid():
                     b = b_form.save()
-                    messages.info(request, 'Benchmark edit successful!')
+                    messages.success(request, 'Benchmark edit successful!')
                     return redirect(b)
                 else:
                     messages.warning(request, 'Benchmark edit failed!')
@@ -100,8 +98,8 @@ def detail(request, bid):
                 t_form = TrialForm(request.POST, request.FILES)
                 if t_form.is_valid():
                     t = t_form.save(user=request.user, benchmark=b)
-                    messages.info(request, 'Trial creation successful: '
-                                           '\'%s\'' % t)
+                    messages.success(
+                        request, 'Trial creation successful: \'%s\'' % t)
                     return redirect(t)
                 else:
                     messages.warning(request, 'Trial creation failed!')
@@ -109,9 +107,9 @@ def detail(request, bid):
                 s_form = SupplementaryForm(request.POST, request.FILES)
                 if s_form.is_valid():
                     s = s_form.save(user=request.user, benchmark=b)
-                    messages.info(request, 'Supplementary creation '
-                                           'successful: '
-                                           '\'%s\'' % s)
+                    messages.success(
+                        request,
+                        'Supplementary creation successful: \'%s\'' % s)
 
         # user submission
         if action == 'e_submit':
@@ -122,10 +120,10 @@ def detail(request, bid):
                 e_forms.append(e_form)
                 if e_form.is_valid():
                     e_form.save(user=request.user)
-                    messages.info(
+                    messages.success(
                         request, '%s: submission successful' % t.name)
                 else:
-                    messages.info(request, '%s: no submission' % t.name)
+                    messages.warning(request, '%s: no submission' % t.name)
 
 
     # build forms
@@ -285,17 +283,16 @@ def trial(request, tid):
                 messages.success(
                     request, 'Version creation successful: %s' % t_new.name)
             else:
-                messages.warning(
-                    request, 'Version creation failed!')
+                messages.warning(request, 'Version creation failed!')
 
     # create forms
     if not t_form:
         t_form = TrialForm(instance=t)
 
     # response
-    return {'t':t,
-            't_form':t_form,
-            }
+    return {
+        't':t,
+        't_form':t_form}
 
 ##---MAIN
 
