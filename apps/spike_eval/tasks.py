@@ -56,17 +56,16 @@ def validate_rawdata_file(did):
     """
 
     # init and checks
-    d = Datafile.objects.get(id=did)
-    if not d:
-        return False
-    if d.filetype != 10:
-        return False
-    valid = False
-
-    # checking rawdata file -- should be hdf5
-    logger = Logger.get_logger(StringIO())
-    logger.log('looking at raw data file with id: %s' % d.id)
     try:
+        state = 20
+        d = Datafile.objects.get(id=did)
+        assert d.filetype == 10
+        logger = Logger.get_logger(StringIO())
+    except:
+        return state
+
+    try:
+        logger.log('looking at raw data file with id: %s' % d.id)
         rd, sr = read_hdf5_arc(d.file.path)
         logger.log('found rd_file: %s' % d.name)
         len_rd_sec = rd.shape[0] / sr
@@ -76,15 +75,16 @@ def validate_rawdata_file(did):
         # TODO: more checks?
 
         logger.log('rd_file passed all checks')
-        d.task_state = 20 # success
-        valid = True
+        state = 20 # success
     except Exception, ex:
-        valid = False
-        d.task_state = 10 # failure
+        state = 10 # failure
         logger.log('error during trial check: %s' % str(ex))
-    d.task_log = logger.get_content()
-    d.save()
-    return valid
+    finally:
+        d.task_state = state
+        d.task_log = logger.get_content()
+        print logger.get_content()
+        d.save()
+        return state
 
 
 @task
@@ -99,17 +99,16 @@ def validate_groundtruth_file(did):
     """
 
     # init and checks
-    d = Datafile.objects.get(id=did)
-    if not d:
-        return False
-    if d.filetype != 20:
-        return Fase
-    valid = False
-
-    # checking ground truth spike train file -- should be gdf
-    logger = Logger.get_logger(StringIO())
-    logger.log('looking at ground truth file version with uid: %s' % d.id)
     try:
+        state = 20
+        d = Datafile.objects.get(id=did)
+        assert d.filetype == 20
+        logger = Logger.get_logger(StringIO())
+    except:
+        return state
+
+    try:
+        logger.log('looking at ground truth file version with uid: %s' % d.id)
         gt = read_gdf_sts(d.file.path)
         logger.log('found gt_file: %s' % d.name)
         for st in gt:
@@ -121,15 +120,16 @@ def validate_groundtruth_file(did):
         # TODO: more checks?
 
         logger.log('gt_file passed all checks')
-        d.task_state = 20 # success
-        valid = True
+        state = 20 # success
     except Exception, ex:
-        valid = False
-        d.task_state = 10 # indicates failure
+        state = 10 # failure
         logger.log('error during trial check: %s' % str(ex))
-    d.task_log = logger.get_content()
-    d.save()
-    return valid
+    finally:
+        d.task_state = state
+        d.task_log = logger.get_content()
+        print logger.get_content()
+        d.save()
+        return state
 
 #+Interface 2: The user uploads a sorting result. The frontend calls a
 #backend function and displays the state of the evaluation to the user.
@@ -169,11 +169,11 @@ def start_eval(eid, **kwargs):
 
     # init and checks
     try:
+        state = 30
         e = Evaluation.objects.get(id=eid)
         logger = Logger.get_logger(StringIO())
-        state = 30
     except:
-        return
+        return state
 
     try:
         rd_file = e.trial.rd_file
@@ -265,6 +265,7 @@ def start_eval(eid, **kwargs):
         state = 30 # Failure
     finally:
         e.task_log = logger.get_content()
+        print logger.get_content()
         e.task_state = state
         e.save()
         return state
