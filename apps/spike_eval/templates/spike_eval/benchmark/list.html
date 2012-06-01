@@ -80,8 +80,8 @@
         <thead>
         <tr>
           <th>{% trans "Name" %}</th>
-          <th>{% trans "Date" %}</th>
           <th>{% trans "Author" %}</th>
+          <th>{% trans "Date" %}</th>
           <th>{% trans "Description" %}</th>
           <th>{% trans "Actions" %}</th>
         </tr>
@@ -105,14 +105,15 @@
               </a>
             </td>
             <td>
-              <nobr><i class="icon-time"></i>{{ b.date_created|date }}</nobr>
-            </td>
-            <td>
               <i class=" icon-user"></i>
               <a href="{% url profile_detail b.owner.username %}"
                title="{{ b.owner.username }}">
                 {{ b.owner.username }}
               </a>
+            </td>
+            <td>
+              <nobr><i class="icon-time"></i>
+                {{ b.date_created|date }}</nobr>
             </td>
             <td>{{ b.description|truncate_dot:100|escape }}</td>
             <td>
