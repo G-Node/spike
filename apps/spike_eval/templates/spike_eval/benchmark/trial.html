@@ -31,12 +31,12 @@
         <strong>Status:</strong>
       </dt>
       <dd>
-        {% if b.is_active %}
+        {% if t.is_validated %}
           <i class="icon-ok"></i>
-          <b style="color: green">ACTIVE</b> - available for user download
+          <strong style="color: green">VALID</strong>
         {% else %}
-          <i class="icon-lock"></i>
-          <b style="color: red">INACTIVE</b> - for your eyes only
+          <i class="icon-exclamation-sign"></i>
+          <strong style="color: red">INVALID</strong>
         {% endif %}
       </dd>
       <dt>

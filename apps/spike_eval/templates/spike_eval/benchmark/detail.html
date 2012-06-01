@@ -189,7 +189,13 @@
             {% endwith %}
             {% ifequal b.owner user %}
               <td>
-                {{ t.is_validated }}
+                {% if t.is_validated %}
+                  <i class="icon-ok"></i>
+                  <strong style="color: green">VALID</strong>
+                {% else %}
+                  <i class="icon-exclamation-sign"></i>
+                  <strong style="color: red">INVALID</strong>
+                {% endif %}
               </td>
             {% endifequal %}
           </tr>
