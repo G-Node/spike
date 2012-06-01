@@ -83,9 +83,9 @@
   {% if user.is_authenticated %}
     {% ifequal e.owner user %}
       <form class="form well" method="POST">
+        {% csrf_token %}
         <span class="label">Actions:</span>
         {% if e.processed %}
-          {% csrf_token %}
           <input type="submit" class="btn btn-mini" name="switch"
            {% if e.is_public %}
              value="{% trans "Unpublish Evaluation" %}"
