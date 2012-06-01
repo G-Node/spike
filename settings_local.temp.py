@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# local django and pinax settings - overwriting the settings.py
+# local django and pinax settings - extending the settings.py
 #
 
 from settings import *

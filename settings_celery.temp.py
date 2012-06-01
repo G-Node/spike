@@ -1,10 +1,19 @@
 # -*- coding: utf-8 -*-
-# django-celery settings
+#
+# local celery settings - extending the settings.py
+#
+
+from settings import *
 
 try:
     import djcelery
 
     djcelery.setup_loader()
+
+    INSTALLED_APPS += [
+        # project apps
+        "djcelery",
+        ]
 
     BROKER_URL = "amqp://guest@localhost:5672//"
     #CELERY_RESULT_BACKEND = "amqp"
