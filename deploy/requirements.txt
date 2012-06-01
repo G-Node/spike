@@ -52,7 +52,7 @@ kombu==2.1.8
 # spike_eval
 
 texttable>=0.8.0
-matplotlib>=1.1.0
+#matplotlib>=1.1.0
 PIL>=1.1.6
 -e git://github.com/pmeier82/SpikEval.git#egg=SpikeEval
 -e git://github.com/pmeier82/SpikePlot.git#egg=SpikePlot
