@@ -17,7 +17,7 @@ from .tasks import (
 USE_CELERY = getattr(settings, 'USE_CELERY', False)
 TrialType = ContentType.objects.get_for_model(Trial)
 
-##---CLASSES
+##---FORMS
 
 class BenchmarkForm(forms.ModelForm):
     class Meta:
@@ -59,7 +59,7 @@ class TrialForm(forms.ModelForm):
 
     rd_file = forms.FileField(label='Rawdata File')
     gt_file = forms.FileField(label='Groundtruth File', required=False)
-    action = forms.CharField(widget=forms.HiddenInput, initial='t_edit')
+    action = forms.CharField(widget=forms.HiddenInput)
 
     ## constructor
 
@@ -93,19 +93,20 @@ class TrialForm(forms.ModelForm):
                 t = super(TrialForm, self).save(*args, **kwargs)
 
                 # creating rd_file
-                rd_file = Datafile(
-                    name=self.cleaned_data['rd_file'].name,
-                    file=self.cleaned_data['rd_file'],
-                    filetype=10,
-                    added_by=user,
-                    content_object=t)
-                rd_file.save()
-                if USE_CELERY:
-                    rval = validate_rawdata_file.delay(rd_file.id)
-                    rd_file.task_id = str(rval.task_id)
-                else:
-                    rval = validate_rawdata_file(rd_file.id)
-                    rd_file.task_id = '00'
+                if self.cleaned_data['rd_file']:
+                    rd_file = Datafile(
+                        name=self.cleaned_data['rd_file'].name,
+                        file=self.cleaned_data['rd_file'],
+                        filetype=10,
+                        added_by=user,
+                        content_object=t)
+                    rd_file.save()
+                    if USE_CELERY:
+                        rval = validate_rawdata_file.delay(rd_file.id)
+                        rd_file.task_id = str(rval.task_id)
+                    else:
+                        rval = validate_rawdata_file(rd_file.id)
+                        rd_file.task_id = '00'
 
                 # creating gt_file
                 if self.cleaned_data['gt_file']:
