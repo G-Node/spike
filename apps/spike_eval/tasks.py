@@ -20,6 +20,7 @@ from .evaluation.models import (
 ##---CONSTANTS
 
 USE_CELERY = getattr(settings, 'USE_CELERY', False)
+print type(USE_CELERY), USE_CELERY
 
 ##---HELPERS
 
