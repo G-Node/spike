@@ -1,6 +1,15 @@
+# python
+*~
+*.pyc
+
+# dirs
 cron/
 logs/
 site_media/
-*~
-*.pyc
+
+# ide
 .idea
+
+# django
+settings_celery.py
+settings_local.py

@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
-# Django settings for basic pinax project.
+#
+# general django and pinax settings
+#
+# do no not edit! instead edit settings_local.py and settings_celery.py
+#
 
 import os.path
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 # tells Pinax to serve media through the staticfiles app.
@@ -22,7 +26,6 @@ INTERNAL_IPS = [
 SITE_ID = 1
 
 ADMINS = [
-    ("Philipp Meier", "pmeier82@googlemail.com"),
     # ("Your Name", "your_email@domain.com"),
 ]
 
@@ -31,13 +34,12 @@ MANAGERS = ADMINS
 DATABASES = {
     "default":{
         "ENGINE":"django.db.backends.mysql",
-        "NAME":"pinax-spike",
-        "USER":"spike",
-        "PASSWORD":"spike",
+        "NAME":"db-name",
+        "USER":"db-user",
+        "PASSWORD":"db-user-pass",
         "HOST":"",
         "PORT":"",
         }
-
 }
 
 CACHES = {
@@ -61,16 +63,6 @@ LANGUAGE_CODE = "en-gb"
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
-
-# restrict available language choices
-gettext_noop = lambda s:s
-LANGUAGES = (
-    ('de', gettext_noop('German')),
-    ('en', gettext_noop('English')),
-    ('es', gettext_noop('Spanish')),
-    ('fr', gettext_noop('French')),
-    ('it', gettext_noop('Italian')),
-    )
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
@@ -135,7 +127,7 @@ MIDDLEWARE_CLASSES = [
     "django_sorting.middleware.SortingMiddleware",
     ]
 
-ROOT_URLCONF = "pinax-spike.urls"
+ROOT_URLCONF = "urls"
 
 TEMPLATE_DIRS = [
     os.path.join(PROJECT_ROOT, "templates"),
@@ -186,10 +178,6 @@ INSTALLED_APPS = [
     "pagination",
     "idios",
     "metron",
-    "taggit",
-    "taggit_templatetags",
-    "django_extensions",
-    "django_sorting",
 
     # Pinax
     "pinax.apps.account",
@@ -199,16 +187,6 @@ INSTALLED_APPS = [
     # project
     "about",
     "profiles",
-
-    # gnode
-    "djcelery",
-
-    # spike_eval
-    "spike_eval",
-    "spike_eval.homepage",
-    "spike_eval.benchmark",
-    "spike_eval.datafile",
-    "spike_eval.evaluation",
     ]
 
 FIXTURE_DIRS = [
@@ -248,23 +226,16 @@ DEBUG_TOOLBAR_CONFIG = {
     "INTERCEPT_REDIRECTS":False,
     }
 
-# local_settings.py can be used to override environment-specific settings
-# like database and email that differ between development and production.
-try:
-    from local_settings import *
-except ImportError:
-    pass
-
-##---CELERY
+# settings_local
 
 try:
-    import djcelery
+    from settings_local import *
+except Exception, ex:
+    print ex
 
-    djcelery.setup_loader()
+# settings_celery
 
-    BROKER_URL = "amqp://guest@localhost:5672//"
-    #CELERY_RESULT_BACKEND = 'amqp'
-    CELERY_RESULT_BACKEND = 'database'
-    CELERY_RESULT_DBURI = 'mysql://spike:spike@localhost/pinax-spike'
-except ImportError:
-    pass
+try:
+    from settings_celery import *
+except Exception, ex:
+    print ex
