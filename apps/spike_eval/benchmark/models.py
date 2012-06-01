@@ -189,11 +189,14 @@ class Trial(CommonInfo):
         related file pairs. That also means this trial is available for
         users to download and perform evaluation against it."""
 
-        rd_good = self.rd_file.task_state == 20
-        gt_good = None
-        if self.gt_file:
-            gt_good = self.gt_file.task_state == 20
-        return rd_good and (gt_good or True)
+        try:
+            rd_good = self.rd_file.task_state == 20
+            gt_good = None
+            if self.gt_file:
+                gt_good = self.gt_file.task_state == 20
+            return rd_good and (gt_good or True)
+        except:
+            return False
 
     def validation_log(self):
         rval = [
