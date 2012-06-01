@@ -4,6 +4,7 @@ from datetime import datetime
 
 from django import forms
 from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 
 from .benchmark.models import Benchmark, Trial
 from .datafile.models import Datafile
@@ -13,6 +14,7 @@ from .tasks import (
 
 ##---CONSTANTS
 
+USE_CELERY = getattr(settings, 'USE_CELERY', False)
 TrialType = ContentType.objects.get_for_model(Trial)
 
 ##---CLASSES
@@ -96,8 +98,13 @@ class TrialForm(forms.ModelForm):
                     added_by=user,
                     content_object=t)
                 rd_file.save()
-                rval = validate_rawdata_file.delay(rd_file.id)
-                rd_file.task_id = str(rval.task_id)
+                if USE_CELERY:
+                    rval = validate_rawdata_file.delay(rd_file.id)
+                    rd_file.task_id = str(rval.task_id)
+                else:
+                    validate_rawdata_file(rd_file.id)
+                    rd_file.task_id = '00'
+
                 rd_file.save()
 
                 if self.cleaned_data['gt_file']:
@@ -108,8 +115,12 @@ class TrialForm(forms.ModelForm):
                         added_by=user,
                         content_object=t)
                     gt_file.save()
-                    rval = validate_groundtruth_file.delay(gt_file.id)
-                    gt_file.task_id = str(rval.task_id)
+                    if USE_CELERY:
+                        rval = validate_groundtruth_file.delay(gt_file.id)
+                        gt_file.task_id = str(rval.task_id)
+                    else:
+                        validate_groundtruth_file(gt_file.id)
+                        gt_file.task_id = '00'
                     gt_file.save()
 
             except Exception, ex:
@@ -182,8 +193,12 @@ class EvaluationForm(forms.ModelForm):
             ev_file.save()
 
             # trigger evaluation
-            rval = start_eval.delay(e.id)
-            e.task_id = str(rval.task_id)
+            if USE_CELERY:
+                rval = start_eval.delay(e.id)
+                e.task_id = str(rval.task_id)
+            else:
+                start_eval(e.id)
+                e.task_id = '00'
             e.save()
 
         except Exception, ex:

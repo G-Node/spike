@@ -19,5 +19,7 @@ try:
     #CELERY_RESULT_BACKEND = "amqp"
     CELERY_RESULT_BACKEND = "database"
     CELERY_RESULT_DBURI = "mysql://db-user:db-user-pass@localhost/db-name"
+
+    USE_CELERY = True
 except ImportError:
     pass
