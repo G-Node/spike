@@ -1,0 +1,91 @@
+Spike Sorting Project - Algorithm Evaluation
+Website Requirements Description
+
+Current implementation is avaiable at
+http://spike.ni.tu-berlin.de/eval/
+
+I) Overall Website Description
+
+The website provides possibilities for experimentalists as well as
+signal processing scientists to evaluate spike sorting algorithms. For
+this purpose, benchmark data set - published and also new ones - are
+being hosted for download and subsequent processing on the users
+computer. To reach a majority of possible users, the benchmarks should
+be donwloadable in the most common data formats. Once analysed by the
+user with the spike sorting algorithm of choice, the sorting can be
+uploaded to the website. Again, most common formats should be
+supported.
+After uploading the sorting the website will use the (hidden) ground
+truth data of the benchmark to calculate the performance of the
+sorting, that is the number of errors. Possible errors are:
+
+Missed Spike (False Negative, FN)
+Detected Noise (False Positive, FP)
+Wrongly Classified Spike (False Positive Association for the neuron
+where the spike was assigned to and False Negative for the Neuron that
+it should belong to)
+
+Those categories are also available for overlapping spikes as defined
+by the ground truth.
+
+
+II) Website Functionality
+1. There must be sections for some static information:
+- Homepage
+- FAQ page
+- Disclaimer page
+
+2. Benchmark management
+There must be a functionality of a benchmark management. Each benchmark is represented by 
+- name
+- description
+- benchmark "file" records (say, up to 50).
+
+For each benchmark "file" record there must be an opportunity to attach several (say, up to 5) different raw files of different formats. Additionaly, for every record there must be also a corresponding "GrowndTruth" file. For the admin user that means the ability to upload/reload these files, for the user - a option to download them (raw files only). Example:
+
+--------------------------------------
+Benchmark "SNR"
+a. Benchmark file record "SNR2_1_data", contains
+    raw data files:
+    - "SNR2_1_data.mat" file
+    - "SNR2_1_data.xpd" file
+    growndtruth file:
+    - "SNR2_1_data.gdf" file
+b. Benchmark file record "SNR2_2_data", contains
+    raw data files:
+    - "SNR2_2_data.mat" file
+    - "SNR2_2_data.xpd" file
+    growndtruth file:
+    - "SNR2_2_data.gdf" file
+--------------------------------------
+
+There must be also a way to organize benchmarks in groups (benchmark providers) for better presentation on the page to users.
+
+3. Submit sorted spikes and their evaluation
+A user downloads one or several "benchmark" files (of the preferred format) and applies it's own spike sorting algorithm to the data in the file. It is suggested as a result a user has a dataset of file(s) with sorted spikes data, with every file corresponding to the originally downloaded "benchmark" ones.
+
+For every benchmark there should be a possibility to upload processed files for further evaluation, every "processed" file corresponds to the appropriate benchmark file. A user enters his e-mail and uploads files. Files are being processed by specific algorithm (standalone ready-to-go library written in Python) after upload. This process is executed as a separate server thread (or other parallel mechanism). At the end of such processing results are written to a database, and several images (describing evaluation characteristics) are produced. When processing is finished, an e-mail with the unique ID related to a processed dataset is sent back to a user, according to the e-mail indicated.
+
+4. View the results
+Using the UID of the evaluation, received by e-mail, a user may go to a website to see the results of the evaluation. For every file evaluated, there must be a numerical and graphical information displayed on the results page.
+
+If a user lost his evaluation UID, he may request it once again by making a request and entering his e-mail.
+
+5. Publish your results
+For every evaluation there must be a way to make it public or retreat to private. A user must provide his name, algorithm description and some comments to publish the evaluation.
+
+6. View opened results
+There must be a page to see public results. The following information (graphical / numerical view) should be presented in the page:
+- total error
+- classification errors (NO)
+- false negatives (NO)
+- false positives (NO)
+- classification errors (O)
+- false negatives (O)
+
+There must be some filtering implemented:
+- by benchmark
+- by evaluation
+- by top 10/newest 10/etc
+
+
