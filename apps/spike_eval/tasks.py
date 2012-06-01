@@ -1,7 +1,7 @@
 ##---IMPORTS
 
 import sys
-#from celery.decorators import task
+from django.conf import settings
 from celery.task import task
 from StringIO import StringIO
 from datetime import datetime
@@ -16,6 +16,17 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from .datafile.models import Datafile
 from .evaluation.models import (
     Evaluation, EvaluationResults, EvaluationResultsImg)
+
+##---CONSTANTS
+
+USE_CELERY = getattr(settings, 'USE_CELERY', False)
+
+##---HELPERS
+
+def toint(val):
+    #if type(val) == type(""):
+    res = int(float(val))
+    return res
 
 ##---TASKS
 
@@ -45,7 +56,7 @@ from .evaluation.models import (
 #return
 
 @task
-def validate_rawdata_file(did):
+def _validate_rawdata_file(did):
     """checks consistency of rawdata file
 
     :type did: int
@@ -86,8 +97,17 @@ def validate_rawdata_file(did):
         return state
 
 
+def validate_rawdata_file(did):
+    rval = 0
+    if USE_CELERY:
+        rval = _validate_rawdata_file.delay(did)
+    else:
+        _validate_rawdata_file(did)
+    return str(rval)
+
+
 @task
-def validate_groundtruth_file(did):
+def _validate_groundtruth_file(did):
     """checks consistency of ground truth file
 
     :type did: int
@@ -129,6 +149,15 @@ def validate_groundtruth_file(did):
         d.save()
         return state
 
+
+def validate_groundtruth_file(did):
+    rval = 0
+    if USE_CELERY:
+        rval = _validate_groundtruth_file.delay(did)
+    else:
+        _validate_groundtruth_file(did)
+    return str(rval)
+
 #+Interface 2: The user uploads a sorting result. The frontend calls a
 #backend function and displays the state of the evaluation to the user.
 #the backend instantiates an object with which to control that user
@@ -152,7 +181,7 @@ def validate_groundtruth_file(did):
 #...
 
 @task
-def start_eval(eid, **kwargs):
+def _start_eval(eid, **kwargs):
     """core function to produce one evaluation result based on one set of
     data, ground truth spike train and estimated spike train.
     :type eid: int
@@ -269,13 +298,15 @@ def start_eval(eid, **kwargs):
         return state
 
 
-def toint(val):
-    #if type(val) == type(""):
-    res = int(float(val))
-    return res
+def start_eval(did):
+    rval = 0
+    if USE_CELERY:
+        rval = _start_eval.delay(did)
+    else:
+        _start_eval(did)
+    return str(rval)
 
 ##---MAIN
 
 if __name__ == '__main__':
     pass
-

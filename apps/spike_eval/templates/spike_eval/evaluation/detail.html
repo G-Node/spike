@@ -86,15 +86,15 @@
         <span class="label">Actions:</span>
         {% if e.processed %}
           {% csrf_token %}
-          <input type="hidden" name="action" value="switch"/>
-          <input type="submit" class="btn btn-mini"
+          <input type="submit" class="btn btn-mini" name="switch"
            {% if e.is_public %}
              value="{% trans "Unpublish Evaluation" %}"
            {% else %}
              value="{% trans "Publish Evalulation" %}"
-           {% endif %}"
-          />
+           {% endif %}"/>
         {% endif %}
+        <input type="submit" class="btn btn-mini" name="restart"
+         value="{% trans "Restart Evaluation" %}"/>
         <a href="#" class="btn btn-mini"
          onclick="$('#show_log').toggle();return false;">
           {% trans "Show Log" %}

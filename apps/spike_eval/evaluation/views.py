@@ -1,12 +1,12 @@
 ##---IMPORTS
 
 from datetime import datetime
-from django.shortcuts import get_object_or_404
+from django.contrib import messages
 from django.http import HttpResponseForbidden
-from django.contrib.auth.decorators import login_required
-from .models import (
-    Evaluation, EvaluationResults, EvaluationResultsImg)
+from django.shortcuts import get_object_or_404
+from .models import Evaluation
 from ..util import render_to
+from ..tasks import start_eval
 
 ##---HELPERS
 
@@ -23,7 +23,6 @@ def sort_er(a, b):
 
 ##---VIEWS
 
-#@login_required
 @render_to('spike_eval/evaluation/list.html')
 def list(request, bid=None, tid=None, vid=None):
     """renders a list of available evaluations"""
@@ -51,7 +50,7 @@ def list(request, bid=None, tid=None, vid=None):
     # response
     return {'e_list':e_list}
 
-#@login_required
+
 @render_to('spike_eval/evaluation/detail.html')
 def detail(request, eid):
     """renders details of an evaluation"""
@@ -79,12 +78,13 @@ def detail(request, eid):
 
     # post request
     if request.method == 'POST':
-        action = request.POST.get('action', None)
-        if action == 'switch':
+        if 'switch' in request.POST:
             if e.owner == request.user:
                 e.switch()
-        elif action == 'restart':
-            s
+        elif 'restart' in request.POST:
+            # TODO: tidy up the old results
+            rval = start_eval(e.id)
+            messages.info(request, 'Evalulation is been restarted!')
 
     # response
     return {'e':e,
