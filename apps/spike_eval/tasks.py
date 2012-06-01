@@ -69,7 +69,7 @@ def _validate_rawdata_file(did):
 
     # init and checks
     try:
-        state = 20
+        state = 10
         d = Datafile.objects.get(id=did)
         assert d.filetype == 10
         logger = Logger.get_logger(StringIO())
@@ -120,7 +120,7 @@ def _validate_groundtruth_file(did):
 
     # init and checks
     try:
-        state = 20
+        state = 10
         d = Datafile.objects.get(id=did)
         assert d.filetype == 20
         logger = Logger.get_logger(StringIO())
