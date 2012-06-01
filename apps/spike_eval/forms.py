@@ -88,7 +88,6 @@ class TrialForm(forms.ModelForm):
                 self.instance.added_by = user
                 self.instance.date_create = datetime.now()
                 t = super(TrialForm, self).save(*args, **kwargs)
-                t.save()
 
                 # creating rd_file
                 rd_file = Datafile(
@@ -102,11 +101,10 @@ class TrialForm(forms.ModelForm):
                     rval = validate_rawdata_file.delay(rd_file.id)
                     rd_file.task_id = str(rval.task_id)
                 else:
-                    validate_rawdata_file(rd_file.id)
+                    rval = validate_rawdata_file(rd_file.id)
                     rd_file.task_id = '00'
 
-                rd_file.save()
-
+                # creating gt_file
                 if self.cleaned_data['gt_file']:
                     gt_file = Datafile(
                         name=self.cleaned_data['gt_file'].name,
@@ -119,9 +117,8 @@ class TrialForm(forms.ModelForm):
                         rval = validate_groundtruth_file.delay(gt_file.id)
                         gt_file.task_id = str(rval.task_id)
                     else:
-                        validate_groundtruth_file(gt_file.id)
+                        rval = validate_groundtruth_file(gt_file.id)
                         gt_file.task_id = '00'
-                    gt_file.save()
 
             except Exception, ex:
                 print 'shit happened during save'
