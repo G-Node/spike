@@ -1,0 +1,43 @@
+/* HEADER-LOGOS */
+
+#header-logo {
+  overflow : auto;
+  padding  : 20px;
+  position : relative;
+  height   : auto;
+}
+
+#logo-main-container {
+  float : left;
+}
+
+#logo-other-container {
+  position : absolute;
+  bottom   : 0px;
+  right    : 0px;
+  margin   : 5px;
+  width    : auto;
+}
+
+.logo-main {
+}
+
+.logo-other {
+  /*background : #FFFFFF;*/
+  height : 40px;
+}
+
+.logo-other img {
+  float  : right;
+  height : 100%;
+}
+
+/* FLOATING CLASSES */
+
+.right {
+  float : right;
+}
+
+.left {
+  float : left;
+}

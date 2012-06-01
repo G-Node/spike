@@ -1,0 +1,19 @@
+{% load i18n %}
+{% load ifsetting_tag %}
+
+{% if not user.is_authenticated %}
+  <div class="well">
+    {% url acct_login as login_url %}
+    {% ifsetting ACCOUNT_OPEN_SIGNUP %}
+      {% url acct_signup as signup_url %}
+      <p>{% blocktrans %}You can
+        <a href="{{ login_url }}" class="btn btn-mini ">Log In</a> or
+        <a href="{{ signup_url }}" class="btn btn-mini">Sign Up</a> to try out
+        the site.{% endblocktrans %}</p>
+    {% else %}
+      <p>{% blocktrans %}You can
+        <a href="{{ login_url }}" class="btn primary large">Log In</a> to try out
+        the site.{% endblocktrans %}</p>
+    {% endifsetting %}
+  </div>
+{% endif %}

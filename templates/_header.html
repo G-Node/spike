@@ -1,0 +1,27 @@
+{% load staticfiles %}
+
+<div id="header-logo" class="hero-unit">
+  <div id="logo-main-container">
+    {% block logo_pre_main %}{% endblock %}
+    {% block logo_main %}
+      <img src="{% static "img/logo_gnode.png" %}" alt="GNode Logo">
+    {% endblock %}
+  </div>
+  <div id="logo-other-container">
+    <div class="logo-other">
+      {% block logo_other3 %}
+        <img src="{% static "img/logo_bmbf.png" %}" alt="BMBF Logo">
+      {% endblock %}
+    </div>
+    <div class="logo-other">
+      {% block logo_other2 %}
+        <img src="{% static "img/logo_tub.png" %}" alt="TUB Logo">
+      {% endblock %}
+    </div>
+    <div class="logo-other">
+      {% block logo_other1 %}
+        <img src="{% static "img/logo_incf.png" %}" alt="INCF Logo">
+      {% endblock %}
+    </div>
+  </div>
+</div>

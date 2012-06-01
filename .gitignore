@@ -1,0 +1,6 @@
+cron/
+logs/
+site_media/
+*~
+*.pyc
+.idea

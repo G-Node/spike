@@ -1,0 +1,89 @@
+{% extends "spike_eval/benchmark/base.html" %}
+
+{% load i18n %}
+{% load pagination_tags %}
+{% load evalhelper_tags %}
+{% load bootstrap_tags %}
+
+{% block head_title %}{T:{{ t.id }}}&nbsp;{{ t.name }}{% endblock %}
+
+{% block content %}
+  <header class="jumbotron subnav">
+    <h2>
+      <a href="{% url b_detail bid=t.benchmark.id %}">
+        {{ t.benchmark.name }}
+      </a>
+      |&nbsp;{{ t.name }}
+    </h2>
+    <dl class="dl-horizontal">
+      <dt>
+        <strong>Description:</strong>
+      </dt>
+      <dd>
+        {{ t.description }}
+      </dd>
+      <dt>
+        <strong>Date Created:</strong>
+      </dt>
+      <dd><i class="icon-time"></i>
+        {{ t.date_created|date }}</dd>
+      <dt>
+        <strong>Status:</strong>
+      </dt>
+      <dd>
+        {% if b.is_active %}
+          <i class="icon-ok"></i>
+          <b style="color: green">ACTIVE</b> - available for user download
+        {% else %}
+          <i class="icon-lock"></i>
+          <b style="color: red">INACTIVE</b> - for your eyes only
+        {% endif %}
+      </dd>
+      <dt>
+        <strong>Tags:</strong>
+      </dt>
+      <dd>
+        {% for tag in t.tags.all %}
+          <i class="icon-tag"></i>{{ tag }}&nbsp;
+        {% endfor %}
+      </dd>
+    </dl>
+  </header>
+
+  <form class="form well" method="POST">
+    <span class="label">Actions:</span>
+    {% csrf_token %}
+    <a id="edit-trial-toggle"
+     class="btn btn-mini">{% trans "Edit Trial" %}</a>
+    <input type="hidden" name="action" value="t_delete"/>
+    <input type="submit" class="btn btn-mini"
+     value="{% trans "Delete Trial" %}"/>
+  </form>
+  <form id="edit-trial" method="POST" style="display:none"
+   class="form form-horizontal well">
+    <fieldset>
+      {% csrf_token %}
+      {{ t_form|as_bootstrap }}
+      <div class="form-actions">
+        <input type="submit" class="btn btn-primary"
+         value="{% trans 'Edit Trial' %}"/>
+      </div>
+    </fieldset>
+  </form>
+{% endblock %}
+
+{% block extra_body %}
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('#edit-trial-toggle').click(function() {
+        $('#edit-trial').toggle();
+        return false;
+      });
+      if($('#edit-trial .error').length) {
+        $('#edit-trial').show();
+        $('#edit-trial .error').autoscroll();
+      }
+      ;
+    });
+  </script>
+{% endblock %}

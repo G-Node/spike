@@ -1,0 +1,50 @@
+{% extends "bootstrap_derived.html" %}
+
+{% load metron_tags %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block extra_style %}
+  <link href="{% static "css/gnode.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block nav %}
+  <ul class="nav">{% spaceless %}
+    {# spike_eval #}
+    <li id="tab_home">
+      <a href="{% url home %}">{% trans "Home" %}</a>
+    </li>
+    <li id="tab_benchmark">
+      <a href="{% url b_list %}">{% trans "Benchmarks" %}</a>
+    </li>
+    <li id="tab_evaluation">
+      <a href="{% url e_list %}">{% trans "Evaluations" %}</a>
+    </li>
+    {# profile and notices #}
+    {% if user.is_authenticated %}
+      <li id="tab_profile">
+        <a href="{% url profile_detail user.username %}">
+          {% trans "Profile" %}</a>
+      </li>
+      <li id="tab_notices">
+        <a href="{% url notification_notices %}">{% trans "Notices" %}
+          {% if notice_unseen_count %}
+            ({{ notice_unseen_count }})
+          {% endif %}</a>
+      </li>
+    {% endif %}
+  {% endspaceless %}</ul>
+{% endblock %}
+
+{% block header %}
+  {% include "_header.html" %}
+{% endblock %}
+
+{% block footer %}
+  {% include "_footer.html" %}
+{% endblock %}
+
+{% block extra_body_base %}
+  {% analytics %}
+  {% block extra_body %}{% endblock %}
+{% endblock %}
