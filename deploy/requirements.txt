@@ -24,10 +24,9 @@ pinax-theme-bootstrap==2.0.3
 django-forms-bootstrap==2.0.3.post1
 
 
-# further django internal
+# django packages
 
 django-appconf==0.5
-django-celery==2.5.5
 django-extensions==0.8
 django-picklefield==0.1.9
 django-sorting==0.1
@@ -36,20 +35,24 @@ django-taggit-templatetags==0.4.6dev
 django-templatetag-sugar==0.1
 
 
-# further django external
+# django external
 
 python-dateutil==1.5
 python-memcached==1.48
 MySQL-python==1.2.3
+
+# celery
+
+celery>=2.4.5
+django-celery>=2.4.2
 amqplib==1.0.2
 kombu==2.1.8
-celery==2.5.3
 
 
 # spike_eval
 
-texttable==0.8.0
-matplotlib==1.1.1rc
-PIL==1.1.7
+texttable>=0.8.0
+matplotlib>=1.1.0
+PIL>=1.1.6
 -e git://github.com/pmeier82/SpikEval.git#egg=SpikeEval
 -e git://github.com/pmeier82/SpikePlot.git#egg=SpikePlot
