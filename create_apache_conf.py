@@ -10,6 +10,7 @@ import pinax.env
 pinax.env.setup_environ(__file__)
 
 from django.conf import settings
+
 print getattr(settings, 'PROJECT_ROOT')
 
 ##---CONSTANTS
@@ -59,11 +60,12 @@ def create_apache_conf(
   svr_email='pmeier82@googlemail.com',
   svr_port='8001'):
     apache_dir = os.path.join(getattr(settings, 'PROJECT_ROOT'), 'apache')
+    deploy_dir = os.path.join(getattr(settings, 'PROJECT_ROOT'), 'deploy')
     if not os.path.exists(apache_dir):
         os.mkdir(apache_dir)
     if not os.path.isdir(apache_dir):
-        raise IOError('{apache_dir} exists but is not a directory!'.format
-            (apache_dir))
+        raise IOError(
+            '{apache_dir} exists but is not a directory!'.format(apache_dir))
 
     with open(os.path.join(apache_dir, 'apache.conf'), 'w') as conf_file:
         conf_file.write(
@@ -76,8 +78,8 @@ def create_apache_conf(
                 MEDIA_URL=getattr(settings, 'MEDIA_URL'),
                 STATIC_ROOT=getattr(settings, 'STATIC_ROOT'),
                 STATIC_URL=getattr(settings, 'STATIC_URL')))
-    shutil.copy('wsgi.py', os.path.join(apache_dir, 'wsgi.py'))
-    os.chmod(os.path.join(apache_dir, 'wsgi.py'), 0755)
+    shutil.copy(os.path.join(deploy_dir, 'wsgi.py'),
+                os.path.join(apache_dir, 'wsgi.py'))
 
 ##---MAIN
 
