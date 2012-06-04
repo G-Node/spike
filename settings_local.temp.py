@@ -32,10 +32,6 @@ DATABASES = {
         }
 }
 
-##---CELERY
-
-USE_CELERY = True
-
 ##---LANGUAGE-AND-LOCALE
 
 TIME_ZONE = "Europe/Berlin"
