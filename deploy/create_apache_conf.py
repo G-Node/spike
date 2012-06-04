@@ -70,8 +70,8 @@ def create_apache_conf(
   svr_email='pmeier82@googlemail.com',
   svr_port='8001'):
     root_dir = getattr(settings, 'PROJECT_ROOT')
-    with open(os.path.join(root_dir, 'apache.conf'), 'w') as conf_file:
-        conf_file.write(
+    with open(os.path.join(root_dir, 'apache', 'apache.conf'), 'w') as ap_cfg:
+        ap_cfg.write(
             APACHE_CONF_TEXT.format(
                 svr_name=svr_name,
                 svr_email=svr_email,
@@ -81,8 +81,8 @@ def create_apache_conf(
                 MEDIA_URL=getattr(settings, 'MEDIA_URL'),
                 STATIC_ROOT=getattr(settings, 'STATIC_ROOT'),
                 STATIC_URL=getattr(settings, 'STATIC_URL')))
-    with open(os.path.join(root_dir, 'wsgi.py'), 'w') as wsgi_file:
-        wsgi_file.write(WSGI_PY_TEXT)
+    with open(os.path.join(root_dir, 'wsgi.py'), 'w') as wsgi_py:
+        wsgi_py.write(WSGI_PY_TEXT)
 
 ##---MAIN
 
