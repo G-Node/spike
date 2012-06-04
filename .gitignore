@@ -4,7 +4,7 @@
 
 # dirs
 cron/
-logs/
+log/
 site_media/
 apache/
 
@@ -12,6 +12,5 @@ apache/
 .idea
 
 # django
-settings_celery.py
 settings_local.py
 wsgi.py
