@@ -33,18 +33,18 @@ AP_CFG_TEXT = """## apache config file for the spikesorting evaluation website
   # directories
   Alias {MEDIA_URL} {MEDIA_ROOT}
   <Directory {MEDIA_ROOT}>
-    Order deny,allow
+    Order allow,deny
     Allow from all
   </Directory>
   Alias {STATIC_URL} {STATIC_ROOT}
   <Directory {STATIC_ROOT}>
-    Order deny,allow
+    Order allow,deny
     Allow from all
   </Directory>
 
   # wsgi script
   WSGIScriptAlias / {PROJECT_ROOT}/wsgi.py
-  WSGIDaemonProcess spike display-name=spike user=spike group=spike home={PROJECT_ROOT}
+  WSGIDaemonProcess spike display-name=spike home={PROJECT_ROOT}
   WSGIProcessGroup spike
   <Directory {PROJECT_ROOT}>
     <Files wsgi.py>
