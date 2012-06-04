@@ -123,8 +123,8 @@ MIDDLEWARE_CLASSES = [
     "pinax.apps.account.middleware.LocaleMiddleware",
     "pagination.middleware.PaginationMiddleware",
     "pinax.middleware.security.HideSensistiveFieldsMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django_sorting.middleware.SortingMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     ]
 
 ROOT_URLCONF = "urls"
