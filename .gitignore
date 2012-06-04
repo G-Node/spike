@@ -6,6 +6,7 @@
 cron/
 logs/
 site_media/
+apache/
 
 # ide
 .idea
@@ -13,3 +14,4 @@ site_media/
 # django
 settings_celery.py
 settings_local.py
+wsgi.py
