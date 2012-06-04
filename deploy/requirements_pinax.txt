@@ -5,7 +5,7 @@ Pinax==0.9a2
 
 django-debug-toolbar==0.8.5
 django-staticfiles==1.1.2
-django_compressor==1.0.1
+django_compressor==1.1.1
 
 django-mailer==0.2a1
 django-email-confirmation==0.2

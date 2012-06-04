@@ -28,8 +28,7 @@ We will assume a "Debian squeeze" as run on the g-node predata:
     Release:	6.0.3
     Codename:	squeeze
     pmeier@predata:/opt/spike$ uname -a
-    Linux predata 2.6.32-5-amd64 #1 SMP Thu Nov 3 03:41:26 UTC 2011 x86_64
-    GNU/Linux
+    Linux predata 2.6.32-5-amd64 #1 SMP Thu Nov 3 03:41:26 UTC 2011 x86_64 GNU/Linux
 
 Befor all we will need a suitable python environment. I suggest to use the
 virtualenv package to set up the environment. A Python 2.7.x is suitable or
@@ -51,11 +50,30 @@ We will assume an "Apache2" webserver as run on the g-node predata.
 
 The django/pinax frontend will be served by the apache2 using mod_wsgi. There
 is a deploy.py in the project root that will produce a "wsgi.py" and an
-"apache.conf" file in the project root.
+"apache.conf" file in the project root. FYI: This did not work out on the
+predata server
 
 ## 1.3 FRONTEND SETTINGS ##
 
-There are two files
+In the settings_local.py in the project root try to configure everthing
+relevant.
+
+DEBUG: For setup and testing is suggest to to keep the DEBUG = TRUE. This
+will provide detailed error messages over the web interface.
+
+ADMINS: Put an email in the ADMINS list. This email will get notified in case
+of errors with the website frontend.
+
+DATABASES: use the default database entry and substitute the login and host
+entries as neccessary.
+
+TIMEZONE/LANGUAGE: adjust as neccessary
+
+FILES: adjust the MEDIA_ROOT and STATIC_ROOT entries
+
+SECRET_KEY: used for csrf-validation, change as neccessary
+
+
 
 ## 1.4 BACKEND SETTINGS ##
 
