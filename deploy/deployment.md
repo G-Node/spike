@@ -21,15 +21,15 @@ In this section the server requirements will be detailed.
 
 We will assume a "Debian squeeze" as run on the g-node predata:
 
->   pmeier@predata:/opt/spike$ lsb_release  -a
->   No LSB modules are available.
-> Distributor ID:	Debian
-> Description:	Debian GNU/Linux 6.0.3 (squeeze)
-> Release:	6.0.3
-> Codename:	squeeze
-> pmeier@predata:/opt/spike$ uname -a
->Linux predata 2.6.32-5-amd64 #1 SMP Thu Nov 3 03:41:26 UTC 2011 x86_64
-GNU/Linux
+    pmeier@predata:/opt/spike$ lsb_release  -a
+    No LSB modules are available.
+    Distributor ID:	Debian
+    Description:	Debian GNU/Linux 6.0.3 (squeeze)
+    Release:	6.0.3
+    Codename:	squeeze
+    pmeier@predata:/opt/spike$ uname -a
+    Linux predata 2.6.32-5-amd64 #1 SMP Thu Nov 3 03:41:26 UTC 2011 x86_64
+    GNU/Linux
 
 Befor all we will need a suitable python environment. I suggest to use the
 virtualenv package to set up the environment. A Python 2.7.x is suitable or
