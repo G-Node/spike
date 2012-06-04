@@ -2,7 +2,15 @@
 
 import os
 import shutil
+
+##---ENVIRONMENT
+
+import pinax.env
+
+pinax.env.setup_environ(__file__)
+
 from django.conf import settings
+print getattr(settings, 'PROJECT_ROOT')
 
 ##---CONSTANTS
 
