@@ -48,7 +48,7 @@ AP_CFG_TEXT = """## apache config file for the spikesorting evaluation website
   WSGIProcessGroup spike
   <Directory {PROJECT_ROOT}>
     <Files wsgi.py>
-      Order deny, allow
+      Order allow, deny
       Allow from all
     </Files>
   </Directory>
