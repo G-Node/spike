@@ -231,7 +231,7 @@ class EvaluationResultsImg(DateCreated):
     """evaluation results picture entity"""
 
     evaluation = models.ForeignKey('Evaluation')
-    img_data = models.ImageField(upload_to="spike_eval/results/%Y/%m/%d/")
+    img_data = models.ImageField(upload_to="results/%Y/%m/%d/")
     img_type = models.CharField(max_length=20) # or mapping
 
 ##---MAIN

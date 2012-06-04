@@ -39,7 +39,7 @@ class Datafile(CommonInfo):
     name = models.CharField(
         max_length=255)
     file = models.FileField(
-        upload_to='spike_eval/datafile/')
+        upload_to='datafile/')
     filetype = models.IntegerField(
         choices=FILETYPE_CHOICES)
 
