@@ -69,7 +69,7 @@ from django.core.handlers.wsgi import WSGIHandler
 setup_environ(__file__)
 
 import sys
-sys.path.append({PROJECT_ROOT})
+sys.path.append('{PROJECT_ROOT}')
 {CELERY_TEXT}
 application = WSGIHandler()
 
