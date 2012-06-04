@@ -43,7 +43,7 @@ CONF_TEXT = """## apache config file for the spikesorting evaluation website
 
 """
 
-##----FUNCTIONS
+##---FUNCTIONS
 
 def create_apache_conf(
   svr_name='spike.g-node.org',
