@@ -33,12 +33,12 @@ AP_CFG_TEXT = """## apache config file for the spikesorting evaluation website
   # directories
   Alias {MEDIA_URL} {MEDIA_ROOT}
   <Directory {MEDIA_ROOT}>
-    Order allow,deny
+    Order deny,allow
     Allow from all
   </Directory>
   Alias {STATIC_URL} {STATIC_ROOT}
   <Directory {STATIC_ROOT}>
-    Order allow,deny
+    Order deny,allow
     Allow from all
   </Directory>
 
