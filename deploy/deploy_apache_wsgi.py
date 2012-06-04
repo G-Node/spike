@@ -30,8 +30,8 @@ AP_CFG_TEXT = """## apache config file for the spikesorting evaluation website
   DocumentRoot {PROJECT_ROOT}
 
   # logs
-  ErrorLog {PROJECT_ROOT}/error.log
-  customLog {PROJECT_ROOT}/access.log combined
+  ErrorLog {PROJECT_ROOT}/apache/error.log
+  customLog {PROJECT_ROOT}/apache/access.log combined
 
   # directories
   Alias {MEDIA_URL} {MEDIA_ROOT}
