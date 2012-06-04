@@ -1,7 +1,6 @@
 ##---IMPORTS
 
 import os
-import shutil
 import pinax.env
 
 ##---ENVIRONMENT
@@ -71,7 +70,10 @@ def create_apache_conf(
   svr_email='pmeier82@googlemail.com',
   svr_port='8001'):
     root_dir = getattr(settings, 'PROJECT_ROOT')
-    with open(os.path.join(root_dir, 'apache', 'apache.conf'), 'w') as ap_cfg:
+    apache_dir = os.path.join(root_dir, 'apache')
+    if not os.path.isdir(apache_dir):
+        os.mkdir(apache_dir)
+    with open(os.path.join(apache_dir, 'apache.conf'), 'w') as ap_cfg:
         ap_cfg.write(
             APACHE_CONF_TEXT.format(
                 svr_name=svr_name,
