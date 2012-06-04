@@ -1,6 +1,7 @@
 ##---IMPORTS
 
 import os
+from ..settings import *
 
 ##---CONSTANTS
 
@@ -15,9 +16,16 @@ CONFIG_TEXT = """## apache config file for the spikesorting evaluation website
   ServerAdmin {svr_email}
   DocumentRoot {dir_root}
 
-  # media directories
-  Alias /site_media {dir_media}
+  # media directory
+  Alias {url_media} {dir_media}
   <Directory {dir_media}>
+    Order deny,allow
+    Allow from all
+  </Directory>
+
+  # static directory
+  Alias {url_static} {dir_static}
+  <Directory {dir_static}>
     Order deny,allow
     Allow from all
   </Directory>
@@ -34,29 +42,25 @@ CONFIG_TEXT = """## apache config file for the spikesorting evaluation website
 
 </VirtualHost>
 
-"""
+""".format(dir_root=PROJECT_ROOT, dir_media=MEDIA_ROOT, url_media=MEDIA_URL,
+           dir_static=STATIC_ROOT, url_static=STATIC_URL)
 
 ##----FUNCTIONS
 
 def create_apache_conf(
   svr_name='spike.g-node.org',
   svr_email='pmeier82@googlemail.com',
-  svr_port='8001',
-  dir_root='/opt/spike',
-  dir_media='/data/spike_eval',
-  ):
+  svr_port='8001'):
     if not os.path.exists('../apache'):
         os.mkdir('../apache')
     if not os.path.isdir('../apache'):
         raise IOError('../apache exists but is not a directory!')
     with open('../apache/apache.conf', 'w') as conf_file:
-        conf_str = CONFIG_TEXT.format(
-            svr_name=svr_name,
-            svr_email=svr_email,
-            svr_port=svr_port,
-            dir_root=dir_root,
-            dir_media=dir_media)
-        conf_file.write(conf_str)
+        conf_file.write(
+            CONFIG_TEXT.format(
+                svr_name=svr_name,
+                svr_email=svr_email,
+                svr_port=svr_port))
 
 ##---MAIN
 
