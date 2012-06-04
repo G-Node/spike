@@ -18,6 +18,7 @@ ADMINS = [
     # ("Your Name", "your_email@domain.com"),
 ]
 MANAGERS = ADMINS
+CONTACT_EMAIL = 'support@example.com'
 
 ##---DATABASE
 
@@ -63,7 +64,6 @@ SECRET_KEY = "yh@yy^c#yqdeh(0ukoz-f@ft)=c%&0!uz7)mi0=48#v=laq6x7"
 INSTALLED_APPS += [
     # project apps
 ]
-
 MIDDLEWARE_CLASSES += [
     # project middleware
 ]
