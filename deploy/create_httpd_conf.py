@@ -13,17 +13,7 @@ CONFIG_TEXT = """## apache config file for the spikesorting evaluation website
   ServerName {svr_name}
   ServerAlias {svr_name}
   ServerAdmin {svr_email}
-  DocumentRoot {dir_root}/site_media
-
-  # log format
-  LogFormat "%h %l %u %t \"%r\" %>s %b" common
-  CustomLog /var/log/apache2/access.log common
-
-  # deployment directory
-  <Directory {dir_root}/apache/>
-    Order deny,allow
-    Allow from all
-  </Directory>
+  DocumentRoot {dir_root}
 
   # media directories
   Alias /media {dir_media}
@@ -39,6 +29,10 @@ CONFIG_TEXT = """## apache config file for the spikesorting evaluation website
   </Directory>
 
   # WSGI scripts
+  <Directory {dir_root}/deploy/>
+    Order deny,allow
+    Allow from all
+  </Directory>
   WSGIScriptAlias / {dir_root}/deploy/wsgi.py
   WSGIDaemonProcess spike display-name=spike
   WSGIProcessGroup spike
