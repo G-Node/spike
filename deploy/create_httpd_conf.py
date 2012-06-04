@@ -16,26 +16,21 @@ CONFIG_TEXT = """## apache config file for the spikesorting evaluation website
   DocumentRoot {dir_root}
 
   # media directories
-  Alias /media {dir_media}
+  Alias /site_media {dir_media}
   <Directory {dir_media}>
     Order deny,allow
     Allow from all
   </Directory>
 
-  # site media
-  <Directory {dir_root}/site_media>
-    Order allow,deny
-    Allow from all
-  </Directory>
-
   # WSGI scripts
-  <Directory {dir_root}/deploy/>
+  WSGIDaemonProcess spike display-name=spike
+  WSGIProcessGroup spike
+
+  WSGIScriptAlias / {dir_root}/deploy/wsgi.py
+  <Directory {dir_root}/deploy>
     Order deny,allow
     Allow from all
   </Directory>
-  WSGIScriptAlias / {dir_root}/deploy/wsgi.py
-  WSGIDaemonProcess spike display-name=spike
-  WSGIProcessGroup spike
 
 </VirtualHost>
 
@@ -48,7 +43,7 @@ def create_apache_conf(
   svr_email='pmeier82@googlemail.com',
   svr_port='8001',
   dir_root='/opt/spike',
-  dir_media='/data/public_media',
+  dir_media='/data/spike_eval',
   ):
     if not os.path.exists('../apache'):
         os.mkdir('../apache')
