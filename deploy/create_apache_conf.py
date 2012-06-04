@@ -35,8 +35,10 @@ CONF_TEXT = """## apache config file for the spikesorting evaluation website
   WSGIProcessGroup spike
   WSGIScriptAlias / {PROJECT_ROOT}/deploy/wsgi.py
   <Directory {PROJECT_ROOT}/deploy>
-    Order deny,allow
-    Allow from all
+    <Files wsgi.py>
+      Order allow,deny
+      Allow from all
+    </Files>
   </Directory>
 
 </VirtualHost>
