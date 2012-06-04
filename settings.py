@@ -221,9 +221,15 @@ LOGOUT_REDIRECT_URLNAME = "home"
 EMAIL_CONFIRMATION_DAYS = 2
 EMAIL_DEBUG = DEBUG
 
+def dbt_visible(request):
+    if not request.user.is_authenticated():
+        return False
+    else:
+        return len(request.user.groups.filter(name='debug_toolbar')) > 0
+
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS':False,
-    'SHOW_TOOLBAR_CALLBACK':lambda request:True,
+    'SHOW_TOOLBAR_CALLBACK':dbt_visible,
     'HIDE_DJANGO_SQL':False,
     'ENABLE_STACKTRACES':True,
     }
