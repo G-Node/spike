@@ -1,6 +1,7 @@
 ##---IMPORTS
 
 import os
+import shutil
 from django.conf import settings
 
 ##---CONSTANTS
@@ -33,12 +34,10 @@ CONF_TEXT = """## apache config file for the spikesorting evaluation website
   # WSGI scripts
   WSGIDaemonProcess spike display-name=spike
   WSGIProcessGroup spike
-  WSGIScriptAlias / {PROJECT_ROOT}/deploy/wsgi.py
-  <Directory {PROJECT_ROOT}/deploy>
-    <Files wsgi.py>
-      Order allow,deny
-      Allow from all
-    </Files>
+  WSGIScriptAlias / {PROJECT_ROOT}/apache/wsgi.py
+  <Directory {PROJECT_ROOT}/apache>
+    Order allow,deny
+    Allow from all
   </Directory>
 
 </VirtualHost>
@@ -69,6 +68,8 @@ def create_apache_conf(
                 MEDIA_URL=getattr(settings, 'MEDIA_URL'),
                 STATIC_ROOT=getattr(settings, 'STATIC_ROOT'),
                 STATIC_URL=getattr(settings, 'STATIC_URL')))
+    shutil.copy('wsgi.py', os.path.join(apache_dir, 'wsgi.py'))
+    os.chmod(os.path.join(apache_dir, 'wsgi.py'), 0755)
 
 ##---MAIN
 
