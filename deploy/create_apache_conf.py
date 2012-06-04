@@ -33,9 +33,8 @@ CONF_TEXT = """## apache config file for the spikesorting evaluation website
   # WSGI scripts
   WSGIDaemonProcess spike display-name=spike
   WSGIProcessGroup spike
-
-  WSGIScriptAlias / {dir_root}/deploy/wsgi.py
-  <Directory {dir_root}/deploy>
+  WSGIScriptAlias / {PROJECT_ROOT}/deploy/wsgi.py
+  <Directory {PROJECT_ROOT}/deploy>
     Order deny,allow
     Allow from all
   </Directory>
@@ -50,11 +49,14 @@ def create_apache_conf(
   svr_name='spike.g-node.org',
   svr_email='pmeier82@googlemail.com',
   svr_port='8001'):
-    if not os.path.exists('../apache'):
-        os.mkdir('../apache')
-    if not os.path.isdir('../apache'):
-        raise IOError('../apache exists but is not a directory!')
-    with open('../apache/apache.conf', 'w') as conf_file:
+    apache_dir = os.path.join(getattr(settings, 'PROJECT_ROOT'), 'apache')
+    if not os.path.exists(apache_dir):
+        os.mkdir(apache_dir)
+    if not os.path.isdir(apache_dir):
+        raise IOError('{apache_dir} exists but is not a directory!'.format
+            (apache_dir))
+
+    with open(os.path.join(apache_dir, 'apache.conf'), 'w') as conf_file:
         conf_file.write(
             CONF_TEXT.format(
                 svr_name=svr_name,
