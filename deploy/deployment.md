@@ -152,7 +152,29 @@ The task broker is started using the command
 https://github.com/G-Node/spike
 6. copy the settings_local.temp.py as settings_local.py and configure
 
-    the rest is done assuming you are in the project_root
+        the rest is done assuming you are in the project_root
 
-7. setup the database
-    python manage.py syncdb
+7. assert hte settings work out by testing with
+
+        python manage.py shell
+
+8. let django setup the database
+
+        python manage.py syncdb
+
+9. if you put SERVE_MEDIA=FALSE in the settings.local.py assure the
+MEDIA_ROOT and STATIC_ROOT are 0755 and let django collect the static media
+
+        python manage.py collectstatic
+
+10. setup the crontabs for the frontend
+11. start the task broker
+12. create a log directory in the project_root
+13. run the deploment script
+
+        python deploy.py
+
+14. review the generated apache/apache.conf and try include it via symlink
+in sites-availabe and sites-eneabled of the apache. restart apache.
+
+15. things should work from here..
