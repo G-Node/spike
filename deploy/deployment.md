@@ -142,7 +142,7 @@ The task broker is started using the command
 
     python manage.py celeryd -l info
 
-## 3. STEP BY STEP INSTALATION
+# 3. STEP BY STEP INSTALATION
 
 1. setup the webserver, apache2 with mod_wsgi
 2. setup the python environment and install pip
