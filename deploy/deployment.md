@@ -3,16 +3,16 @@ tries to give a step-by-step guide to deploy the website.
 
 ### CONTENTS
 
-1 platform requirements
-    1 platform and software
-    2 python
-    3 webserver
-    4 database
-2 settings and configs
-    1 frontend settings
-    2 backend settings
-    3 celery task broker
-3 other
+1) platform requirements
+    1) platform and software
+    2) python
+    3) webserver
+    4) database
+2) settings and configs
+    1) frontend settings
+    2) backend settings
+    3) celery task broker
+3) spet-by-speother
 
 # 1) PLATTFORM REQUIREMENTS
 
