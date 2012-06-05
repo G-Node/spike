@@ -64,6 +64,8 @@ A databse will be used, for the frontend mostly. The standard database yould
 be a MySQL database, optionally postgresql (not required though). We will
 need schema with full edit permissions set to the database user.
 
+# SETTINGS AND CONFIGS
+
 ## 2.1 FRONTEND SETTINGS
 
 Copy the "settings_local.temp.py" in the project root and name it
