@@ -98,6 +98,20 @@ ACCOUNT: (optional) account flags for account setup
 
 EMAIL: configure the mx server you want to use
 
+
+### 2.1.1 FRONTEND CRONTAB ###
+
+The frontend uses django-mailer with the database as backend for email
+queueing. So to actually send the emails
+
+    python manage.py send_mail
+
+has to be called periodically using a crontab. The crontab for this would
+look like this:
+
+    * * * * * cd /path/to/spike; python manage.py send_mail >> /path/to/spike/log/cron_mail.log 2>&1
+    00,20,40 * * * * cd /path/to/spike; python manage.py retry_deferred >> /path/to/spike/log/cron_mail_deferred.log 2>&1
+
 ## 2.2 BACKEND SETTINGS ##
 
 None so far. I guess ther will be a .matplotlib.cfg file soon when I iterate
@@ -118,6 +132,16 @@ the django-celery python package and its requirements.
 If the celery task broker is running on a non-standard uri, please adjust the
 BROKER_URL in settings_celery.py. The results backend is set to 'database'
 and defaults to the same databse the frontend is using.
+
+The task broker has to be started as a process running along with the
+application at all times. I suggest taking care of this with a checking
+crontab or something else.
+
+The task broker is started using the command
+
+    python manage.py celeryd -l info
+
+
 
 ## 3. STEP BY STEP INSTALATION ##
 
