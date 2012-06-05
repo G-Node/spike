@@ -3,16 +3,16 @@ tries to give a step-by-step guide to deploy the website.
 
 ### CONTENTS
 
-1) platform requirements
-    1) platform and software
-    2) python
-    3) webserver
-    4) database
-2) settings and configs
-    1) frontend settings
-    2) backend settings
-    3) celery task broker
-3) spet-by-speother
+1. platform requirements
+    1. platform and software
+    2. python
+    3. webserver
+    4. database
+2. settings and configs
+    1. frontend settings
+    2. backend settings
+    3. celery task broker
+3. spet-by-speother
 
 # 1) PLATTFORM REQUIREMENTS
 
@@ -34,8 +34,9 @@ We will assume a "Debian squeeze" as run on the g-node predata:
 ## 1.2 PYTHON
 
 Befor all we will need a suitable python environment. I suggest to use the
-virtualenv package to set up the environment. A Python 2.7.x is suitable or
-at least what the development was done with.
+virtualenv package to set up the environment if other python dependent
+applications run on the same server. A Python 2.7.x is suitable or at least
+what the development was done with.
 
 I recommend to use "pip" to process the requirements.txt files. Else the
 python packages have to be installed manually.
@@ -143,4 +144,15 @@ The task broker is started using the command
 
 ## 3. STEP BY STEP INSTALATION
 
-1)
+1. setup the webserver, apache2 with mod_wsgi
+2. setup the python environment and install pip
+3. setup a database and database user
+4. setup the task broker
+5. checkout the spikesorting evaluation website from
+https://github.com/G-Node/spike
+6. copy the settings_local.temp.py as settings_local.py and configure
+
+    the rest is done assuming you are in the project_root
+
+7. setup the database
+    python manage.py syncdb
