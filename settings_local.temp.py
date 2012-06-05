@@ -63,10 +63,21 @@ SECRET_KEY = "yh@yy^c#yqdeh(0ukoz-f@ft)=c%&0!uz7)mi0=48#v=laq6x7"
 
 INSTALLED_APPS += [
     # project apps
-]
+    "taggit",
+    "taggit_templatetags",
+    "django_extensions",
+    "django_sorting",
+
+    # spike_eval
+    "spike_eval",
+    "spike_eval.homepage",
+    "spike_eval.benchmark",
+    "spike_eval.datafile",
+    "spike_eval.evaluation",
+    ]
 MIDDLEWARE_CLASSES += [
-    # project middleware
-]
+    "django_sorting.middleware.SortingMiddleware",
+    ]
 
 ##---ACCOUNT
 
