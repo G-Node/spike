@@ -1,25 +1,24 @@
-This file will detail the steps and issues concerning the deployment of the
-spikesorting evaluation website application.
+This file will describe the platform and environmental requirements and
+tries to give a step-by-step guide to deploy the website.
 
 ### CONTENTS
 
-1. platform requirements
-    1. platform and software
-    2. python
-    3. webserver
-    4. database
-2. settings and configs
-    1. frontend settings
-    2. backend settings
-    3. celery task broker
-3. other
-
+1 platform requirements
+    1 platform and software
+    2 python
+    3 webserver
+    4 database
+2 settings and configs
+    1 frontend settings
+    2 backend settings
+    3 celery task broker
+3 other
 
 # 1) PLATTFORM REQUIREMENTS
 
 In this section the server requirements will be detailed.
 
-## 1.1) PLATFORM AND SOFTWARE
+## 1.1 PLATFORM AND SOFTWARE
 
 We will assume a "Debian squeeze" as run on the g-node predata:
 
@@ -64,7 +63,7 @@ A databse will be used, for the frontend mostly. The standard database yould
 be a MySQL database, optionally postgresql (not required though). We will
 need schema with full edit permissions set to the database user.
 
-# SETTINGS AND CONFIGS
+# 2) SETTINGS AND CONFIGS
 
 ## 2.1 FRONTEND SETTINGS
 
@@ -144,3 +143,4 @@ The task broker is started using the command
 
 ## 3. STEP BY STEP INSTALATION
 
+1)
