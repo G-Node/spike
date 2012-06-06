@@ -24,10 +24,10 @@ def sort_er(a, b):
 ##---VIEWS
 
 @render_to('spike_eval/evaluation/list.html')
-def list(request, bid=None, tid=None, vid=None):
+def list(request, bid=None, tid=None):
     """renders a list of available evaluations"""
 
-    # inits and checks
+    # init and checks
     e_list = Evaluation.objects.filter(access=20)
     if request.user.is_authenticated():
         e_list = e_list | Evaluation.objects.filter(owner=request.user,
