@@ -67,6 +67,11 @@ in /opt do
 in /opt do
 
     pip install -r spike/deploy/requirements_pinax.txt
+    pip install -r spike/deploy/requirements_spike_eval.txt
+    pip install -r spike/deploy/requirements_celery.txt
+
+This will populate the virutal python environment with the neccessary packages
+using pip as the package manager.
 
 
 
