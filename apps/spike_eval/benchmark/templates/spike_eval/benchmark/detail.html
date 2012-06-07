@@ -1,12 +1,8 @@
 {% extends "spike_eval/benchmark/base.html" %}
 
 {% load i18n %}
-{% load humanize %}
-{% load pagination_tags %}
-{% load truncate_filter %}
-{% load evalhelper_tags %}
+{% load spike_eval_tags %}
 {% load bootstrap_tags %}
-{% load taggit_extras %}
 
 {% block head_title %}{B:{{ b.id }}}&nbsp;{{ b.name }}{% endblock %}
 
@@ -79,10 +75,11 @@
       <form id="edit-benchmark" method="POST" style="display:none"
        class="form form-horizontal well">
         <fieldset>
+          <legend>Edit Benchmark</legend>
           {% csrf_token %}
           {{ b_form|as_bootstrap }}
           <div class="form-actions">
-            <input type="submit" class="btn btn-primary"
+            <input type="submit" class="btn btn-primary" name=""
              value="{% trans 'Edit Benchmark' %}"/>
           </div>
         </fieldset>
@@ -90,6 +87,7 @@
       <form id="create-trial" method="POST" enctype="multipart/form-data"
        style="display:none" class="form form-horizontal well">
         <fieldset>
+          <legend>Create Trial</legend>
           {% csrf_token %}
           {{ t_form|as_bootstrap }}
           <div class="form-actions">
@@ -101,6 +99,7 @@
       <form id="create-suppl" method="POST" enctype="multipart/form-data"
        style="display:none" class="form form-horizontal well">
         <fieldset>
+          <legend>Create Supplementary</legend>
           {% csrf_token %}
           {{ s_form|as_bootstrap }}
           <div class="form-actions">
@@ -157,7 +156,7 @@
               {{ t.parameter }}
             </td>
             <td>
-              {{ t.description|truncate_dot:100|escape }}
+              {{ t.description|truncate:100|escape }}
             </td>
             <td>
               {% if t.eval_count %}
@@ -175,7 +174,7 @@
                     {{ f.name }} - {{ f.size|filesizeformat }}
                   </a>
                 </nobr>
-                {% if t.gt_access == 20 %}
+                {% if b.gt_access == 20 %}
                   {% with t.gt_file as f %}
                     </br>
                     <nobr>

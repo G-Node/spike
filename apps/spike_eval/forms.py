@@ -4,7 +4,7 @@ from datetime import datetime
 from django import forms
 from .benchmark.models import Benchmark, Trial
 from .datafile.models import Datafile
-from .evaluation.models import Evaluation
+from .evaluation.models import Algorithm, Evaluation
 from .tasks import (
     start_eval, validate_groundtruth_file, validate_rawdata_file)
 
@@ -14,11 +14,6 @@ class BenchmarkForm(forms.ModelForm):
     class Meta:
         model = Benchmark
         exclude = ('owner', 'date_created', 'added_by')
-
-    ## fields
-
-    action = forms.CharField(widget=forms.HiddenInput, initial='b_edit',
-                             required=False)
 
     ## constructor
 
@@ -184,14 +179,16 @@ class EvaluationForm(forms.ModelForm):
             return e
 
 
+class AlgorithmForm(forms.ModelForm):
+    class Meta:
+        model = Algorithm
+        #fields = ()
+
+
 class SupplementaryForm(forms.ModelForm):
     class Meta:
         model = Datafile
         fields = ('name', 'file')
-
-    ## fields
-
-    action = forms.CharField(widget=forms.HiddenInput, initial='s_create')
 
     ## constructor
 
@@ -200,13 +197,13 @@ class SupplementaryForm(forms.ModelForm):
 
     def save(self, *args, **kwargs):
         # init and checks
-        benchmark = kwargs.pop('benchmark')
+        obj = kwargs.pop('obj')
         user = kwargs.pop('user')
 
         # build instance
         self.instance.filetype = 40
         self.instance.added_by = user
-        self.instance.content_object = benchmark
+        self.instance.content_object = obj
         dfile = super(SupplementaryForm, self).save(*args, **kwargs)
         dfile.save()
         return dfile

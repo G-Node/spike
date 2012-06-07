@@ -4,9 +4,10 @@ from datetime import datetime
 from django.contrib import messages
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404
-from .models import Evaluation
-from ..util import render_to
+from .models import Algorithm, Evaluation
+from ..forms import AlgorithmForm, SupplementaryForm
 from ..tasks import start_eval
+from ..util import render_to
 
 ##---HELPERS
 
@@ -90,6 +91,45 @@ def detail(request, eid):
     return {'e':e,
             'er':er,
             'image_results':image_results}
+
+
+@render_to('spike_eval/evaluation/algo.html')
+def algo(request, aid):
+    """renders details of an algorithm"""
+
+    # init and checks
+    a = get_object_or_404(Algorithm.objects.all(), id=aid)
+    a_form = None
+    s_form = None
+
+    # post request
+    if request.method == 'POST':
+        if '' in request.POST:
+            a_form = AlgorithmForm(request.POST, instance=a)
+            if a_form.is_valid():
+                a = a_form.save()
+                messages.success(request, 'Algorithm edit successful!')
+            else:
+                messages.warning(request, 'Algorithm edit failed!')
+        elif '' in request.POST:
+            s_form = SupplementaryForm(request.POST, request.FILES)
+            if s_form.is_valid():
+                s = s_form.save(user=request.user, obj=b)
+                messages.success(
+                    request,
+                    'Supplementary creation successful: \'%s\'' % s)
+            else:
+                messages.warning(request, 'Supplementary creation failed!')
+
+    if not a_form:
+        a_form = AlgorithmForm(instance=a)
+    if not s_form:
+        s_form = SupplementaryForm()
+
+    # response
+    return {'a':a,
+            'a_form':a_form,
+            's_form':s_form}
 
 ##---MAIN
 

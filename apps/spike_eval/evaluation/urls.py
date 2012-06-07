@@ -6,4 +6,5 @@ urlpatterns = patterns(
     url(r'^list/(?P<bid>\d+)/$', 'list', name='e_list'),
     url(r'^list/(?P<bid>\d+)/(?P<tid>\d+)/$', 'list', name='e_list'),
     url(r'^detail/(?P<eid>\d+)/$', 'detail', name='e_detail'),
+    url(r'^algo/(?P<aid>\d+)/$', 'algo', name='e_algo'),
     )

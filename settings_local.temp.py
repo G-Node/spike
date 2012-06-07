@@ -97,4 +97,5 @@ EMAIL_HOST = "localhost"
 EMAIL_PORT = 25
 EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""
-EMAIL_USE_TSL = False
+EMAIL_USE_TSL = True
+DEFAULT_FROM_EMAIL = "nopeply@spike.g-node.org"

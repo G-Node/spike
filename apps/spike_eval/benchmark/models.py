@@ -37,23 +37,39 @@ class Benchmark(CommonInfo):
     ## fields
 
     name = models.CharField(
-        max_length=255)
+        max_length=255,
+        help_text='The name will be used as an identifier for the Benchmark '\
+                  'in many places, mostly in links. (character limit: 255)')
     description = models.TextField(
         blank=True,
-        null=True)
+        null=True,
+        help_text='Use this field to give a detailed summary of the '\
+                  'Benchmark. If you need to describe more than feasibly can'\
+                  ' go in this field, please use the Supplementary upload '\
+                  'option. (character limit: none)')
     state = models.IntegerField(
         choices=STATES_CHOICES,
-        default=10)
+        default=10,
+        help_text='The publication state of the Benchmark.')
     parameter = models.CharField(
         max_length=255,
-        default='Order')
+        default='Order',
+        help_text='Trials of the Benchmark will have a parameter attached '\
+                  'that can be used to order and distinguish Trials. This is'\
+                  ' the caption for that parameter. (character limit: 255')
+    gt_access = models.IntegerField(
+        choices=ACCESS_CHOICES,
+        default=10)
 
     owner = models.ForeignKey(
         'auth.User',
         related_name='benchmark owner',
-        blank=True)
+        blank=True,
+        help_text='The user associated with this Benchmark.')
 
-    tags = TaggableManager(_(TAG_NAMESPACE))
+    tags = TaggableManager(
+        _(TAG_NAMESPACE),
+        help_text='A comma-separated list of tags classifying the Benchmark.')
 
     ## special methods
 
@@ -128,20 +144,26 @@ class Trial(CommonInfo):
     ## fields
 
     name = models.CharField(
-        max_length=255)
+        max_length=255,
+        help_text='The name will be used as an identifier for the Trial '\
+                  'in many places, mostly in links. (character limit: 255)')
     description = models.TextField(
         blank=True,
-        null=True)
+        null=True,
+        help_text='Use this field to give a detailed summary of the Trial. '\
+                  '(character limit: none)')
     parameter = models.FloatField(
-        default=0.0)
-    gt_access = models.IntegerField(
-        choices=ACCESS_CHOICES,
-        default=10)
+        default=0.0,
+        help_text='The parameter value for this Trial. (type: float)')
 
     benchmark = models.ForeignKey(
-        'Benchmark')
+        'Benchmark',
+        help_text='The Benchmark associated with this Trial.')
 
-    tags = TaggableManager(_(TAG_NAMESPACE))
+    tags = TaggableManager(
+        _(TAG_NAMESPACE),
+        help_text='A comma-separated list of tags classifying the Trial.',
+        blank=True)
 
     ## special methods
 

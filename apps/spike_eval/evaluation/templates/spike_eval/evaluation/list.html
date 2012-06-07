@@ -1,12 +1,9 @@
 {% extends "spike_eval/evaluation/base.html" %}
 
 {% load i18n %}
-{% load humanize %}
 {% load pagination_tags %}
 {% load sorting_tags %}
-{% load truncate_filter %}
-{% load benchmark_tags %}
-{% load evalhelper_tags %}
+{% load spike_eval_tags %}
 
 {% block head_title %}{% trans "Evaluations" %}{% endblock %}
 
@@ -70,7 +67,7 @@
             </td>
             <td>
               {% if e.description %}
-                <nobr>{{ e.description|truncate_dot:100|escape }}</nobr>
+                <nobr>{{ e.description|truncate:100|escape }}</nobr>
               {% endif %}
             </td>
             <td>

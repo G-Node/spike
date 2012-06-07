@@ -106,10 +106,12 @@ def detail(request, bid):
             elif action == 's_create':
                 s_form = SupplementaryForm(request.POST, request.FILES)
                 if s_form.is_valid():
-                    s = s_form.save(user=request.user, benchmark=b)
+                    s = s_form.save(user=request.user, obj=b)
                     messages.success(
                         request,
                         'Supplementary creation successful: \'%s\'' % s)
+                else:
+                    messages.warning(request, 'Supplementary creation failed!')
 
         # user submission
         if action == 'e_submit':

@@ -1,11 +1,10 @@
 {% extends "spike_eval/benchmark/base.html" %}
 
 {% load i18n %}
-{% load humanize %}
+{#{% load humanize %}#}
 {% load pagination_tags %}
 {% load sorting_tags %}
-{% load truncate_filter %}
-{% load benchmark_tags %}
+{% load spike_eval_tags %}
 {% load bootstrap_tags %}
 {% load taggit_extras %}
 
@@ -21,7 +20,6 @@
       <a class="btn btn-mini"
        onclick="$('#tagcloud').toggle();">Show Tagcloud</a>
     </form>
-
     <form id="create-benchmark" class="form form-horizontal well" method="POST"
      {% if not b_form.errors %}style="display:none"{% endif %}>
       <fieldset>
@@ -115,7 +113,7 @@
               <nobr><i class="icon-time"></i>
                 {{ b.date_created|date }}</nobr>
             </td>
-            <td>{{ b.description|truncate_dot:100|escape }}</td>
+            <td>{{ b.description|truncate:100|escape }}</td>
             <td>
               <div class="btn-group">
                 {% if request.user.is_authenticated %}

@@ -1,0 +1,162 @@
+{% extends "spike_eval/evaluation/base.html" %}
+
+{% load i18n %}
+{% load pagination_tags %}
+{% load spike_eval_tags %}
+{% load bootstrap_tags %}
+
+{% block head_title %}{A:{{ a.id }}}&nbsp;{{ a.name }}{% endblock %}
+
+{% block content %}
+
+  <header class="jumbotron subnav">
+    <h2>{{ a }}</h2>
+    <dl class="dl-horizontal">
+      <dt>
+        <strong>Description:</strong>
+      </dt>
+      <dd>
+        {{ a.description }}
+      </dd>
+      <dt>
+        <strong>Owner:</strong>
+      </dt>
+      <dd>
+        <nobr>
+          <i class=" icon-user"></i>
+          <a href="{% url profile_detail a.added_by.username %}">
+            {{ a.added_by.username }}
+          </a>
+          {% ifequal a.added_by user %}(you){% endifequal %}
+        </nobr>
+      </dd>
+      <dt>
+        <strong>Date Created:</strong>
+      </dt>
+      <dd>
+        <nobr><i class="icon-time"></i>
+          {{ a.date_created|date }}</nobr>
+      </dd>
+      <dt>
+        <strong>Kind:</strong>
+      </dt>
+      <dd>
+        {% for tag in a.tags.all %}
+          <i class="icon-tag"></i>{{ tag }}&nbsp;
+        {% endfor %}
+      </dd>
+    </dl>
+  </header>
+
+  {% if user.is_authenticated %}
+    {% if a.added_by == user or user.is_superuser %}
+      <form class="form well">
+        <span class="label">Actions:</span>
+        <a id="edit-algorithm-toggle" class="btn btn-mini">
+          {% trans "Edit Algorithm" %}</a>
+        <a id="create-suppl-toggle" class="btn btn-mini">
+          {% trans "Create Supplementary" %}</a>
+      </form>
+      <form id="edit-algorithm" method="POST" style="display:none"
+       class="form form-horizontal well">
+        <fieldset>
+          <legend>Edit Algorithm</legend>
+          {% csrf_token %}
+          {{ a_form|as_bootstrap }}
+          <div class="form-actions">
+            <input type="submit" class="btn btn-primary"
+             value="{% trans 'Edit Benchmark' %}"/>
+          </div>
+        </fieldset>
+      </form>
+      <form id="create-suppl" method="POST" enctype="multipart/form-data"
+       style="display:none" class="form form-horizontal well">
+        <fieldset>
+          <legend>Create Supplementary</legend>
+          {% csrf_token %}
+          {{ s_form|as_bootstrap }}
+          <div class="form-actions">
+            <input type="submit" class="btn btn-primary"
+             value="{% trans 'Create Supplementary' %}"/>
+          </div>
+        </fieldset>
+      </form>
+    {% endif %}
+  {% endif %}
+
+  <div>
+    <h2>Supplementary Files</h2>
+
+    <p>List of Supplementaries describing the Algorithm.</p>
+
+    {% if a.datafile_set %}
+      <table class="table table-striped table-condensed">
+        <thead>
+        <tr>
+          <th>{% trans "Name" %}</th>
+          <th>{% trans "Filename" %}</th>
+          <th>{% trans "Size" %}</th>
+          <th>{% trans "Created" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for d in a.datafile_set %}
+          <tr>
+            <td>
+              <nobr>{{ d.name }}</nobr>
+            </td>
+            <td>
+              <nobr>
+                <a href="{{ d.get_absolute_url }}">{{ d.file.name }}</a>
+              </nobr>
+            </td>
+            <td>
+              {{ d.size|filesizeformat }}
+            </td>
+            <td>
+              <nobr>
+                <i class="icon-time"></i>
+                {{ d.date_created|date }}
+              </nobr>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>This Algorithm has no Supplementaries yet.
+        {% ifequal a.owner user %}
+          You can add new Supplementary Files by clicking on the "Create
+          Supplementary" button under "Actions:" above.
+        {% endifequal %}
+      </p>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block extra_body %}
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('#edit-algorithm-toggle').click(function() {
+        $('#create-suppl').hide();
+        $('#edit-algorithm').toggle();
+        return false;
+      });
+      if($('#edit-algorithm .error').length) {
+        $('#edit-algorithm').show();
+        $('#edit-algorithm .error').autoscroll();
+      }
+      ;
+      $('#create-suppl-toggle').click(function() {
+        $('#edit-algorithm').hide();
+        $('#create-suppl').toggle();
+        return false;
+      });
+      if($('#create-suppl .error').length) {
+        $('#create-suppl').show();
+        $('#create-suppl .error').autoscroll();
+      }
+      ;
+    });
+  </script>
+{% endblock %}

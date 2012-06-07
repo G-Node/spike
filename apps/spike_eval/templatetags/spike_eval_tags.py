@@ -7,6 +7,14 @@ register = template.Library()
 ##---FILTERS
 
 @register.filter
+def truncate(value, size):
+    if len(value) > size and size > 3:
+        return ''.join([value[:(size - 3)], '...'])
+    else:
+        return value[:size]
+
+
+@register.filter
 def in_group(user, groups):
     """Returns a boolean if the user is in the given group, or comma-separated
     list of groups.
@@ -77,7 +85,13 @@ def zero_red(value):
     except:
         return value
 
-##---MAIN
 
-if __name__ == '__main__':
-    pass
+@register.simple_tag
+def clear_search_url(request):
+    getvars = request.GET.copy()
+    if 'search' in getvars:
+        del getvars['search']
+    if len(getvars.keys()) > 0:
+        return "%s?%s" % (request.path, getvars.urlencode())
+    else:
+        return request.path

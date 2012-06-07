@@ -6,5 +6,43 @@
       "domain":"spike.g-node.org",
       "name"  :"Spikesorting Evaluation"
     }
+  },
+
+
+  {
+    "pk"    :1,
+    "model" :"auth.group",
+    "fields":{
+      "name"       :"debug_toolbar",
+      "permissions":[]
+    }
+  },
+
+
+  {
+    "pk"    :1,
+    "model" :"auth.user",
+    "fields":{
+      "username"    :"admin",
+      "first_name"  :"Admin",
+      "last_name"   :"User",
+      "password"    :"sha1$7febf$862adfde3dc554fd3ef0dd9f412b25f24ba8ea4f",
+      "is_active"   :true,
+      "is_superuser":true,
+      "is_staff"    :true,
+      "groups"      :[1]
+    }
+  },
+  {
+    "pk"    :2,
+    "model" :"auth.user",
+    "fields":{
+      "username"    :"anonymous",
+      "first_name"  :"Anonymous",
+      "last_name"   :"User",
+      "is_active"   :false,
+      "is_superuser":false,
+      "is_staff"    :false
+    }
   }
 ]

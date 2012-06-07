@@ -1,8 +1,7 @@
 {% extends "spike_eval/benchmark/base.html" %}
 
 {% load i18n %}
-{% load pagination_tags %}
-{% load evalhelper_tags %}
+{% load spike_eval_tags %}
 {% load bootstrap_tags %}
 
 {% block head_title %}{T:{{ t.id }}}&nbsp;{{ t.name }}{% endblock %}
@@ -62,6 +61,7 @@
   <form id="edit-trial" method="POST" style="display:none"
    class="form form-horizontal well">
     <fieldset>
+      <legend>Edit Trial</legend>
       {% csrf_token %}
       {{ t_form|as_bootstrap }}
       <div class="form-actions">
