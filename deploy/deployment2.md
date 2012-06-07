@@ -73,6 +73,66 @@ in /opt do
 This will populate the virutal python environment with the neccessary packages
 using pip as the package manager.
 
+# 3. django/pinax configuration
 
+### 3.1 database setup
+*do this as root*
 
+    mysql -p
+
+in mysql console do
+
+    CREATE DATABASE spike;
+    USE spike;
+    GRANT ALL PRIVILEGES ON spike.* TO spike@"%" IDENTIFIED BY "spike"
+
+you can adjust the user and password ofc, we use spike:spike here
+
+### 3.2 configure settings_locale.py
+*do this as www-data*
+
+change to /opt/spike
+
+    mkdir log
+    cp settings_local.temp.py settings_local.py
+
+configure the entries
+
+**DEBUG**: For setup and testing is suggest to to keep the DEBUG = TRUE. This
+will provide detailed error messages over the web interface and serve the
+static media from the template directories. COMPRESS will enable static file
+compression (for css, js, etc).
+
+**ADMINS**: Put an email in the ADMINS list and adjust the CONTANCT_EMAIL.
+ADMINS will gen notified in case of errors, the CONTANCT_EMAIL is displayed
+publicly on the frontend.
+
+**DATABASES**: use the default database entry and adjust the login and host
+entries as neccessary.
+
+**LANGUAGE-AND-LOCALE**: (optional) adjust as neccessary
+
+**FILES**: adjust the MEDIA_ROOT and STATIC_ROOT point to the absolute path
+where static and user uploaded media files should be stored. Make sure this
+has a trailing slash in the path, else the generated apache.conf will not
+work.
+
+**SECRET_KEY**: (optional) used for csrf-validation
+
+**APPS**: add any additional django apps to INSTALLED_APPS and if they bring
+middleware add those to MIDDLEWARE_CLASSES. Mind the += extension here.
+
+**ACCOUNT**: (optional) account flags for account setup
+
+**EMAIL**: configure the mx server you want to use
+
+### 3.3 check the pinax/django environment
+*do this as www-data*
+
+    python manage.py shell
+
+check that no import errors are thrown when importing e.g.
+- pinax
+- spikeval
+- spike_eval
 

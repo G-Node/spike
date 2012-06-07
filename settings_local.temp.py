@@ -51,8 +51,8 @@ LANGUAGES = (
 
 ##---FILE-PATHS
 
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, "site_media", "media")
-STATIC_ROOT = os.path.join(PROJECT_ROOT, "site_media", "static")
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, "site_media", "media/")
+STATIC_ROOT = os.path.join(PROJECT_ROOT, "site_media", "static/")
 FILE_UPLOAD_PERMISSIONS = 0644
 
 ##---CSRF-TOKEN
