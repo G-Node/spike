@@ -82,11 +82,10 @@ def detail(request, bid):
 
     # post request
     if request.method == 'POST':
-        action = request.POST.get('action', None)
 
         # edit & creation
         if request.user == b.owner:
-            if action == 'b_edit':
+            if 'b_edit' in request.POST:
                 b_form = BenchmarkForm(request.POST, instance=b)
                 if b_form.is_valid():
                     b = b_form.save()
@@ -94,7 +93,7 @@ def detail(request, bid):
                     return redirect(b)
                 else:
                     messages.warning(request, 'Benchmark edit failed!')
-            elif action == 't_create':
+            elif 't_create' in request.POST:
                 t_form = TrialForm(request.POST, request.FILES)
                 if t_form.is_valid():
                     t = t_form.save(user=request.user, benchmark=b)
@@ -103,7 +102,7 @@ def detail(request, bid):
                     return redirect(t)
                 else:
                     messages.warning(request, 'Trial creation failed!')
-            elif action == 's_create':
+            elif 's_create' in request.POST:
                 s_form = SupplementaryForm(request.POST, request.FILES)
                 if s_form.is_valid():
                     s = s_form.save(user=request.user, obj=b)
@@ -114,7 +113,7 @@ def detail(request, bid):
                     messages.warning(request, 'Supplementary creation failed!')
 
         # user submission
-        if action == 'e_submit':
+        if 'e_submit' in request.POST:
             e_forms = []
             for t in t_list:
                 e_form = EvaluationForm(request.POST, request.FILES,

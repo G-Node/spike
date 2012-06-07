@@ -79,7 +79,7 @@
           {% csrf_token %}
           {{ b_form|as_bootstrap }}
           <div class="form-actions">
-            <input type="submit" class="btn btn-primary" name=""
+            <input type="submit" class="btn btn-primary" name="b_edit"
              value="{% trans 'Edit Benchmark' %}"/>
           </div>
         </fieldset>
@@ -91,7 +91,7 @@
           {% csrf_token %}
           {{ t_form|as_bootstrap }}
           <div class="form-actions">
-            <input type="submit" class="btn btn-primary"
+            <input type="submit" class="btn btn-primary" name="t_create"
              value="{% trans 'Create Trial' %}"/>
           </div>
         </fieldset>
@@ -103,7 +103,7 @@
           {% csrf_token %}
           {{ s_form|as_bootstrap }}
           <div class="form-actions">
-            <input type="submit" class="btn btn-primary"
+            <input type="submit" class="btn btn-primary" name="s_create"
              value="{% trans 'Create Supplementary' %}"/>
           </div>
         </fieldset>
@@ -270,6 +270,7 @@
         <form method="POST" enctype="multipart/form-data"
          class="form form-inline">
           <fieldset>
+          <legend>Submit Evaluation</legend>
             {% csrf_token %}
             {% for e_form in e_forms %}
               <div class="well" style="float: left;">
@@ -277,9 +278,8 @@
                 {{ e_form|as_bootstrap }}
               </div>
             {% endfor %}
-            <div class="controls" style="clear: both;">
-              <input type="hidden" name="action" value="e_submit"/>
-              <input class="btn btn-primary" type="submit"
+            <div class="form-actions" style="clear: both;">
+              <input type="submit" class="btn btn-primary" name="e_submit"
                value="{% trans 'Submit Evaluations' %}"/>
             </div>
           </fieldset>
