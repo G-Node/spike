@@ -76,10 +76,7 @@ application = WSGIHandler()
 
 ##---FUNCTIONS
 
-def create_apache_conf(
-  svr_name='spike.g-node.org',
-  svr_email='spike-admin@g-node.org',
-  svr_port='8001'):
+def create_apache_conf():
     svr_name = raw_input('please provide a server name:')
     svr_email = raw_input('please provide a server email:')
     svr_port = raw_input('pleases provide a server port:')
