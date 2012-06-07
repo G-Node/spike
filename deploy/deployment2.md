@@ -1,6 +1,6 @@
+# SPIKESORTING EVALUATION WEBSITE - INSTALL INSTRUCTIONS
 
-
-# 1. system level install
+## 1. system level install
 
 *do this as root*
 
@@ -31,7 +31,7 @@ or in one command:
 mysql-server-5.1 will promt you to set the mysql root password,
 liblzo2-2 is required for python-tables.
 
-# 2. cloning the application sources
+## 2. cloning the application sources
 
 ### 2.1 create directories
 *do this as root*
@@ -73,7 +73,7 @@ in /opt do
 This will populate the virutal python environment with the neccessary packages
 using pip as the package manager.
 
-# 3. django/pinax configuration
+## 3. django/pinax configuration
 
 ### 3.1 database setup
 *do this as root*
@@ -136,3 +136,64 @@ check that no import errors are thrown when importing e.g.
 - spikeval
 - spike_eval
 
+## 4. apache2 deployment
+
+### 4.1 apache2 modules
+
+you need apache2 with mod-wsgi installed
+
+### 4.2 application deployment
+*do this as www-data*
+
+in /opt/spike call
+
+    python deploy.py
+
+validate generated the apache/apache.conf
+validate generated wsgi.py
+
+*do this as root*
+
+create a link to the apache.conf in /etc/apache2/sites-available and
+activate the page
+
+    cd /etc/apache2/sites-available
+    ln -s /opt/spike/apache/apache.conf spike
+    a2ensite spike
+
+!!!something is missing here!!!
+
+in /etc/apache2/mods-available/wsgi.conf add
+
+    WSGIPythonHome /opt/spike-env
+
+
+# 5. miscellaneous settings
+
+### 5.1 /etc/rc.local
+*do this as root*
+
+in /etc/rc.local add
+
+    # for spike web site
+    /etc/init.d/rabbitmq-server start
+    echo -n 'Starting celeryd...'
+    cd /opt/spike && /opt/spike-env/bin/python manage.py celeryd >& /var/log/celeryd.log &
+    if [ $? -eq 0 ]; then
+        echo " done."
+    else
+        echo " failed! Log in /var/log/celeryd.log!"
+    fi
+
+
+### 5.2 crontab for mail sending
+*do this as root*
+
+in /etc/cron.d/
+
+    vim spike-mail
+
+in that file enter these 2 lines:
+
+    * * * * * www-data cd /opt/spike; (echo "----"; date ; /opt/spike-env/bin/python manage.py send_mail; date) >> /opt/spike/log/cron_mail.log 2>&1
+    00,20,40 * * * * www-data cd /opt/spike; (echo "----"; date ; /opt/spike-env/bin/python manage.py retry_deferred; date) >> /opt/spike/log/cron_mail_deferred.log 2>&1
