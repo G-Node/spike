@@ -160,11 +160,6 @@ class Trial(CommonInfo):
         'Benchmark',
         help_text='The Benchmark associated with this Trial.')
 
-    tags = TaggableManager(
-        _(TAG_NAMESPACE),
-        help_text='A comma-separated list of tags classifying the Trial.',
-        blank=True)
-
     ## special methods
 
     def __str__(self):
