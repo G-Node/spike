@@ -268,12 +268,12 @@
     {% else %}
       {% if e_forms %}
         <form method="POST" enctype="multipart/form-data"
-         class="form form-inline">
+         class="form form-inline well">
           <fieldset>
           <legend>Submit Evaluation</legend>
             {% csrf_token %}
             {% for e_form in e_forms %}
-              <div class="well" style="float: left;">
+              <div style="float: left;">
                 <legend>Trial: {{ e_form.trial }}</legend>
                 {{ e_form|as_bootstrap }}
               </div>
