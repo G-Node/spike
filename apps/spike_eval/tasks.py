@@ -298,12 +298,12 @@ def _start_eval(eid, **kwargs):
         return state
 
 
-def start_eval(did):
+def start_eval(eid):
     rval = 0
     if USE_CELERY:
-        rval = _start_eval.delay(did)
+        rval = _start_eval.delay(eid)
     else:
-        _start_eval(did)
+        _start_eval(eid)
     return str(rval)
 
 ##---MAIN

@@ -4,7 +4,7 @@ from datetime import datetime
 from django import forms
 from .benchmark.models import Benchmark, Trial
 from .datafile.models import Datafile
-from .evaluation.models import Algorithm, Evaluation
+from .evaluation.models import Algorithm, Evaluation, EvaluationBatch
 from .tasks import (
     start_eval, validate_groundtruth_file, validate_rawdata_file)
 
@@ -110,10 +110,79 @@ class TrialForm(forms.ModelForm):
             return super(TrialForm, self).save(*args, **kwargs)
 
 
+class EvaluationSubmitForm(forms.ModelForm):
+    class Meta:
+        model = EvaluationBatch
+        exclude = ('added_by', 'date_created', 'access', 'benchmark')
+
+    ## constructor
+
+    def __init__(self, *args, **kwargs):
+        self.benchmark = kwargs.pop('benchmark')
+        super(EvaluationSubmitForm, self).__init__(*args, **kwargs)
+        self.sub_ids = []
+        self.sub_ommited = []
+        for t in self.benchmark.trial_set.all():
+            self.sub_ids.append('sub-t-%s' % t.id)
+            self.fields['sub-t-%s' % t.id] = forms.FileField(
+                label='Upload Trial: %s' % t.name)
+
+    ## form interface
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+
+        if self._errors:
+            print self._errors
+            for sub_id in self.sub_ids:
+                if sub_id in self._errors:
+                    self.sub_ommited.append(self._errors.pop(sub_id))
+        return cleaned_data
+
+    def save(self, *args, **kwargs):
+        # init and checks
+        user = kwargs.pop('user')
+
+        # build instance
+        self.instance.added_by = user
+        self.instance.benchmark = self.benchmark
+        self.instance.access = 10
+        eb = super(EvaluationSubmitForm, self).save(*args, **kwargs)
+
+        # evaluations
+
+        for sub_id in self.sub_ids:
+            if sub_id in self.sub_ommited:
+                continue
+
+            # evaluation
+            tid = int(sub_id.split('-')[-1])
+            trial = Trial.objects.get(id=tid)
+            e = Evaluation(
+                added_by=user,
+                evaluation_batch=eb,
+                trial=trial)
+            e.save()
+
+            # datafile
+            ev_file = Datafile(
+                name=self.cleaned_data[sub_id].name,
+                file=self.cleaned_data[sub_id],
+                filetype=30,
+                added_by=user,
+                content_object=e)
+            ev_file.save()
+
+            # trigger evaluation
+            e.task_id = start_eval(e.id)
+            e.save()
+        return eb
+
+
 class EvaluationForm(forms.ModelForm):
     class Meta:
         model = Evaluation
-        fields = ('algorithm',)
+        fields = ()
 
     ## fields
 
@@ -127,12 +196,9 @@ class EvaluationForm(forms.ModelForm):
         self.trial = None
         if self.prefix is not None:
             self.tid = int(self.prefix.split('-')[1])
-            try:
-                self.trial = Trial.objects.get(id=self.tid)
-            except:
-                pass
+            self.trial = Trial.objects.get(id=self.tid)
 
-    ## for interface
+    ## form interface
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -144,45 +210,38 @@ class EvaluationForm(forms.ModelForm):
             return cleaned_data
 
     def save(self, *args, **kwargs):
-        try:
-            # init and checks
-            user = kwargs.pop('user')
-            if self.tid is None:
-                self.tid = int(kwargs.pop('tid'))
-            self.trial = Trial.objects.get(id=self.tid)
+        # init and checks
+        batch = kwargs.pop('batch')
+        user = kwargs.pop('user')
+        if self.tid is None:
+            self.tid = int(kwargs.pop('tid'))
+        self.trial = Trial.objects.get(id=self.tid)
 
-            # build instance
-            self.instance.owner = user
-            self.instance.added_by = user
-            self.instance.trial = self.trial
-            self.instance.task_state = 10
-            self.instance.access = 10
-            e = super(EvaluationForm, self).save(*args, **kwargs)
+        # build instance
+        self.instance.added_by = user
+        self.instance.trial = self.trial
+        self.instance.task_state = 10
+        self.instance.evaluation_batch = batch
+        e = super(EvaluationForm, self).save(*args, **kwargs)
 
-            # datafile
-            ev_file = Datafile(
-                name=self.cleaned_data['ev_file'].name,
-                file=self.cleaned_data['ev_file'],
-                filetype=30,
-                added_by=user,
-                content_object=e)
-            ev_file.save()
+        # datafile
+        ev_file = Datafile(
+            name=self.cleaned_data['ev_file'].name,
+            file=self.cleaned_data['ev_file'],
+            filetype=30,
+            added_by=user,
+            content_object=e)
+        ev_file.save()
 
-            # trigger evaluation
-            e.task_id = start_eval(e.id)
-
-        except Exception, ex:
-            print 'shit happened during save'
-            print str(ex)
-            raise
-        else:
-            return e
+        # trigger evaluation
+        e.task_id = start_eval(e.id)
+        e.save()
+        return e
 
 
 class AlgorithmForm(forms.ModelForm):
     class Meta:
         model = Algorithm
-        #fields = ()
 
 
 class SupplementaryForm(forms.ModelForm):

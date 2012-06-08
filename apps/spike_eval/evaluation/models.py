@@ -47,6 +47,53 @@ class Algorithm(CommonInfo):
         return unicode(self.__str__())
 
 
+class EvaluationBatch(CommonInfo):
+    """set of evaluations from a submission"""
+
+    ## fields
+    description = models.TextField(
+        blank=True,
+        null=True)
+    access = models.IntegerField(
+        choices=ACCESS_CHOICES,
+        default=10)
+
+    algorithm = models.ForeignKey(
+        'Algorithm',
+        default=1)
+    benchmark = models.ForeignKey(
+        'benchmark.Benchmark')
+
+    ## special methods
+
+    def __str__(self):
+        return 'Evaluation Batch #%s' % self.pk
+
+    def __unicode__(self):
+        return unicode(self.__str__())
+
+    ## django special methods
+
+    @models.permalink
+    def get_absolute_url(self):
+        return 'e_batch', (), {'ebid':self.pk}
+
+    ## interface
+
+    def switch(self):
+        if self.access == 10:
+            self.access = 20
+        else:
+            self.access = 10
+        self.save()
+
+    def is_public(self):
+        return self.access == 20
+
+    def is_accessible(self, user):
+        return self.added_by == user or self.access == 20
+
+
 class Evaluation(CommonInfo):
     """single trial evaluation object
 
@@ -58,16 +105,6 @@ class Evaluation(CommonInfo):
 
     ## fields
 
-    algorithm = models.ForeignKey(
-        Algorithm,
-        default=1)
-    description = models.TextField(
-        blank=True,
-        null=True)
-    access = models.IntegerField(
-        choices=ACCESS_CHOICES,
-        default=10)
-
     task_state = models.IntegerField(
         choices=TASK_STATE_CHOICES,
         default=10)
@@ -78,17 +115,15 @@ class Evaluation(CommonInfo):
         blank=True,
         null=True)
 
-    owner = models.ForeignKey(
-        'auth.User',
-        related_name='evaluation owner',
-        blank=True)
+    evaluation_batch = models.ForeignKey(
+        'EvaluationBatch')
     trial = models.ForeignKey(
         'benchmark.Trial')
 
     ## special methods
 
     def __str__(self):
-        return '%s (#%s)' % (self.algorithm, self.pk)
+        return 'Evaluation #%s' % self.pk
 
     def __unicode__(self):
         return unicode(self.__str__())
@@ -112,24 +147,15 @@ class Evaluation(CommonInfo):
         except IndexError:
             return None
 
-    def switch(self):
-        if self.access == 10:
-            self.access = 20
-        else:
-            self.access = 10
-        self.save()
+    @property
+    def benchmark(self):
+        return self.trial.benchmark
 
     def processed(self):
         return self.task_state >= 20
 
-    def is_public(self):
-        return self.access == 20
-
     def is_accessible(self, user):
-        return self.owner == user or self.access == 20
-
-    def benchmark(self):
-        return self.trial.benchmark
+        return self.evaluation_batch.is_accessible(user)
 
     def summary(self):
         er = self.evaluationresults_set.all()

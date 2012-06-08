@@ -32,8 +32,8 @@
         <div class="controls right">
           <i class="icon-filter"></i>
           {% anchor algorithm__name Algorithm %}
-          {% anchor owner__username Author %}
-          {% anchor trial__benchmark__name Benchmark %}
+          {% anchor added_by__username Author %}
+          {% anchor benchmark__name Benchmark %}
           {% anchor date_created Date %}
         </div>
       </div>
@@ -43,49 +43,47 @@
       <thead>
       <tr>
         <th>{% trans "ID, Algorithm" %}</th>
+        <th>{% trans "Author" %}</th>
+        <th>{% trans "Date" %}</th>
         <th>{% trans "Benchmark" %}</th>
         <th>{% trans "Description" %}</th>
-        <th>{% trans "Author" %}</th>
-        <th>{% trans "Created" %}</th>
         <th>{% trans "Access" %}</th>
       </tr>
       </thead>
       <tbody>
       {% for e in e_list %}
-        {% with e.owner as uname %}
-          <tr>
-            <td>
-              <a href="{{ e.get_absolute_url }}">
-                <b style="{% zero_red e.access %}">
-                  #{{ e.id }}, {{ e.algorithm }}
-                </b>
-              </a>
-            </td>
-            <td>
-              <a href="{{ e.benchmark.get_absolute_url }}">
-                {{ e.benchmark.name }}</a>({{ e.trial.name }})
-            </td>
-            <td>
-              {% if e.description %}
-                <nobr>{{ e.description|truncate:100|escape }}</nobr>
-              {% endif %}
-            </td>
-            <td>
-              <nobr>
-                <i class="icon-user"></i>
-                <a href="{% url profile_detail uname %}"
-                 title="{{ uname }}">{{ uname }}</a>
-              </nobr>
-            </td>
-            <td>
-              <nobr><i class="icon-time"></i>{{ e.date_created|date }}</nobr>
-            </td>
-            <td>
-              <b style="{% state_color e.access %}">
-                {{ e.get_access_display }}</b>
-            </td>
-          </tr>
-        {% endwith %}
+        <tr>
+          <td>
+            <a href="{{ e.get_absolute_url }}">
+              <b style="{% zero_red e.access %}">
+                #{{ e.id }}, {{ e.algorithm }}
+              </b>
+            </a>
+          </td>
+          <td>
+            <nobr>
+              <i class="icon-user"></i>
+              <a href="{% url profile_detail e.added_by %}"
+               title="{{ e.added_by }}">{{ e.added_by }}</a>
+            </nobr>
+          </td>
+          <td>
+            <nobr><i class="icon-time"></i>{{ e.date_created|date }}</nobr>
+          </td>
+          <td>
+            <a href="{{ e.benchmark.get_absolute_url }}">
+              {{ e.benchmark.name }}</a>
+          </td>
+          <td>
+            {% if e.description %}
+              <nobr>{{ e.description|truncate:100|escape }}</nobr>
+            {% endif %}
+          </td>
+          <td>
+            <b style="{% state_color e.access %}">
+              {{ e.get_access_display }}</b>
+          </td>
+        </tr>
       {% endfor %}
       </tbody>
     </table>

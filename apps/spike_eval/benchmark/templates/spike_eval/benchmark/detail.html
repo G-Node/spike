@@ -127,7 +127,6 @@
           <th>{% trans "Created" %}</th>
           <th>{{ b.parameter }}</th>
           <th>{% trans "Description" %}</th>
-          <th>{% trans "Evaluations" %}</th>
           <th>{% trans "Download" %}</th>
           {% ifequal b.owner user %}
             <th>{% trans "Status" %}</th>
@@ -158,15 +157,6 @@
             <td>
               {{ t.description|truncate:100|escape }}
             </td>
-            <td>
-              {% if t.eval_count %}
-                <a href="{% url e_list bid=b.id tid=t.id %}">
-                  {% trans "view evaluations" %}({{ t.eval_count }})
-                </a>
-              {% else %}
-                {% trans "no evaluations yet" %}
-              {% endif %}
-            </td>
             {% with t.rd_file as f %}
               <td>
                 <nobr>
@@ -174,7 +164,7 @@
                     {{ f.name }} - {{ f.size|filesizeformat }}
                   </a>
                 </nobr>
-                {% if b.gt_access == 20 %}
+                {% if b.gt_access == 20 or user == b.owner %}
                   {% with t.gt_file as f %}
                     </br>
                     <nobr>
@@ -266,18 +256,13 @@
     {% if not user.is_authenticated %}
       <p>Please log in to submit for this Benchmark!</p>
     {% else %}
-      {% if e_forms %}
+      {% if b.trial_set %}
         <form method="POST" enctype="multipart/form-data"
-         class="form form-inline well">
+         class="form form-horizontal well">
           <fieldset>
-          <legend>Submit Evaluation</legend>
+            <legend>Submit Evaluation</legend>
             {% csrf_token %}
-            {% for e_form in e_forms %}
-              <div style="float: left;">
-                <legend>Trial: {{ e_form.trial }}</legend>
-                {{ e_form|as_bootstrap }}
-              </div>
-            {% endfor %}
+            {{ e_form|as_bootstrap }}
             <div class="form-actions" style="clear: both;">
               <input type="submit" class="btn btn-primary" name="e_submit"
                value="{% trans 'Submit Evaluations' %}"/>

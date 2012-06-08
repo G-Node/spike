@@ -1,7 +1,7 @@
 ##---IMPORTS
 
 from django.contrib import admin
-from .models import Algorithm, Evaluation
+from .models import Algorithm, Evaluation, EvaluationBatch
 
 ##---ADMINS
 
@@ -14,6 +14,11 @@ class EvaluationAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Evaluation, EvaluationAdmin)
+
+class EvaluationBatchAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(EvaluationBatch, EvaluationBatchAdmin)
 
 ##---MAIN
 

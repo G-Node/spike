@@ -4,7 +4,7 @@ from datetime import datetime
 from django.contrib import messages
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404
-from .models import Algorithm, Evaluation
+from .models import Algorithm, Evaluation, EvaluationBatch
 from ..forms import AlgorithmForm, SupplementaryForm
 from ..tasks import start_eval
 from ..util import render_to
@@ -25,20 +25,18 @@ def sort_er(a, b):
 ##---VIEWS
 
 @render_to('spike_eval/evaluation/list.html')
-def list(request, bid=None, tid=None):
+def list(request, bid=None):
     """renders a list of available evaluations"""
 
     # init and checks
-    e_list = Evaluation.objects.filter(access=20)
+    e_list = EvaluationBatch.objects.filter(access=20)
     if request.user.is_authenticated():
-        e_list = e_list | Evaluation.objects.filter(owner=request.user,
-                                                    access=10)
+        e_list = e_list | EvaluationBatch.objects.filter(
+            added_by=request.user, access=10)
 
     # filters
     if bid is not None:
-        e_list = e_list.filter(trial__benchmark=bid)
-    if tid is not None:
-        e_list = e_list.filter(trial=tid)
+        e_list = e_list.filter(benchmark=bid)
 
     # search terms
     search_terms = request.GET.get('search', '')
@@ -46,7 +44,7 @@ def list(request, bid=None, tid=None):
         e_list = (
             e_list.filter(algotithm__icontains=search_terms) |
             e_list.filter(description__icontains=search_terms) |
-            e_list.filter(owner__icontains=search_terms))
+            e_list.filter(added_by__icontains=search_terms))
 
     # response
     return {'e_list':e_list}
@@ -77,20 +75,43 @@ def detail(request, eid):
                 'Unrecoverable Processing-Error: idle time > 1day!'])
             e.save()
 
-    # post request
-    if request.method == 'POST':
-        if 'switch' in request.POST:
-            if e.owner == request.user:
-                e.switch()
-        elif 'restart' in request.POST:
-            # TODO: tidy up the old results
-            rval = start_eval(e.id)
-            messages.info(request, 'Evalulation is been restarted!')
+
 
     # response
     return {'e':e,
             'er':er,
             'image_results':image_results}
+
+
+@render_to('spike_eval/evaluation/batch.html')
+def batch(request, ebid):
+    """renders an evaluation batch"""
+
+    # init and checks
+    eb = get_object_or_404(EvaluationBatch.objects.all(), id=ebid)
+    if not eb.is_accessible(request.user):
+        return HttpResponseForbidden(
+            'You don\'t have rights to view this Evaluation.')
+
+    # post request
+    if request.method == 'POST':
+        if 'switch' in request.POST:
+            if eb.added_by == request.user:
+                eb.switch()
+                messages.success(request, 'switch successful!')
+        elif 'restart' in request.POST:
+            # TODO: tidy up the old results
+            print request.GET
+            print request.POST
+            eid = request.POST.get('restart_eid', None)
+            if eid:
+                start_eval(eid)
+                messages.info(request, 'Evalulation is been restarted!')
+            else:
+                messages.error(request, 'Evalulation restart failed!')
+
+    # response
+    return {'eb':eb}
 
 
 @render_to('spike_eval/evaluation/algo.html')

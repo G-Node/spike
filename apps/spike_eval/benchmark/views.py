@@ -13,8 +13,9 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from numpy import nan, nanmax, nanmin
 
+from ..evaluation.models import EvaluationBatch
 from ..forms import (
-    BenchmarkForm, TrialForm, EvaluationForm, SupplementaryForm)
+    BenchmarkForm, TrialForm, EvaluationSubmitForm, SupplementaryForm)
 from ..util import render_to
 
 ##---MODEL-REFS
@@ -71,7 +72,7 @@ def detail(request, bid):
     """renders details of a particular benchmark"""
 
     # init and checks
-    b_form = t_form = e_forms = s_form = None
+    b_form = t_form = e_form = s_form = None
     b = get_object_or_404(Benchmark.objects.all(), id=bid)
     if not b.is_accessible(request.user):
         return HttpResponseForbidden(
@@ -82,7 +83,6 @@ def detail(request, bid):
 
     # post request
     if request.method == 'POST':
-
         # edit & creation
         if request.user == b.owner:
             if 'b_edit' in request.POST:
@@ -114,17 +114,13 @@ def detail(request, bid):
 
         # user submission
         if 'e_submit' in request.POST:
-            e_forms = []
-            for t in t_list:
-                e_form = EvaluationForm(request.POST, request.FILES,
-                                        prefix='t-%s' % t.id)
-                e_forms.append(e_form)
-                if e_form.is_valid():
-                    e_form.save(user=request.user)
-                    messages.success(
-                        request, '%s: submission successful' % t.name)
-                else:
-                    messages.warning(request, '%s: no submission' % t.name)
+            e_form = EvaluationSubmitForm(
+                request.POST, request.FILES, benchmark=b)
+            if e_form.is_valid():
+                e_form.save(user=request.user)
+                messages.success(request, 'submission successful')
+            else:
+                messages.warning(request, 'submission failed')
 
 
     # build forms
@@ -134,8 +130,8 @@ def detail(request, bid):
         t_form = TrialForm(pv_label=b.parameter)
     if not s_form:
         s_form = SupplementaryForm()
-    if not e_forms:
-        e_forms = [EvaluationForm(prefix='t-%s' % t.id) for t in t_list]
+    if not e_form:
+        e_form = EvaluationSubmitForm(benchmark=b)
 
     # response
     return {'b':b,
@@ -143,7 +139,7 @@ def detail(request, bid):
             'b_form':b_form,
             't_form':t_form,
             's_form':s_form,
-            'e_forms':e_forms}
+            'e_form':e_form}
 
 
 @login_required

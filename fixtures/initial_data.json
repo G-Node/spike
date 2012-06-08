@@ -44,5 +44,17 @@
       "is_superuser":false,
       "is_staff"    :false
     }
+  },
+
+
+  {
+    "pk"    :1,
+    "model" :"evaluation.algorithm",
+    "fields":{
+      "name"       :"Undefined",
+      "version"    :"",
+      "added_by"   :2,
+      "description":"No algorithm was defined!"
+    }
   }
 ]
