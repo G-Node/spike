@@ -121,23 +121,23 @@ class EvaluationSubmitForm(forms.ModelForm):
         self.benchmark = kwargs.pop('benchmark')
         super(EvaluationSubmitForm, self).__init__(*args, **kwargs)
         self.sub_ids = []
-        self.sub_ommited = []
         for t in self.benchmark.trial_set.all():
             self.sub_ids.append('sub-t-%s' % t.id)
             self.fields['sub-t-%s' % t.id] = forms.FileField(
-                label='Upload Trial: %s' % t.name)
+                label='Upload Trial: %s' % t.name,
+                required=False)
 
     ## form interface
 
-    def clean(self):
-        cleaned_data = self.cleaned_data
-
-        if self._errors:
-            print self._errors
-            for sub_id in self.sub_ids:
-                if sub_id in self._errors:
-                    self.sub_ommited.append(self._errors.pop(sub_id))
-        return cleaned_data
+#    def clean(self):
+#        cleaned_data = self.cleaned_data
+#
+#        if self._errors:
+#            print self._errors
+#            for sub_id in self.sub_ids:
+#                if sub_id in self._errors:
+#                    self.sub_ommited.append(self._errors.pop(sub_id))
+#        return cleaned_data
 
     def save(self, *args, **kwargs):
         # init and checks
@@ -151,8 +151,9 @@ class EvaluationSubmitForm(forms.ModelForm):
 
         # evaluations
 
+        print self.cleaned_data
         for sub_id in self.sub_ids:
-            if sub_id in self.sub_ommited:
+            if not self.cleaned_data[sub_id]:
                 continue
 
             # evaluation
