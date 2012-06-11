@@ -1,16 +1,16 @@
 {% load i18n %}
 {% load spike_eval_tags %}
 
-<div class="well" style="float: right">
-  {% if e.processed %}
-    {% with e.summary_short as e_sum %}
-      <p>True positive: {{ e_sum.TP }}%</p>
-      <p>False positive: {{ e_sum.FP }}%</p>
-    {% endwith %}
-  {% else %}
-    <p>No evaluation results available yet.</p>
-  {% endif %}
-</div>
+{#<div class="well" style="float: right">#}
+{#  {% if e.processed %}#}
+{#    {% with e.summary_short as e_sum %}#}
+{#      <p>True positive: {{ e_sum.TP|floatformat:2 }}%</p>#}
+{#      <p>False positive: {{ e_sum.FP|floatformat:2 }}%</p>#}
+{#    {% endwith %}#}
+{#  {% else %}#}
+{#    <p>No evaluation results available yet.</p>#}
+{#  {% endif %}#}
+{#</div>#}
 
 <div class="jumbotron subnav">
   <dl class="dl-horizontal">

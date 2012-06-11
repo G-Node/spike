@@ -7,7 +7,7 @@
 
 {% block content %}
 
-  <div class="jumbotron subnav">
+  <div class="jumbotron subnav" xmlns="http://www.w3.org/1999/html">
     <h2>
       Evaluation Batch #{{ eb.id }}
       (<a href="{% url b_detail eb.benchmark.id %}">{{ eb.benchmark }}</a>)
@@ -71,13 +71,30 @@
     {% for e in eb.evaluation_set.all %}
       <div class="accordion-group">
         <div class="accordion-heading">
-          <a class="accordion-toggle" data-toggle="collapse"
-           data-parent="#accordion" href="#collapse{{ forloop.counter }}">
-            {{ eb }} - {{ e.trial }}
+
+          <a class="accordion-toggle"
+           href="#collapse{{ forloop.counter }}"
+           data-parent="#accordion" data-toggle="collapse">
+            <p class="pull-left">{{ eb }} - {{ e.trial }}</p>
+
+            <p class="accordion-heading pull-right">
+              {% if e.processed %}
+
+                {% with e.summary_short as e_sum %}
+                  True positive: {{ e_sum.TP|floatformat:2 }}%
+                  False positive: {{ e_sum.FP|floatformat:2 }}%
+                {% endwith %}
+              {% else %}
+                No evaluation results available yet.
+              {% endif %}
+            </p>
           </a>
+
+          <div class="clearfix"></div>
         </div>
         <div id="collapse{{ forloop.counter }}"
-         class="accordion-body collapse" style="height: 0px; ">
+         class="accordion-body collapse
+         {% if not forloop.counter0 %}in{% endif %}">
           <div class="accordion-inner">
             {% include "spike_eval/evaluation/detail.html" %}
           </div>
