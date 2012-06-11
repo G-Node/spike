@@ -5,7 +5,7 @@
 *do this as root*
 
 These installs will need root or sudo permission. Some of the packages might
-also be installed already install by:
+also be installed already. To install use:
 
     aptitude install <package-name>
 
@@ -20,16 +20,16 @@ also be installed already install by:
 - python-scipy
 - python-matplotlib
 - python-tables
-- python-imaging
 - liblzo2-2
+- python-imaging
 - python-mdp
 
 or in one command:
 
-    aptitude install git mysql-server-5.1 rabbitmq-server python-virtualenv python-mysqldb python-numpy python-scipy python-matplotlib python-tables python-imaging liblzo2-2 python-mdp
+    aptitude install git mysql-server-5.1 rabbitmq-server python-virtualenv python-mysqldb python-numpy python-scipy python-matplotlib python-tables liblzo2-2 python-imaging python-mdp
 
 mysql-server-5.1 will promt you to set the mysql root password,
-liblzo2-2 is required for python-tables.
+liblzo2-2 is an unmet dependency for python-tables.
 
 ## 2. cloning the application sources
 
@@ -46,8 +46,7 @@ liblzo2-2 is required for python-tables.
 *do this as www-data*
 
 We need a place to put the application sources. We will place the
-application in /opt/spike, this will also be where the apache will be servering
-the website from.
+application in /opt/spike. The apache2 will serve the website from here.
 
     cd /opt
     git clone git://github.com/G-Node/spike.git spike
@@ -80,13 +79,14 @@ using pip as the package manager.
 
     mysql -p
 
+Chose a databse name and database user:password. We use spike:spike@spike
+here.
+
 in mysql console do
 
     CREATE DATABASE spike;
     USE spike;
     GRANT ALL PRIVILEGES ON spike.* TO spike@"%" IDENTIFIED BY "spike"
-
-you can adjust the user and password ofc, we use spike:spike here
 
 ### 3.2 configure settings_locale.py
 *do this as www-data*
