@@ -83,8 +83,7 @@
   </section>
 
   {% for e in eb.evaluation_set.all %}
-    <section>
-      <h2 id="trial-id-{{ e.id }}">Evaluation {{ e.name }}</h2>
+    <section id="trial-id-{{ e.id }}">
       {% include "spike_eval/evaluation/detail.html" %}
     </section>
   {% endfor %}
