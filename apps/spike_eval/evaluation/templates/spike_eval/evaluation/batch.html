@@ -62,7 +62,7 @@
            value="{% trans "Unpublish Evaluation" %}"
          {% else %}
            value="{% trans "Publish Evalulation" %}"
-         {% endif %}"/>
+         {% endif %}/>
       </form>
     {% endifequal %}
   {% endif %}
@@ -93,8 +93,11 @@
           <div class="clearfix"></div>
         </div>
         <div id="collapse{{ forloop.counter }}"
-         class="accordion-body collapse
-         {% if not forloop.counter0 %}in{% endif %}">
+         class="accordion-body collapse">
+          {% comment %}
+            use this to have the first trial opend initially
+            {% if not forloop.counter0 %}in{% endif %}">
+          {% endcomment %}
           <div class="accordion-inner">
             {% include "spike_eval/evaluation/detail.html" %}
           </div>
