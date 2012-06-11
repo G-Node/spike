@@ -11,6 +11,7 @@
 {% block nav %}
   <ul class="nav">{% spaceless %}
     {# spike_eval #}
+    <li class="divider-vertical"></li>
     <li id="tab_home">
       <a href="{% url home %}">{% trans "Home" %}</a>
     </li>
@@ -22,6 +23,7 @@
     </li>
     {# profile and notices #}
     {% if user.is_authenticated %}
+      <li class="divider-vertical"></li>
       <li id="tab_profile">
         <a href="{% url profile_detail user.username %}">
           {% trans "Profile" %}</a>
@@ -42,6 +44,15 @@
 
 {% block footer %}
   {% include "_footer.html" %}
+{% endblock %}
+
+{% block body %}
+  <header class="jumbotron subhead" id="header">
+    <h1>{% block heading %}{% endblock %}</h1>
+    <hr>
+    {% block subnav %}{% endblock %}
+  </header>
+  {% block content %}{% endblock %}
 {% endblock %}
 
 {% block extra_body_base %}

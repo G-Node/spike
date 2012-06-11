@@ -35,7 +35,9 @@
   {% endblock %}
 </head>
 
-<body class="{% block body_class %}{% endblock %}" id="{% block body_id %}{% endblock %}">
+<body class="{% block body_class %}{% endblock %}"
+ id="{% block body_id %}{% endblock %}" data-spy="scroll"
+ data-target="#subnav" data-offset="20">
 
 {% block topbar_base %}
   <div class="navbar {% block navbar_class %}navbar-fixed-top{% endblock %}">
@@ -61,31 +63,25 @@
   </div>
 {% endblock %}
 
-{% block header_base %}
-  <div id="header">
-    <div class="inner">
-      <div class="container">
-        {% block header %}{% endblock %}
-      </div>
-    </div>
-  </div>
-{% endblock %}
-
 {% block body_base %}
   <div class="container">
+    {% block header_base %}
+      <div id="header">
+        <div class="inner">
+          <div class="container">
+            {% block header %}{% endblock %}
+          </div>
+        </div>
+      </div>
+    {% endblock %}
     {% include "_messages.html" %}
     {% include "_signup_block.html" %}
     {% block body %}{% endblock %}
-  </div>
-{% endblock %}
-
-{% block footer_base %}
-  <div id="footer">
-    <div class="inner">
-      <div class="container">
+    {% block footer_base %}
+      <footer class="footer">
         {% block footer %}{% endblock %}
-      </div>
-    </div>
+      </footer>
+    {% endblock %}
   </div>
 {% endblock %}
 

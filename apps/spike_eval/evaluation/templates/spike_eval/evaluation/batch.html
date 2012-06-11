@@ -5,9 +5,24 @@
 
 {% block head_title %}{E:{{ eb.id }}}&nbsp;{{ eb.benchmark }}{% endblock %}
 
+{% block subnav %}
+  <div class="subnav subnav-fixed" id="subnav">
+    <ul class="nav nav-pills">
+      <li>
+        <a href="#top">{{ eb }}</a>
+      </li>
+      {% for e in eb.evaluation_set.all %}
+        <li>
+          <a href="#trial-id-{{ e.id }}">Trial: {{ e.trial }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}
+
 {% block content %}
 
-  <div class="jumbotron subnav" xmlns="http://www.w3.org/1999/html">
+  <section id="top">
     <h2>
       Evaluation Batch #{{ eb.id }}
       (<a href="{% url b_detail eb.benchmark.id %}">{{ eb.benchmark }}</a>)
@@ -50,60 +65,28 @@
           {{ eb.date_created|date }}</nobr>
       </dd>
     </dl>
-  </div>
 
-  {% if user.is_authenticated %}
-    {% ifequal eb.added_by user %}
-      <form class="form well" method="POST">
-        {% csrf_token %}
-        <span class="label">Actions:</span>
-        <input type="submit" class="btn btn-mini" name="switch"
-         {% if e.is_public %}
-           value="{% trans "Unpublish Evaluation" %}"
-         {% else %}
-           value="{% trans "Publish Evalulation" %}"
-         {% endif %}/>
-      </form>
-    {% endifequal %}
-  {% endif %}
+    {% if user.is_authenticated %}
+      {% ifequal eb.added_by user %}
+        <form class="form well" method="POST">
+          {% csrf_token %}
+          <span class="label">Actions:</span>
+          <input type="submit" class="btn btn-mini" name="switch"
+           {% if e.is_public %}
+             value="{% trans "Unpublish Evaluation" %}"
+           {% else %}
+             value="{% trans "Publish Evalulation" %}"
+           {% endif %}/>
+        </form>
+      {% endifequal %}
+    {% endif %}
+  </section>
 
-  <div class="accordion" id="accordion">
-    {% for e in eb.evaluation_set.all %}
-      <div class="accordion-group">
-        <div class="accordion-heading">
-
-          <a class="accordion-toggle"
-           href="#collapse{{ forloop.counter }}"
-           data-parent="#accordion" data-toggle="collapse">
-            <p class="pull-left">{{ eb }} - {{ e.trial }}</p>
-
-            <p class="accordion-heading pull-right">
-              {% if e.processed %}
-
-                {% with e.summary_short as e_sum %}
-                  True positive: {{ e_sum.TP|floatformat:2 }}%
-                  False positive: {{ e_sum.FP|floatformat:2 }}%
-                {% endwith %}
-              {% else %}
-                No evaluation results available yet.
-              {% endif %}
-            </p>
-          </a>
-
-          <div class="clearfix"></div>
-        </div>
-        <div id="collapse{{ forloop.counter }}"
-         class="accordion-body collapse">
-          {% comment %}
-            use this to have the first trial opend initially
-            {% if not forloop.counter0 %}in{% endif %}">
-          {% endcomment %}
-          <div class="accordion-inner">
-            {% include "spike_eval/evaluation/detail.html" %}
-          </div>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
+  {% for e in eb.evaluation_set.all %}
+    <section>
+      <h2 id="trial-id-{{ e.id }}">Evaluation {{ e.name }}</h2>
+      {% include "spike_eval/evaluation/detail.html" %}
+    </section>
+  {% endfor %}
 
 {% endblock %}
