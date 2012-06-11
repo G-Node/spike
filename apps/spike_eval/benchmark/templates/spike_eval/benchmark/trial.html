@@ -7,19 +7,17 @@
 {% block head_title %}{T:{{ t.id }}}&nbsp;{{ t.name }}{% endblock %}
 
 {% block content %}
-  <header class="jumbotron subnav">
+  <header>
     <h2>
       <a href="{% url b_detail bid=t.benchmark.id %}">
-        {{ t.benchmark.name }}
-      </a>
-      |&nbsp;{{ t.name }}
+        "{{ t.benchmark.name }}"</a>&nbsp;|&nbsp;{{ t.name }}
     </h2>
     <dl class="dl-horizontal">
       <dt>
         <strong>Description:</strong>
       </dt>
       <dd>
-        {{ t.description }}
+        {{ t.description|default:"no description" }}
       </dd>
       <dt>
         <strong>Date Created:</strong>
@@ -44,6 +42,8 @@
       <dd>
         {% for tag in t.tags.all %}
           <i class="icon-tag"></i>{{ tag }}&nbsp;
+        {% empty %}
+          &nbsp;
         {% endfor %}
       </dd>
     </dl>
