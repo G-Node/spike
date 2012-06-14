@@ -56,54 +56,52 @@
     </dl>
   </header>
 
-  {% if user.is_authenticated %}
-    {% ifequal b.owner user %}
-      <form class="form well">
-        <span class="label">Actions:</span>
-        <a id="edit-benchmark-toggle" class="btn btn-mini">
-          {% trans "Edit Benchmark" %}</a>
-        <a id="create-trial-toggle" class="btn btn-mini">
-          {% trans "Create Trial" %}</a>
-        <a id="create-suppl-toggle" class="btn btn-mini">
-          {% trans "Create Supplementary" %}</a>
-      </form>
-      <form id="edit-benchmark" method="POST" style="display:none"
-       class="form form-horizontal well">
-        <fieldset>
-          <legend>Edit Benchmark</legend>
-          {% csrf_token %}
-          {{ b_form|as_bootstrap }}
-          <div class="form-actions">
-            <input type="submit" class="btn btn-primary" name="b_edit"
-             value="{% trans 'Edit Benchmark' %}"/>
-          </div>
-        </fieldset>
-      </form>
-      <form id="create-trial" method="POST" enctype="multipart/form-data"
-       style="display:none" class="form form-horizontal well">
-        <fieldset>
-          <legend>Create Trial</legend>
-          {% csrf_token %}
-          {{ t_form|as_bootstrap }}
-          <div class="form-actions">
-            <input type="submit" class="btn btn-primary" name="t_create"
-             value="{% trans 'Create Trial' %}"/>
-          </div>
-        </fieldset>
-      </form>
-      <form id="create-suppl" method="POST" enctype="multipart/form-data"
-       style="display:none" class="form form-horizontal well">
-        <fieldset>
-          <legend>Create Supplementary</legend>
-          {% csrf_token %}
-          {{ s_form|as_bootstrap }}
-          <div class="form-actions">
-            <input type="submit" class="btn btn-primary" name="s_create"
-             value="{% trans 'Create Supplementary' %}"/>
-          </div>
-        </fieldset>
-      </form>
-    {% endifequal %}
+  {% if b|is_editable:user %}
+    <form class="form well">
+      <span class="label">Actions:</span>
+      <a id="edit-benchmark-toggle" class="btn btn-mini">
+        {% trans "Edit Benchmark" %}</a>
+      <a id="create-trial-toggle" class="btn btn-mini">
+        {% trans "Create Trial" %}</a>
+      <a id="create-suppl-toggle" class="btn btn-mini">
+        {% trans "Create Supplementary" %}</a>
+    </form>
+    <form id="edit-benchmark" method="POST" style="display:none"
+     class="form form-horizontal well">
+      <fieldset>
+        <legend>Edit Benchmark</legend>
+        {% csrf_token %}
+        {{ b_form|as_bootstrap }}
+        <div class="form-actions">
+          <input type="submit" class="btn btn-primary" name="b_edit"
+           value="{% trans 'Edit Benchmark' %}"/>
+        </div>
+      </fieldset>
+    </form>
+    <form id="create-trial" method="POST" enctype="multipart/form-data"
+     style="display:none" class="form form-horizontal well">
+      <fieldset>
+        <legend>Create Trial</legend>
+        {% csrf_token %}
+        {{ t_form|as_bootstrap }}
+        <div class="form-actions">
+          <input type="submit" class="btn btn-primary" name="t_create"
+           value="{% trans 'Create Trial' %}"/>
+        </div>
+      </fieldset>
+    </form>
+    <form id="create-suppl" method="POST" enctype="multipart/form-data"
+     style="display:none" class="form form-horizontal well">
+      <fieldset>
+        <legend>Create Supplementary</legend>
+        {% csrf_token %}
+        {{ s_form|as_bootstrap }}
+        <div class="form-actions">
+          <input type="submit" class="btn btn-primary" name="s_create"
+           value="{% trans 'Create Supplementary' %}"/>
+        </div>
+      </fieldset>
+    </form>
   {% endif %}
 
   <div>
@@ -132,13 +130,13 @@
         {% for t in t_list %}
           <tr>
             <td>
-              {% ifequal b.owner user %}
+              {% if b|is_editable:user %}
                 <a href="{{ t.get_absolute_url }}">
-              {% endifequal %}
+              {% endif %}
               <nobr><strong>{{ t }}</strong></nobr>
-              {% ifequal b.owner user %}
+              {% if b|is_editable:user %}
                 </a>
-              {% endifequal %}
+              {% endif %}
             </td>
             <td>
               <nobr>
