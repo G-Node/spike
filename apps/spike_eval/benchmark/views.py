@@ -26,7 +26,6 @@ Datafile = models.get_model('datafile', 'datafile')
 
 ##---VIEWS
 
-#@login_required
 @render_to('spike_eval/benchmark/list.html')
 def list(request):
     """renders a list of available benchmarks"""
@@ -48,9 +47,14 @@ def list(request):
 
     # benchmark list
     b_list = Benchmark.objects.exclude(state__in=[10, 30])
+    b_list_self = None
     if request.user.is_authenticated():
-        b_list = b_list | Benchmark.objects.filter(
-            owner=request.user, state__in=[10, 30])
+        if not request.user.is_superuser:
+            b_list |= Benchmark.objects.filter(
+                owner=request.user, state__in=[10, 30])
+        else:
+            b_list = Benchmark.objects.all()
+        b_list_self = Benchmark.objects.filter(owner=request.user)
 
     # search terms
     search_terms = request.GET.get('search', '')
@@ -63,6 +67,7 @@ def list(request):
 
     # response
     return {'b_list':b_list,
+            'b_list_self':b_list_self,
             'b_form':b_form,
             'search_terms':search_terms}
 
