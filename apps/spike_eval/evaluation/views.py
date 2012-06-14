@@ -28,26 +28,35 @@ def sort_er(a, b):
 def list(request, bid=None):
     """renders a list of available evaluations"""
 
-    # init and checks
+    # evaluation batch list
     e_list = EvaluationBatch.objects.filter(access=20)
+    e_list_self = None
     if request.user.is_authenticated():
-        e_list = e_list | EvaluationBatch.objects.filter(
-            added_by=request.user, access=10)
+        if not request.user.is_superuser:
+            e_list |= EvaluationBatch.objects.filter(
+                added_by=request.user, access=10)
+        else:
+            e_list = EvaluationBatch.objects.all()
+        e_list_self = EvaluationBatch.objects.filter(added_by=request.user)
 
     # filters
     if bid is not None:
         e_list = e_list.filter(benchmark=bid)
+        e_list_self = e_list_self.filter(benchmark=bid)
 
     # search terms
     search_terms = request.GET.get('search', '')
     if search_terms:
         e_list = (
-            e_list.filter(algotithm__icontains=search_terms) |
+            e_list.filter(algorithm__icontains=search_terms) |
             e_list.filter(description__icontains=search_terms) |
-            e_list.filter(added_by__icontains=search_terms))
+            e_list.filter(added_by__icontains=search_terms) |
+            e_list.filter(benchmark__icontains=search_terms))
 
     # response
-    return {'e_list':e_list}
+    return {'e_list':e_list,
+            'e_list_self':e_list_self,
+            'search_terms':search_terms}
 
 
 @render_to('spike_eval/evaluation/detail.html')

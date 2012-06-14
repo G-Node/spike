@@ -128,4 +128,7 @@ def icn_time(obj):
     date_str = 'unknown'
     if hasattr(obj, 'date_created'):
         date_str = date(obj.date_created)
-    return '<nobr><i class="icon-time"></i>&nbsp;%s</nobr>' % date_str
+    return """<nobr>
+  <i class="icon-time"></i>
+  <span>%s</span>
+</nobr>""" % date_str

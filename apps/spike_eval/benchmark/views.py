@@ -66,9 +66,9 @@ def list(request):
             )
 
     # response
-    return {'b_list':b_list,
+    return {'b_form':b_form,
+            'b_list':b_list,
             'b_list_self':b_list_self,
-            'b_form':b_form,
             'search_terms':search_terms}
 
 #@login_required

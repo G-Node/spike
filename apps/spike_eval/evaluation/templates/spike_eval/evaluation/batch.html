@@ -9,7 +9,7 @@
   <div class="subnav subnav-fixed" id="subnav">
     <ul class="nav nav-pills">
       <li>
-        <a href="#top">{{ eb }}</a>
+        <a href="#batch">{{ eb }}</a>
       </li>
       {% for e in eb.evaluation_set.all %}
         <li>
@@ -22,22 +22,24 @@
 
 {% block content %}
 
-  <section id="top">
+  <section id="batch">
     <h2>
       Evaluation Batch #{{ eb.id }}
-      (<a href="{% url b_detail eb.benchmark.id %}">{{ eb.benchmark }}</a>)
       {% if eb.is_public %}- published{% endif %}
     </h2>
     <dl class="dl-horizontal">
       <dt>
+        <strong>Benchmark:</strong>
+      </dt>
+      <dd>
+        <a href="{% url b_detail bid=eb.benchmark.id %}">
+          {{ eb.benchmark.name }}</a>
+      </dd>
+      <dt>
         <strong>Description:</strong>
       </dt>
       <dd>
-        {% if not eb.description %}
-          None
-        {% else %}
-          {{ eb.description }}
-        {% endif %}
+        {{ eb.description|default:"no description" }}
       </dd>
       <dt>
         <strong>Algorithm:</strong>
@@ -49,36 +51,27 @@
         <strong>Author:</strong>
       </dt>
       <dd>
-        <nobr>
-          <i class=" icon-user"></i>
-          <a href="{% url profile_detail eb.added_by.username %}">
-            {{ eb.added_by.username }}
-          </a>
-          {% ifequal eb.added_by request.user %}(you){% endifequal %}
-        </nobr>
+        {% icn_profile eb %}
       </dd>
       <dt>
         <strong>Date Created:</strong>
       </dt>
       <dd>
-        <nobr><i class="icon-time"></i>
-          {{ eb.date_created|date }}</nobr>
+        {% icn_time eb %}
       </dd>
     </dl>
 
-    {% if user.is_authenticated %}
-      {% ifequal eb.added_by user %}
-        <form class="form well" method="POST">
-          {% csrf_token %}
-          <span class="label">Actions:</span>
-          <input type="submit" class="btn btn-mini" name="switch"
-           {% if e.is_public %}
-             value="{% trans "Unpublish Evaluation" %}"
-           {% else %}
-             value="{% trans "Publish Evalulation" %}"
-           {% endif %}/>
-        </form>
-      {% endifequal %}
+    {% if eb|is_editable:user %}
+      <form class="form well" method="POST">
+        {% csrf_token %}
+        <span class="label">Actions:</span>
+        <input type="submit" class="btn btn-mini" name="eb_switch"
+         {% if e.is_public %}
+           value="{% trans "Unpublish Evaluation" %}"
+         {% else %}
+           value="{% trans "Publish Evalulation" %}"
+         {% endif %}/>
+      </form>
     {% endif %}
   </section>
 
