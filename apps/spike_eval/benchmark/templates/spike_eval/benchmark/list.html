@@ -40,7 +40,8 @@
 
   {% if b_list_self %}
     <div>
-      <h3>Your Benchmarks</h3>
+      <h3>Benchmark List ({% icn_profile user %})
+      </h3>
       {% autosort b_list_self %}
       {% autopaginate b_list_self 20 %}
       <table class="table table-striped table-condensed">
@@ -63,24 +64,21 @@
                   <span style="color: green">{{ b.name }}</span>
                 {% else %}
                   <span style="color: red">
+                  <nobr>
                     <i class="icon-lock"></i>
                     {% if b.state == 30 %}<strike>{% endif %}
-                    <nobr><strong>{{ b.name }}</strong></nobr>
+                    <strong>{{ b.name }}</strong>
                     {% if b.state == 30 %}</strike>{% endif %}
+                  </nobr>
                   </span>
                 {% endif %}
               </a>
             </td>
             <td>
-              <i class=" icon-user"></i>
-              <a href="{% url profile_detail b.owner.username %}"
-               title="{{ b.owner.username }}">
-                {{ b.owner.username }}
-              </a>
+              {% icn_profile b %}
             </td>
             <td>
-              <nobr><i class="icon-time"></i>
-                {{ b.date_created|date }}</nobr>
+              {% icn_time b %}
             </td>
             <td>{{ b.description|truncatewords:15|escape }}</td>
             <td>
@@ -88,20 +86,18 @@
                 <a href="{{ b.get_absolute_url }}" class="btn btn-mini">
                   {% trans "download" %}
                 </a>
-                {% if request.user.is_authenticated %}
-                  {% ifequal b.owner request.user %}
-                    {% if b.state != 30 %}
-                      <a href="{% url b_archive b.id %}" class="btn
+                {% if b|is_editable:user %}
+                  {% if b.state != 30 %}
+                    <a href="{% url b_archive b.id %}" class="btn
                         btn-mini">
-                        {% trans "archive" %}
-                      </a>
-                    {% else %}
-                      <a href="{% url b_resurrect b.id %}" class="btn
+                      {% trans "archive" %}
+                    </a>
+                  {% else %}
+                    <a href="{% url b_resurrect b.id %}" class="btn
                       btn-mini">
-                        {% trans "resurrect" %}
-                      </a>
-                    {% endif %}
-                  {% endifequal %}
+                      {% trans "resurrect" %}
+                    </a>
+                  {% endif %}
                 {% endif %}
                 <a href="{% url b_summary b.id %}" class="btn btn-mini">
                   {% trans "summary" %}

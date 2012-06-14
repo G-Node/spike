@@ -13,10 +13,6 @@ from ..util import ACCESS_CHOICES
 Datafile = models.get_model('datafile', 'datafile')
 Evaluation = models.get_model('evaluation', 'evaluation')
 
-##---CONSTANTS
-
-TAG_NAMESPACE = 'Benchmark Tags'
-
 ##---MODELS
 
 class Benchmark(CommonInfo):
@@ -68,7 +64,7 @@ class Benchmark(CommonInfo):
         help_text='The user associated with this Benchmark.')
 
     tags = TaggableManager(
-        _(TAG_NAMESPACE),
+        _('Benchmark Tags'),
         help_text='A comma-separated list of tags classifying the Benchmark.')
 
     ## special methods

@@ -1,17 +1,26 @@
 ##---IMPORTS
 
 from django import template
+from django.template.defaultfilters import date
+from django.db import models
+from django.core.urlresolvers import reverse
 
 register = template.Library()
+
+##---CONSTANTS
+
+User = models.get_model('auth', 'user')
 
 ##---FILTERS
 
 @register.filter
-def truncate(value, size):
-    if len(value) > size and size > 3:
-        return ''.join([value[:(size - 3)], '...'])
-    else:
-        return value[:size]
+def is_editable(obj, user):
+    if user.is_superuser:
+        return True
+    if hasattr(obj, 'owner'):
+        return obj.owner == user
+    if hasattr(obj, 'added_by'):
+        user_good = obj.owner == user
 
 
 @register.filter
@@ -95,3 +104,27 @@ def clear_search_url(request):
         return "%s?%s" % (request.path, getvars.urlencode())
     else:
         return request.path
+
+
+@register.simple_tag
+def icn_profile(obj):
+    if isinstance(obj, User):
+        user = obj
+    else:
+        if hasattr(obj, 'owner'):
+            user = obj.owner
+        elif hasattr(obj, 'added_by'):
+            user = obj.added_by
+        else:
+            user = User.objects.get(id=2)
+    return """<nobr>
+  <i class="icon-user"></i><a href="%s" title="%s">&nbsp;%s</a>
+</nobr>""" % (user.get_absolute_url(), user.username, user.username)
+
+
+@register.simple_tag
+def icn_time(obj):
+    date_str = 'unknown'
+    if hasattr(obj, 'date_created'):
+        date_str = date(obj.date_created)
+    return '<nobr><i class="icon-time"></i>&nbsp;%s</nobr>' % date_str
