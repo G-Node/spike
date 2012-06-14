@@ -79,7 +79,7 @@
             <td>
               {% icn_time b %}
             </td>
-            <td>{{ b.description|truncatewords:15|escape }}</td>
+            <td>{{ b.description|truncatewords:11|escape }}</td>
             <td>
               <div class="btn-group">
                 <a href="{{ b.get_absolute_url }}" class="btn btn-mini">
@@ -183,7 +183,7 @@
             <td>
               {% icn_time b %}
             </td>
-            <td>{{ b.description|truncatewords:15|escape }}</td>
+            <td>{{ b.description|truncatewords:11|escape }}</td>
             <td>
               <div class="btn-group">
                 <a href="{{ b.get_absolute_url }}" class="btn btn-mini">
