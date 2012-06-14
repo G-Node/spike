@@ -109,7 +109,10 @@ class Benchmark(CommonInfo):
         return self.state == 20
 
     def is_accessible(self, user):
-        return self.owner == user or self.is_active()
+        return self.is_active() or self.is_editable(user)
+
+    def is_editable(self, user):
+        return self.owner == user or user.is_superuser
 
     def archive(self):
         self.state = 30
