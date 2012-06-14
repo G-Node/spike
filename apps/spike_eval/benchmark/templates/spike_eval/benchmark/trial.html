@@ -9,10 +9,16 @@
 {% block content %}
   <header>
     <h2>
-      <a href="{% url b_detail bid=t.benchmark.id %}">
-        "{{ t.benchmark.name }}"</a>&nbsp;|&nbsp;{{ t.name }}
+      {{ t.benchmark.name }}&nbsp;::&nbsp;{{ t.name }}
     </h2>
     <dl class="dl-horizontal">
+      <dt>
+        <strong>Benchmark:</strong>
+      </dt>
+      <dd>
+        <a href="{% url b_detail bid=t.benchmark.id %}">
+          {{ t.benchmark.name }}</a>
+      </dd>
       <dt>
         <strong>Description:</strong>
       </dt>
@@ -22,8 +28,9 @@
       <dt>
         <strong>Date Created:</strong>
       </dt>
-      <dd><i class="icon-time"></i>
-        {{ t.date_created|date }}</dd>
+      <dd>
+        {% icn_time t %}
+      </dd>
       <dt>
         <strong>Status:</strong>
       </dt>
