@@ -116,6 +116,9 @@
             <td>{{ b.description|truncate:100|escape }}</td>
             <td>
               <div class="btn-group">
+                <a href="{{ b.get_absolute_url }}" class="btn btn-mini">
+                  {% trans "download" %}
+                </a>
                 {% if request.user.is_authenticated %}
                   {% ifequal b.owner request.user %}
                     {% if b.state != 30 %}
