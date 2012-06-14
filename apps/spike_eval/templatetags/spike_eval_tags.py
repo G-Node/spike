@@ -15,6 +15,18 @@ def truncate(value, size):
 
 
 @register.filter
+def strip(value):
+    try:
+        print "strip ok: type(%s)" % value.__class__.__name__
+        print value, value.strip()
+        return value.strip()
+    except:
+        print "strip error: type(%s)" % value.__class__.__name__
+        print value
+        return value
+
+
+@register.filter
 def in_group(user, groups):
     """Returns a boolean if the user is in the given group, or comma-separated
     list of groups.

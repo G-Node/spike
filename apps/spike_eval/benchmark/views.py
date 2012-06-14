@@ -13,9 +13,9 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from numpy import nan, nanmax, nanmin
 
-from ..evaluation.models import EvaluationBatch
 from ..forms import (
     BenchmarkForm, TrialForm, EvaluationSubmitForm, SupplementaryForm)
+from ..tasks import validate_groundtruth_file, validate_rawdata_file
 from ..util import render_to
 
 ##---MODEL-REFS
@@ -261,26 +261,28 @@ def trial(request, tid):
     # post request
     if request.method == 'POST':
         action = request.POST.get('action')
-        if action == 't_edit':
+        if 't_edit' in request.POST:
             t_form = TrialForm(request.POST, instance=t)
             if t_form.is_valid():
                 t_form.save()
                 messages.success(request, 'Trial edit successful')
             else:
                 messages.warning(request, 'Trial edit failed!')
-        elif action == 't_delete':
+        elif 't_delete' in request.POST:
             t.delete()
             messages.success(
                 request, 'Trial deleted: %s' % t.name)
             return redirect(t.benchmark)
-        elif action == 't_create':
-            t_form = TrialForm(request.POST, request.FILES)
-            if t_form.is_valid():
-                t_new = t_form.save()
-                messages.success(
-                    request, 'Version creation successful: %s' % t_new.name)
+        elif 't_validate' in request.POST:
+            try:
+                if t.rd_file:
+                    validate_rawdata_file(t.rd_file.id)
+                if t.gt_file:
+                    validate_groundtruth_file(t.gt_file.id)
+            except:
+                messages.error(request, 'trial validation failed!')
             else:
-                messages.warning(request, 'Version creation failed!')
+                messages.info(request, 'trial validation scheduled')
 
     # create forms
     if not t_form:

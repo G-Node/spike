@@ -36,16 +36,6 @@
           <strong style="color: red">INVALID</strong>
         {% endif %}
       </dd>
-      <dt>
-        <strong>Tags:</strong>
-      </dt>
-      <dd>
-        {% for tag in t.tags.all %}
-          <i class="icon-tag"></i>{{ tag }}&nbsp;
-        {% empty %}
-          &nbsp;
-        {% endfor %}
-      </dd>
     </dl>
   </header>
 
@@ -54,9 +44,11 @@
     {% csrf_token %}
     <a id="edit-trial-toggle"
      class="btn btn-mini">{% trans "Edit Trial" %}</a>
-    <input type="hidden" name="action" value="t_delete"/>
-    <input type="submit" class="btn btn-mini"
+    <input type="submit" class="btn btn-mini" name="t_delete"
      value="{% trans "Delete Trial" %}"/>
+    <input type="submit" class="btn btn-mini" name="t_validate"
+     value="{% trans "Validate Trial" %}"/>
+
   </form>
   <form id="edit-trial" method="POST" style="display:none"
    class="form form-horizontal well">
@@ -70,6 +62,27 @@
       </div>
     </fieldset>
   </form>
+
+  <div class="clearfix">
+    <h3>Validation Logs</h3>
+
+    <div class="pull-left">
+      <strong>{% trans "Rawdata File" %}</strong>
+      {% if t.rd_file %}
+        <pre>{{ t.rd_file.task_log|default:"no log!"|strip }}</pre>
+      {% else %}
+        <pre>no rd_file!</pre>
+      {% endif %}
+    </div>
+    <div class="pull-left">
+      <strong>{% trans "Groundtruth File" %}</strong>
+      {% if t.gt_file %}
+        <pre>{{ t.gt_file.task_log|default:"no log!"|strip }}</pre>
+      {% else %}
+        <pre>no gt_file!</pre>
+      {% endif %}
+    </div>
+  </div>
 {% endblock %}
 
 {% block extra_body %}
