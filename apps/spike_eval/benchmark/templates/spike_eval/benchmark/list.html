@@ -130,7 +130,7 @@
       {% autopaginate b_list 20 %}
       <form class="form" method="GET">
         <div class="control-group clearfix">
-          <div class="controls pull-left">
+          <div class="controls">
             <div class="input-prepend input-append">
               <span class="add-on"><i class="icon-search"></i></span>
               <input type="text" name="search" value="{{ search_terms }}"
@@ -141,7 +141,7 @@
               {% endif %}
             </div>
           </div>
-          <div class="controls pull-right">
+          <div class="controls">
             <i class="icon-filter"></i>
             {% anchor owner__username Author %}
             {% anchor date_created Date %}
@@ -179,15 +179,10 @@
               </a>
             </td>
             <td>
-              <i class=" icon-user"></i>
-              <a href="{% url profile_detail b.owner.username %}"
-               title="{{ b.owner.username }}">
-                {{ b.owner.username }}
-              </a>
+              {% icn_profile b %}
             </td>
             <td>
-              <nobr><i class="icon-time"></i>
-                {{ b.date_created|date }}</nobr>
+              {% icn_time b %}
             </td>
             <td>{{ b.description|truncatewords:15|escape }}</td>
             <td>
@@ -195,19 +190,17 @@
                 <a href="{{ b.get_absolute_url }}" class="btn btn-mini">
                   {% trans "download" %}
                 </a>
-                {% if request.user.is_authenticated %}
-                  {% ifequal b.owner request.user %}
-                    {% if b.state != 30 %}
-                      <a href="{% url b_archive b.id %}" class="btn btn-mini">
-                        {% trans "archive" %}
-                      </a>
-                    {% else %}
-                      <a href="{% url b_resurrect b.id %}" class="btn
+                {% if b|is_editable:user %}
+                  {% if b.state != 30 %}
+                    <a href="{% url b_archive b.id %}" class="btn btn-mini">
+                      {% trans "archive" %}
+                    </a>
+                  {% else %}
+                    <a href="{% url b_resurrect b.id %}" class="btn
                       btn-mini">
-                        {% trans "resurrect" %}
-                      </a>
-                    {% endif %}
-                  {% endifequal %}
+                      {% trans "resurrect" %}
+                    </a>
+                  {% endif %}
                 {% endif %}
                 <a href="{% url b_summary b.id %}" class="btn btn-mini">
                   {% trans "summary" %}

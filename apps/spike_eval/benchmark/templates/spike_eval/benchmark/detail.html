@@ -21,22 +21,17 @@
         <strong>Owner:</strong>
       </dt>
       <dd>
-        <nobr>
-          <i class=" icon-user"></i>
-          <a href="{% url profile_detail b.owner.username %}">
-            {{ b.owner.username }}
-          </a>
-          {% ifequal b.owner request.user %}(you){% endifequal %}
+        {% icn_profile b %}
+        {% ifequal b.owner request.user %}(you){% endifequal %}
         </nobr>
       </dd>
       <dt>
         <strong>Date Created:</strong>
       </dt>
       <dd>
-        <nobr><i class="icon-time"></i>
-          {{ b.date_created|date }}</nobr>
+        {% icn_time b %}
       </dd>
-      {% ifequal b.owner request.user %}
+      {% if b|is_editable:user %}
         <dt>
           <strong>Status:</strong>
         </dt>
@@ -49,7 +44,7 @@
             <b style="color: red">INACTIVE</b> - for your eyes only
           {% endif %}
         </dd>
-      {% endifequal %}
+      {% endif %}
       <dt>
         <strong>Tags:</strong>
       </dt>
@@ -155,7 +150,7 @@
               {{ t.parameter }}
             </td>
             <td>
-              {{ t.description|truncate:100|escape }}
+              {{ t.description|truncatewords:15|escape }}
             </td>
             {% with t.rd_file as f %}
               <td>
@@ -164,7 +159,7 @@
                     {{ f.name }} - {{ f.size|filesizeformat }}
                   </a>
                 </nobr>
-                {% if b.gt_access == 20 or user == b.owner %}
+                {% if b.gt_access == 20 or b|is_editable:user %}
                   {% with t.gt_file as f %}
                     </br>
                     <nobr>
@@ -176,7 +171,7 @@
                 {% endif %}
               </td>
             {% endwith %}
-            {% ifequal b.owner user %}
+            {% if b|is_editable:user %}
               <td>
                 {% if t.is_validated %}
                   <i class="icon-ok"></i>
@@ -186,7 +181,7 @@
                   <strong style="color: red">INVALID</strong>
                 {% endif %}
               </td>
-            {% endifequal %}
+            {% endif %}
           </tr>
         {% endfor %}
         </tbody>
@@ -230,10 +225,7 @@
               {{ d.size|filesizeformat }}
             </td>
             <td>
-              <nobr>
-                <i class="icon-time"></i>
-                {{ d.date_created|date }}
-              </nobr>
+              {% icn_time d %}
             </td>
           </tr>
         {% endfor %}
@@ -241,10 +233,10 @@
       </table>
     {% else %}
       <p>This Benchmark has no Supplementaries yet.
-        {% ifequal b.owner request.user %}
+        {% if b|is_editable:user %}
           You can add new Supplementary Files by clicking on the "Create
           Supplementary" button under "Actions:" above.
-        {% endifequal %}
+        {% endif %}
       </p>
     {% endif %}
   </div>

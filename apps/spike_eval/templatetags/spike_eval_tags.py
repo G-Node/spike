@@ -118,7 +118,8 @@ def icn_profile(obj):
         else:
             user = User.objects.get(id=2)
     return """<nobr>
-  <i class="icon-user"></i><a href="%s" title="%s">&nbsp;%s</a>
+  <i class="icon-user"></i>
+  <a href="%s" title="%s">%s</a>
 </nobr>""" % (user.get_absolute_url(), user.username, user.username)
 
 
