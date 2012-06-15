@@ -7,10 +7,10 @@
 {% block head_title %}{T:{{ t.id }}}&nbsp;{{ t.name }}{% endblock %}
 
 {% block content %}
-  <header>
-    <h2>
-      {{ t.benchmark.name }}&nbsp;::&nbsp;{{ t.name }}
-    </h2>
+  <section>
+    <h3>
+      &quot;{{ t.benchmark.name }}&quot;&nbsp;-&nbsp;&quot;{{ t.name }}&quot;
+    </h3>
     <dl class="dl-horizontal">
       <dt>
         <strong>Benchmark:</strong>
@@ -24,6 +24,12 @@
       </dt>
       <dd>
         {{ t.description|default:"no description" }}
+      </dd>
+      <dt>
+        <strong>{{ t.benchmark.parameter }}:</strong>
+      </dt>
+      <dd>
+        {{ t.parameter }}
       </dd>
       <dt>
         <strong>Date Created:</strong>
@@ -44,52 +50,48 @@
         {% endif %}
       </dd>
     </dl>
-  </header>
-
-  <form class="form well" method="POST">
-    <span class="label">Actions:</span>
-    {% csrf_token %}
-    <a id="edit-trial-toggle"
-     class="btn btn-mini">{% trans "Edit Trial" %}</a>
-    <input type="submit" class="btn btn-mini" name="t_delete"
-     value="{% trans "Delete Trial" %}"/>
-    <input type="submit" class="btn btn-mini" name="t_validate"
-     value="{% trans "Validate Trial" %}"/>
-
-  </form>
-  <form id="edit-trial" method="POST" style="display:none"
-   class="form form-horizontal well">
-    <fieldset>
-      <legend>Edit Trial</legend>
+    <form class="form well" method="POST">
+      <span class="label">Actions:</span>
       {% csrf_token %}
-      {{ t_form|as_bootstrap }}
-      <div class="form-actions">
-        <input type="submit" class="btn btn-primary"
-         value="{% trans 'Edit Trial' %}"/>
-      </div>
-    </fieldset>
-  </form>
+      <a id="edit-trial-toggle"
+       class="btn btn-mini">{% trans "Edit Trial" %}</a>
+      <input type="submit" class="btn btn-mini" name="t_delete"
+       value="{% trans "Delete Trial" %}"/>
+      <input type="submit" class="btn btn-mini" name="t_validate"
+       value="{% trans "Validate Trial" %}"/>
+    </form>
+    <form id="edit-trial" method="POST" style="display:none"
+     class="form form-horizontal well">
+      <fieldset>
+        <legend>Edit Trial</legend>
+        {% csrf_token %}
+        {{ t_form|as_bootstrap }}
+        <div class="form-actions">
+          <input type="submit" class="btn btn-primary" name="t_edit"
+           value="{% trans 'Edit Trial' %}"/>
+        </div>
+      </fieldset>
+    </form>
+  </section>
 
-  <div class="clearfix">
-    <h3>Validation Logs</h3>
+  <section>
+    <h3>Validation Logs
+      <small>separate logs of the validation of each file</small>
+    </h3>
 
-    <div class="pull-left">
-      <strong>{% trans "Rawdata File" %}</strong>
-      {% if t.rd_file %}
-        <pre>{{ t.rd_file.task_log|default:"no log!" }}</pre>
-      {% else %}
-        <pre>no rd_file!</pre>
-      {% endif %}
-    </div>
-    <div class="pull-left">
-      <strong>{% trans "Groundtruth File" %}</strong>
-      {% if t.gt_file %}
-        <pre>{{ t.gt_file.task_log|default:"no log!" }}</pre>
-      {% else %}
-        <pre>no gt_file!</pre>
-      {% endif %}
-    </div>
-  </div>
+    <strong>{% trans "Rawdata File" %}</strong>
+    {% if t.rd_file %}
+      <pre>{{ t.rd_file.task_log|default:"no log!" }}</pre>
+    {% else %}
+      <pre>no rd_file!</pre>
+    {% endif %}
+    <strong>{% trans "Groundtruth File" %}</strong>
+    {% if t.gt_file %}
+      <pre>{{ t.gt_file.task_log|default:"no log!" }}</pre>
+    {% else %}
+      <pre>no gt_file!</pre>
+    {% endif %}
+  </section>
 {% endblock %}
 
 {% block extra_body %}

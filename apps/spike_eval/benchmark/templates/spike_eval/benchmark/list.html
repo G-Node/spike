@@ -13,34 +13,44 @@
 {% block content %}
 
   {% if user.is_authenticated %}
-    <form class="form well">
-      <span class="label">Actions:</span>
-      <a class="btn btn-mini"
-       onclick="$('#create-benchmark').toggle();">Create Benchmark</a>
-      <a class="btn btn-mini"
-       onclick="$('#tagcloud').toggle();">Show Tagcloud</a>
-    </form>
-    <form id="create-benchmark" class="form form-horizontal well" method="POST"
-     {% if not b_form.errors %}style="display:none"{% endif %}>
-      <fieldset>
-        <legend>Create Benchmark</legend>
-        {% csrf_token %}
-        {{ b_form|as_bootstrap }}
-        <div class="form-actions">
-          <input type="submit" class="btn btn-primary"
-           value="{% trans 'Create Benchmark' %}"/>
-        </div>
-      </fieldset>
-    </form>
+    <section>
+      <form class="form well">
+        <span class="label">Actions:</span>
+        <a class="btn btn-mini"
+         onclick="$('#create-benchmark').toggle();">Create Benchmark</a>
+        <a class="btn btn-mini"
+         onclick="$('#tagcloud').toggle();">Show Tagcloud</a>
+      </form>
+      <form id="create-benchmark" class="form form-horizontal well"
+       method="POST"
+       {% if not b_form.errors %}style="display:none"{% endif %}>
+        <fieldset>
+          <legend>Create Benchmark</legend>
+          {% csrf_token %}
+          {{ b_form|as_bootstrap }}
+          <div class="form-actions">
+            <input type="submit" class="btn btn-primary"
+             value="{% trans 'Create Benchmark' %}"/>
+          </div>
+        </fieldset>
+      </form>
+    </section>
   {% endif %}
 
-  <div id="tagcloud" class="well" style="display: none;">
-    {% include_tagcloud 'benchmark.Benchmark' %}
-  </div>
+  <section id="tagcloud" style="display: none;">
+    <h3>Benchmark Tagcloud
+      <small>visualisation of the Benchmark tag space</small>
+    </h3>
+    <div class="well">
+      {% include_tagcloud 'benchmark.Benchmark' %}
+    </div>
+  </section>
 
   {% if b_list_self %}
-    <div>
-      <h3>Benchmark List ({% icn_profile user %})</h3>
+    <section>
+      <h3>Benchmark List ({% icn_profile user %})
+        <small>only your Benchmarks are listed here</small>
+      </h3>
       {% autosort b_list_self %}
       {% autopaginate b_list_self 20 %}
       <table class="table table-striped table-condensed">
@@ -108,12 +118,13 @@
         </tbody>
       </table>
       {% paginate %}
-    </div>
-    <hr>
+    </section>
   {% endif %}
 
-  <div>
-    <h3>Benchmark List</h3>
+  <section>
+    <h3>Benchmark List
+      <small>all public Benchmarks are listed here</small>
+    </h3>
     {% if not b_list %}
       <p>{% if user.is_authenticated %}
         You don't have any private Benchmarks.
@@ -212,5 +223,5 @@
       </table>
       {% paginate %}
     {% endif %}
-  </div>
+  </section>
 {% endblock %}

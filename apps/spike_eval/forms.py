@@ -45,7 +45,6 @@ class TrialForm(forms.ModelForm):
 
     rd_file = forms.FileField(label='Rawdata File')
     gt_file = forms.FileField(label='Groundtruth File', required=False)
-    action = forms.CharField(widget=forms.HiddenInput)
 
     ## constructor
 
@@ -53,10 +52,7 @@ class TrialForm(forms.ModelForm):
         pv_label = kwargs.pop('pv_label', None)
         super(TrialForm, self).__init__(*args, **kwargs)
         #if 'instance' not in kwargs:
-        if self.instance.id is None:
-            self.initial['action'] = 't_create'
-        else:
-            self.initial['action'] = 't_edit'
+        if self.instance.id is not None:
             self.initial['rd_file'] = self.instance.rd_file
             if self.instance.gt_file:
                 self.initial['gt_file'] = self.instance.gt_file
@@ -127,17 +123,17 @@ class EvaluationSubmitForm(forms.ModelForm):
                 label='Upload Trial: %s' % t.name,
                 required=False)
 
-    ## form interface
+            ## form interface
 
-#    def clean(self):
-#        cleaned_data = self.cleaned_data
-#
-#        if self._errors:
-#            print self._errors
-#            for sub_id in self.sub_ids:
-#                if sub_id in self._errors:
-#                    self.sub_ommited.append(self._errors.pop(sub_id))
-#        return cleaned_data
+        #    def clean(self):
+        #        cleaned_data = self.cleaned_data
+        #
+        #        if self._errors:
+        #            print self._errors
+        #            for sub_id in self.sub_ids:
+        #                if sub_id in self._errors:
+        #                    self.sub_ommited.append(self._errors.pop(sub_id))
+        #        return cleaned_data
 
     def save(self, *args, **kwargs):
         # init and checks

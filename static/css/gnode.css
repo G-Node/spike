@@ -32,7 +32,6 @@
   height : 100%;
 }
 
-
 /* SUB-NAVIGATION */
 
 /* Specific jumbotrons
@@ -148,4 +147,11 @@
     -moz-border-radius    : 0;
     border-radius         : 0;
   }
+}
+
+/* SECTION <hr> replacement */
+
+section {
+  padding-bottom : 8px;
+  border-bottom  : 1px solid #eeeeee;
 }

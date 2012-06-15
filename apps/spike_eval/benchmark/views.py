@@ -79,9 +79,11 @@ def detail(request, bid):
     # init and checks
     b_form = t_form = e_form = s_form = None
     b = get_object_or_404(Benchmark.objects.all(), id=bid)
-    if not b.is_accessible(request.user):
-        return HttpResponseForbidden(
-            'You don\'t have rights to view or modify this Benchmark.')
+    if not b.is_editable(request.user):
+        messages.error(request,
+                       'You don\'t have rights to view or modify this '
+                       'Benchmark.')
+        redirect()
     t_list = b.trial_set.order_by('parameter')
     if request.user != b.owner:
         t_list = filter(lambda x:x.is_validated(), t_list)
@@ -142,9 +144,57 @@ def detail(request, bid):
     return {'b':b,
             't_list':t_list,
             'b_form':b_form,
-            't_form':t_form,
+            'e_form':e_form,
             's_form':s_form,
-            'e_form':e_form}
+            't_form':t_form}
+
+
+@login_required
+@render_to('spike_eval/benchmark/trial.html')
+def trial(request, tid):
+    """renders details of a trial"""
+
+    # init and checks
+    t = get_object_or_404(Trial.objects.all(), id=tid)
+    if not t.benchmark.is_editable(request.user):
+        return HttpResponseForbidden(
+            'You don\'t own this benchmark Benchmark!')
+    t_form = None
+
+    # post request
+    print request.method
+    if request.method == 'POST':
+        print request.POST
+        if 't_edit' in request.POST:
+            t_form = TrialForm(request.POST, instance=t)
+            if t_form.is_valid():
+                t_form.save()
+                messages.success(request, 'Trial edit successful')
+            else:
+                messages.warning(request, 'Trial edit failed!')
+        elif 't_delete' in request.POST:
+            t.delete()
+            messages.success(
+                request, 'Trial deleted: %s' % t.name)
+            return redirect(t.benchmark)
+        elif 't_validate' in request.POST:
+            try:
+                if t.rd_file:
+                    validate_rawdata_file(t.rd_file.id)
+                if t.gt_file:
+                    validate_groundtruth_file(t.gt_file.id)
+            except:
+                messages.error(request, 'trial validation failed!')
+            else:
+                messages.info(request, 'trial validation scheduled')
+
+    # create forms
+    if not t_form:
+        t_form = TrialForm(instance=t)
+
+    # response
+    return {'t':t,
+            't_form':t_form}
 
 
 @login_required
@@ -249,54 +299,6 @@ def summary_plot(request, bid):
         sys.exc_clear()
     finally:
         return response
-
-
-@login_required
-@render_to('spike_eval/benchmark/trial.html')
-def trial(request, tid):
-    """renders details of a trial"""
-
-    # init and checks
-    t = get_object_or_404(Trial.objects.all(), id=tid)
-    if t.benchmark.owner != request.user:
-        return HttpResponseForbidden(
-            'You don\'t own this benchmark Benchmark!')
-    t_form = None
-
-    # post request
-    if request.method == 'POST':
-        action = request.POST.get('action')
-        if 't_edit' in request.POST:
-            t_form = TrialForm(request.POST, instance=t)
-            if t_form.is_valid():
-                t_form.save()
-                messages.success(request, 'Trial edit successful')
-            else:
-                messages.warning(request, 'Trial edit failed!')
-        elif 't_delete' in request.POST:
-            t.delete()
-            messages.success(
-                request, 'Trial deleted: %s' % t.name)
-            return redirect(t.benchmark)
-        elif 't_validate' in request.POST:
-            try:
-                if t.rd_file:
-                    validate_rawdata_file(t.rd_file.id)
-                if t.gt_file:
-                    validate_groundtruth_file(t.gt_file.id)
-            except:
-                messages.error(request, 'trial validation failed!')
-            else:
-                messages.info(request, 'trial validation scheduled')
-
-    # create forms
-    if not t_form:
-        t_form = TrialForm(instance=t)
-
-    # response
-    return {
-        't':t,
-        't_form':t_form}
 
 ##---MAIN
 
