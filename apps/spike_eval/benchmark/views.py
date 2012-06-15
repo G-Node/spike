@@ -283,8 +283,8 @@ def summary_plot(request, bid):
         ax.set_ylabel('total error (FP+FN)')
         y_margin = y_max * 0.05
         ax.set_ylim(-y_margin, y_max + y_margin)
-        x_margin = len(param_labels) * 0.05
-        ax.set_xlim(-x_margin, 2 * len(param_labels))
+        x_margin = np * 0.05
+        ax.set_xlim(-x_margin, 2 * np)
         ax.set_xticks(range(np))
         ax.set_xticklabels(param_labels)
         ax.legend()
