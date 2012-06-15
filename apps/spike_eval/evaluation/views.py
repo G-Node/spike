@@ -25,7 +25,7 @@ def sort_er(a, b):
 ##---VIEWS
 
 @render_to('spike_eval/evaluation/list.html')
-def list(request, bid=None):
+def elist(request, bid=None):
     """renders a list of available evaluations"""
 
     # evaluation batch list
@@ -77,12 +77,10 @@ def batch(request, ebid):
                 eb.switch()
                 messages.success(request, 'switch successful!')
         elif 'restart' in request.POST:
-            # TODO: tidy up the old results
-            print request.GET
-            print request.POST
             eid = request.POST.get('restart_eid', None)
             if eid:
                 start_eval(eid)
+                Evaluation.objects.get(id=eid).clear_results()
                 messages.info(request, 'Evalulation is been restarted!')
             else:
                 messages.error(request, 'Evalulation restart failed!')

@@ -27,7 +27,7 @@ Datafile = models.get_model('datafile', 'datafile')
 ##---VIEWS
 
 @render_to('spike_eval/benchmark/list.html')
-def list(request):
+def blist(request):
     """renders a list of available benchmarks"""
 
     # post request -> create benchmark
@@ -237,70 +237,69 @@ def summary(request, bid):
     """summary page for benchmark"""
 
     b = get_object_or_404(Benchmark.objects.all(), id=bid)
-    e_list = b.evaluations(pub_state=1)
+    access = 20
+    eb_list = b.eval_batches(access=20)
     if request.user.is_authenticated():
-        e_list = e_list | b.evaluations(
-            pub_state=0).filter(owner=request.user)
-
+        eb_list_self = b.eval_batches(access=10)
+        if not request.user.is_superuser:
+            eb_list_self = eb_list_self.filter(added_by=request.user)
+        eb_list |= eb_list_self
     return {'b':b,
-            'e_list':e_list}
+            'eb_list':eb_list.order_by('id')}
 
 #@login_required
 def summary_plot(request, bid):
     """generate a plot of the benchmark summary"""
-    try:
-        # get data
-        b = get_object_or_404(Benchmark.objects.all(), id=bid)
-        r_list = b.trial_set.order_by('parameter')
-        e_list = b.evaluations()
-        plist = [r.parameter_value for r in r_list]
-        nparams = len(plist)
 
-        # build data
-        data = {}
-        for e in e_list:
-            algo = e.algorithm
-            if not algo:
-                algo = 'unknown'
-            if algo not in data:
-                data[algo] = (plist, [nan] * nparams)
-            est = e.summary_table()
-            value = est['FN'] + est['FP'] + est['FPAE']
-            data[algo][1][plist.index(e.trial.parameter)] = value
+    try:
+        # init and checks
+        b = get_object_or_404(Benchmark.objects.all(), id=bid)
+        t_list = list(b.trial_set.order_by('parameter'))
+        eb_list = b.eval_batches(access=20)
+        if request.user.is_authenticated():
+            eb_list_self = b.eval_batches(access=10)
+            if not request.user.is_superuser:
+                eb_list_self = eb_list_self.filter(added_by=request.user)
+            eb_list |= eb_list_self
+        param_labels = [t.parameter for t in t_list]
+        np = len(param_labels)
+        response = HttpResponse(content_type='image/png')
 
         # build figure
         fig = Figure(edgecolor='white', facecolor='white')
         ax = fig.add_subplot(111)
 
-        # plot content
-        ymax = -1
-        for algo in data:
-            x, y = data[algo]
-            ymax = max(ymax, nanmax(y))
-            ax.plot(x, y, 'o-', label=algo)
+        # plot data
+        y_max = -1
+        for eb in eb_list:
+            y_curve = [nan] * np
+            for e in eb.evaluation_set.all():
+                y_curve[t_list.index(e.trial)] = e.summary_table()['error_sum']
+            y_max = max(y_max, nanmax(y_curve))
+            ax.plot(y_curve, 'o-', label=str(eb))
 
         # beautify
-        ax.set_xlabel(b.parameter_desc)
-        ax.set_ylabel('errors (FP+FN)')
+        ax.set_xlabel(b.parameter)
+        ax.set_ylabel('total error (FP+FN)')
+        y_margin = y_max * 0.05
+        ax.set_ylim(-y_margin, y_max + y_margin)
+        x_margin = len(param_labels) * 0.05
+        ax.set_xlim(-x_margin, 2 * len(param_labels))
+        ax.set_xticks(range(np))
+        ax.set_xticklabels(param_labels)
         ax.legend()
         ax.grid()
-        y_margin = ymax * 0.1
-        ax.set_ylim(-y_margin, ymax + y_margin)
-        x_margin = (nanmax(plist) - nanmin(plist)) * 0.1
-        ax.set_xlim(nanmin(plist) - x_margin, nanmax(plist) + x_margin)
-        ax.set_xticks(plist)
-
-        # return
-        canvas = FigureCanvas(fig)
-        response = HttpResponse(content_type='image/png')
-        canvas.print_png(response)
     except:
-        response = HttpResponse(content_type='image/png')
         import sys, traceback
 
         traceback.print_exception(*sys.exc_info())
         sys.exc_clear()
     finally:
+        try:
+            canvas = FigureCanvas(fig)
+            canvas.print_png(response)
+        except:
+            pass
         return response
 
 ##---MAIN

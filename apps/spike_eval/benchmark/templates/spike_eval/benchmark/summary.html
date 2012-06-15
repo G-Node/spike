@@ -1,72 +1,94 @@
 {% extends "spike_eval/benchmark/base.html" %}
 
 {% load i18n %}
-{% load uni_form %}
-{% load humanize %}
 {% load pagination_tags %}
-{% load order_by %}
-{% load extra_tagging_tags %}
 {% load sorting_tags %}
-{% load truncate_filter %}
+{% load spike_eval_tags %}
 
-{% block head_title %}
-  {% blocktrans %}Benchmark Summary{% endblocktrans %}{% endblock %}
+{% block head_title %}{% trans "Benchmarks" %}{% endblock %}
 
-{% block body %}
-  <h1>{% trans "Benchmark Summary" %}</h1>
+{% block content %}
 
-  {% if not user.is_authenticated %}
-    {% url acct_signup as signup_url %}
-    {% url acct_login as login_url %}
-    <p>{% blocktrans %}<a href="{{ signup_url }}">Sign up</a> and
-      <a href="{{ login_url }}">log in </a> to create your own benchmark or
-      submit an evaluation for an existing one. {% endblocktrans %}</p>
-  {% else %}
-    <p>Summary for the <b>{{ b }}</b> Benchmark.</p>
-  {% endif %}
 
-  {% if not e_list %}
-    <p>There are no evaluations available yet to summarise.</p>
-  {% else %}
-    {% autosort e_list %}
-    <table class="messages">
-      <thead>
-      <tr>
-        <th>{% trans "Record" %}</th>
-        <th>{% trans "Algorithm" %}</th>
-        <th>{% trans "Summary [FP, FN]" %}</th>
-      </tr>
-      </thead>
-      <tbody>
-      {% for e in e_list %}
-        {% with e.owner.username as uname %}
+  <section>
+    <h3>Summary: <a href="{{ b.get_absolute_url }}">{{ b }}</a>
+      <small>visualisation and listing of evaluation results</small>
+    </h3>
+  </section>
+
+  <section>
+    <h3>Visual Summary
+      <small>plots visualising the performance for this Benchmark</small>
+    </h3>
+    <img src="{% url b_summary_plot b.id %}" alt="Summary Plot"
+     border="1px"/>
+  </section>
+
+  <section>
+    <h3>Table Summary
+      <small>tabular summary of performance for this Benchmark</small>
+    </h3>
+    {% if not eb_list %}
+      <p>There are no evaluations available yet to summarise.</p>
+    {% else %}
+      {% autosort eb_list %}
+      <table class="table">
+        <thead>
+        <tr>
+          <th>{% trans "Benchmark" %}</th>
+          <th>{% trans "ID, Algorithm" %}</th>
+          <th>{% trans "Total Error" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for eb in eb_list %}
           <tr>
             <td>
-              <b {% if not e.is_public %}style="color: red"{% endif %}>
-                {{ e.record }}</b>
-            </td>
-            <td>
-              <a href="{{ e.get_absolute_url }}">
-                <b {% if not e.is_public %}style="color: red"{% endif %}>
-                  {{ e.algorithm }}</b>
+              <a href="{{ eb.benchmark.get_absolute_url }}">
+                {% if eb.benchmark.is_active %}
+                  <i class="icon-ok"></i>
+                  <span style="color: green">{{ b.name }}</span>
+                {% else %}
+                  <span style="color: red">
+                  <nobr>
+                    <i class="icon-lock"></i>
+                    {% if eb.benchmark.state == 30 %}<strike>{% endif %}
+                    <strong>{{ eb.benchmark.name }}</strong>
+                    {% if eb.benchmark.state == 30 %}</strike>{% endif %}
+                  </nobr>
+                  </span>
+                {% endif %}
               </a>
             </td>
             <td>
-              {% with e.summary_table as e_sum %}
-                FN: {{ e_sum.FN }}
-                &nbsp;-&nbsp;
-                FP: {{ e_sum.FP }}
-                &nbsp;-&nbsp;
-                FPA: {{ e_sum.FPAE }}
-                &nbsp;-&nbsp;
-                Sum: {{ e_sum.error_sum }}
-              {% endwith %}
+              <a href="{{ eb.get_absolute_url }}">
+                <strong style="{% zero_red eb.access %}">
+                  #{{ eb.id }}, {{ eb.algorithm }}</strong>
+              </a>
+            </td>
+            <td>
+              <ul>
+                {% for e_sum in eb.summary_table %}
+                  <li>
+                    <strong>{{ e_sum.trial }}</strong>
+                    {{ e_sum.error_sum }}
+                    {% comment %}
+                    FN: {{ e_sum.FN }}
+                    &nbsp;-&nbsp;
+                    FP: {{ e_sum.FP }}
+                    &nbsp;-&nbsp;
+                    FPA: {{ e_sum.FPAE }}
+                    &nbsp;-&nbsp;
+                    Sum: {{ e_sum.error_sum }}
+                    {% endcomment %}
+                  </li>
+                {% endfor %}
+              </ul>
             </td>
           </tr>
-        {% endwith %}
-      {% endfor %}
-      </tbody>
-    </table>
-    <img src="{% url b_summary_plot b.id %}" alt="Summary Plot" border="1px"/>
-  {% endif %}
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </section>
 {% endblock %}

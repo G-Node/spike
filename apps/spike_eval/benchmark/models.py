@@ -118,14 +118,10 @@ class Benchmark(CommonInfo):
         self.state = 20
         self.save()
 
-    def evaluations(self, state=10):
-        e_set = Evaluation.objects.none()
-        for t in self.trial_set.all():
-            e_set |= t.evaluations(state=state)
-        return e_set
-
-    def eval_count(self):
-        return len(self.evaluations())
+    def eval_batches(self, access=20):
+        if not isinstance(access, (list, tuple, set)):
+            access = (access,)
+        return self.evaluationbatch_set.filter(access__in=access)
 
 
 class Trial(CommonInfo):
@@ -174,8 +170,7 @@ class Trial(CommonInfo):
         return 'b_trial', (), {'tid':self.pk}
 
     def delete(self, *args, **kwargs):
-        for d in self.datafile_set:
-            d.delete()
+        self.datafile_set.delete(*args, **kwargs)
         super(Trial, self).delete(*args, **kwargs)
 
     ## interface
@@ -213,14 +208,6 @@ class Trial(CommonInfo):
             return rd_good and (gt_good or True)
         except:
             return False
-
-    def evaluations(self, state=10):
-        if not isinstance(state, (list, tuple, set)):
-            state = (state,)
-        return self.evaluation_set.filter(task_state__in=state)
-
-    def eval_count(self):
-        return len(self.evaluations())
 
 ##---MAIN
 

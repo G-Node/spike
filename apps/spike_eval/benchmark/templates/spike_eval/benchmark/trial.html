@@ -81,15 +81,13 @@
 
     <strong>{% trans "Rawdata File" %}</strong>
     {% if t.rd_file %}
+      ({{ t.rd_file.get_task_state_display|default:"no rd_file!" }})
       <pre>{{ t.rd_file.task_log|default:"no log!" }}</pre>
-    {% else %}
-      <pre>no rd_file!</pre>
     {% endif %}
     <strong>{% trans "Groundtruth File" %}</strong>
     {% if t.gt_file %}
+      ({{ t.gt_file.get_task_state_display|default:"no gt_file!" }})
       <pre>{{ t.gt_file.task_log|default:"no log!" }}</pre>
-    {% else %}
-      <pre>no gt_file!</pre>
     {% endif %}
   </section>
 {% endblock %}

@@ -6,7 +6,7 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns(
     'spike_eval.benchmark.views',
-    url(r'^list/$', 'list', name='b_list'),
+    url(r'^list/$', 'blist', name='b_list'),
     url(r'^detail/(?P<bid>\d+)/', 'detail', name='b_detail'),
     url(r'^archive/(?P<bid>\d+)/', 'archive', name='b_archive'),
     url(r'^resurrect/(?P<bid>\d+)/', 'resurrect', name='b_resurrect'),

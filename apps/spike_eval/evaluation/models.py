@@ -46,6 +46,12 @@ class Algorithm(CommonInfo):
     def __unicode__(self):
         return unicode(self.__str__())
 
+    ## django special methods
+
+    @models.permalink
+    def get_absolute_url(self):
+        return 'e_algo', (), {'aid':self.pk}
+
 
 class EvaluationBatch(CommonInfo):
     """set of evaluations from a submission"""
@@ -95,6 +101,14 @@ class EvaluationBatch(CommonInfo):
 
     def is_editable(self, user):
         return self.added_by == user or user.is_superuser
+
+    def summary_table(self):
+        rval = []
+        for e in self.evaluation_set.all():
+            e_sum = dict(e.summary_table())
+            e_sum['trial'] = e.trial.name
+            rval.append(e_sum)
+        return rval
 
 
 class Evaluation(CommonInfo):
@@ -159,6 +173,10 @@ class Evaluation(CommonInfo):
 
     def is_accessible(self, user):
         return self.evaluation_batch.is_accessible(user)
+
+    def clear_results(self):
+        self.evaluationresults_set.all().delete()
+        self.evaluationresultsimg_set.all().delete()
 
     def summary(self):
         er = self.evaluationresults_set.all()
