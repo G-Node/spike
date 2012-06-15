@@ -23,10 +23,10 @@
 {% block content %}
 
   <section id="batch">
-    <h2>
+    <h3>
       Evaluation Batch #{{ eb.id }}
       {% if eb.is_public %}- published{% endif %}
-    </h2>
+    </h3>
     <dl class="dl-horizontal">
       <dt>
         <strong>Benchmark:</strong>
@@ -60,7 +60,6 @@
         {% icn_time eb %}
       </dd>
     </dl>
-
     {% if eb|is_editable:user %}
       <form class="form well" method="POST">
         {% csrf_token %}

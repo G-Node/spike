@@ -36,7 +36,7 @@
 </div>
 
 {% if user.is_authenticated %}
-  {% ifequal eb.added_by user %}
+  {% if eb|is_editable:user %}
     <form class="form well" method="POST">
       {% csrf_token %}
       <span class="label">Actions:</span>
@@ -51,13 +51,12 @@
     <pre id="show_log" class="well"
      {% if e.processed %}style="display:none"{% endif %}
      >{{ e.task_log }}</pre>
-  {% endifequal %}
+  {% endif %}
 {% endif %}
 
 {% if e.processed %}
-
   <div>
-    <h2>Evaluation summary:</h2>
+    <h3>Evaluation summary:</h3>
 
     <table class="table table-striped table-condensed table-bordered">
       <thead>

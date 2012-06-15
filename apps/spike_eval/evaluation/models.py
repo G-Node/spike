@@ -171,7 +171,7 @@ class Evaluation(CommonInfo):
         return self.trial.benchmark
 
     def processed(self):
-        return self.task_state >= 20
+        return self.task_state == 20
 
     def is_accessible(self, user):
         return self.evaluation_batch.is_accessible(user)
