@@ -3,7 +3,7 @@
 from datetime import datetime
 from django.contrib import messages
 from django.http import HttpResponseForbidden
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from .models import Algorithm, Evaluation, EvaluationBatch
 from ..forms import AlgorithmForm, SupplementaryForm
 from ..tasks import start_eval
@@ -59,9 +59,44 @@ def list(request, bid=None):
             'search_terms':search_terms}
 
 
+@render_to('spike_eval/evaluation/batch.html')
+def batch(request, ebid):
+    """renders an evaluation batch"""
+
+    # init and checks
+    eb = get_object_or_404(EvaluationBatch.objects.all(), id=ebid)
+    if not eb.is_accessible(request.user):
+        messages.error(
+            request, 'You are not allowed to view this Evaluation Batch.')
+        redirect('e_list')
+
+    # post request
+    if request.method == 'POST':
+        if 'switch' in request.POST:
+            if eb.added_by == request.user:
+                eb.switch()
+                messages.success(request, 'switch successful!')
+        elif 'restart' in request.POST:
+            # TODO: tidy up the old results
+            print request.GET
+            print request.POST
+            eid = request.POST.get('restart_eid', None)
+            if eid:
+                start_eval(eid)
+                messages.info(request, 'Evalulation is been restarted!')
+            else:
+                messages.error(request, 'Evalulation restart failed!')
+
+    # response
+    return {'eb':eb}
+
+
 @render_to('spike_eval/evaluation/detail.html')
 def detail(request, eid):
-    """renders details of an evaluation"""
+    """renders details of an evaluation
+
+    DEPRECATED SINCE EVALUATION BATCHES!!
+    """
 
     # init and checks
     e = get_object_or_404(Evaluation.objects.all(), id=eid)
@@ -90,37 +125,6 @@ def detail(request, eid):
     return {'e':e,
             'er':er,
             'image_results':image_results}
-
-
-@render_to('spike_eval/evaluation/batch.html')
-def batch(request, ebid):
-    """renders an evaluation batch"""
-
-    # init and checks
-    eb = get_object_or_404(EvaluationBatch.objects.all(), id=ebid)
-    if not eb.is_accessible(request.user):
-        return HttpResponseForbidden(
-            'You don\'t have rights to view this Evaluation.')
-
-    # post request
-    if request.method == 'POST':
-        if 'switch' in request.POST:
-            if eb.added_by == request.user:
-                eb.switch()
-                messages.success(request, 'switch successful!')
-        elif 'restart' in request.POST:
-            # TODO: tidy up the old results
-            print request.GET
-            print request.POST
-            eid = request.POST.get('restart_eid', None)
-            if eid:
-                start_eval(eid)
-                messages.info(request, 'Evalulation is been restarted!')
-            else:
-                messages.error(request, 'Evalulation restart failed!')
-
-    # response
-    return {'eb':eb}
 
 
 @render_to('spike_eval/evaluation/algo.html')

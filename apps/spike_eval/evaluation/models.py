@@ -91,7 +91,10 @@ class EvaluationBatch(CommonInfo):
         return self.access == 20
 
     def is_accessible(self, user):
-        return self.added_by == user or self.access == 20
+        return self.is_public() or self.is_editable(user)
+
+    def is_editable(self, user):
+        return self.added_by == user or user.is_superuser
 
 
 class Evaluation(CommonInfo):

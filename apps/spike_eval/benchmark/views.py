@@ -79,13 +79,13 @@ def detail(request, bid):
     # init and checks
     b_form = t_form = e_form = s_form = None
     b = get_object_or_404(Benchmark.objects.all(), id=bid)
-    if not b.is_editable(request.user):
-        messages.error(request,
-                       'You don\'t have rights to view or modify this '
-                       'Benchmark.')
-        redirect()
+    if not b.is_accessible(request.user):
+        messages.error(
+            request,
+            'You are not allowed to view or modify this Benchmark.')
+        redirect('b_list')
     t_list = b.trial_set.order_by('parameter')
-    if request.user != b.owner:
+    if not b.is_editable(request.user):
         t_list = filter(lambda x:x.is_validated(), t_list)
 
     # post request
@@ -162,9 +162,7 @@ def trial(request, tid):
     t_form = None
 
     # post request
-    print request.method
     if request.method == 'POST':
-        print request.POST
         if 't_edit' in request.POST:
             t_form = TrialForm(request.POST, instance=t)
             if t_form.is_valid():
