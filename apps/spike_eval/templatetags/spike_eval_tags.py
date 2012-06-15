@@ -20,7 +20,7 @@ def is_editable(obj, user):
     if hasattr(obj, 'owner'):
         return obj.owner == user
     if hasattr(obj, 'added_by'):
-        user_good = obj.owner == user
+        return obj.added_by == user
 
 
 @register.filter
