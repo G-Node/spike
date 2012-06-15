@@ -105,6 +105,8 @@ class EvaluationBatch(CommonInfo):
     def summary_table(self):
         rval = []
         for e in self.evaluation_set.all():
+            if e.task_state != 20:
+                continue
             e_sum = dict(e.summary_table())
             e_sum['trial'] = e.trial.name
             rval.append(e_sum)
