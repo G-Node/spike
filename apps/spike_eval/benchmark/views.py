@@ -164,13 +164,16 @@ def trial(request, tid):
     # post request
     if request.method == 'POST':
         if 't_edit' in request.POST:
-            t_form = TrialForm(request.POST, instance=t)
+            t_form = TrialForm(request.POST, request.FILES, instance=t)
             if t_form.is_valid():
-                t_form.save()
-                messages.success(request, 'Trial edit successful')
+                if t_form.save():
+                    messages.success(request, 'Trial edit successful')
+                else:
+                    messages.info(request, 'No changes detected!')
             else:
                 messages.warning(request, 'Trial edit failed!')
         elif 't_delete' in request.POST:
+            to = t.benchmark
             t.delete()
             messages.success(
                 request, 'Trial deleted: %s' % t.name)
@@ -188,7 +191,7 @@ def trial(request, tid):
 
     # create forms
     if not t_form:
-        t_form = TrialForm(instance=t)
+        t_form = TrialForm(instance=t, pv_label=t.benchmark.parameter)
 
     # response
     return {'t':t,

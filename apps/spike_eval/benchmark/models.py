@@ -214,20 +214,6 @@ class Trial(CommonInfo):
         except:
             return False
 
-    def validation_log(self):
-        rval = [
-            'Rawdata File: %s' % self.rd_file.get_task_state_display(),
-            'Task ID: %s' % self.rd_file.task_id,
-            self.rd_file.task_log, '']
-        if self.gt_file is None:
-            rval.extend('Groundtruth File: does not exist')
-        else:
-            rval.extend([
-                'Groundtruth File: %s' % self.gt_file.get_task_state_display(),
-                'Task ID: %s' % self.gt_file.task_id,
-                self.gt_file.task_log])
-        return '\n'.join(rval)
-
     def evaluations(self, state=10):
         if not isinstance(state, (list, tuple, set)):
             state = (state,)

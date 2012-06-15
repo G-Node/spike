@@ -60,8 +60,8 @@
       <input type="submit" class="btn btn-mini" name="t_validate"
        value="{% trans "Validate Trial" %}"/>
     </form>
-    <form id="edit-trial" method="POST" style="display:none"
-     class="form form-horizontal well">
+    <form id="edit-trial" class="form form-horizontal well" method="POST"
+     enctype="multipart/form-data" style="display:none">
       <fieldset>
         <legend>Edit Trial</legend>
         {% csrf_token %}

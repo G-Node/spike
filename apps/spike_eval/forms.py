@@ -43,67 +43,70 @@ class TrialForm(forms.ModelForm):
 
     ## fields
 
-    rd_file = forms.FileField(label='Rawdata File')
-    gt_file = forms.FileField(label='Groundtruth File', required=False)
+    rd_upload = forms.FileField(label='Rawdata File', required=False)
+    gt_upload = forms.FileField(label='Groundtruth File', required=False)
 
     ## constructor
 
     def __init__(self, *args, **kwargs):
+        print args, kwargs
         pv_label = kwargs.pop('pv_label', None)
         super(TrialForm, self).__init__(*args, **kwargs)
-        #if 'instance' not in kwargs:
-        if self.instance.id is not None:
-            self.initial['rd_file'] = self.instance.rd_file
-            if self.instance.gt_file:
-                self.initial['gt_file'] = self.instance.gt_file
+        if self.instance.rd_file:
+            self.initial['rd_upload'] = self.instance.rd_file.file
+        if self.instance.gt_file:
+            self.initial['gt_upload'] = self.instance.gt_file.file
         if pv_label is not None:
             self.fields['parameter'].label = pv_label
 
     ## form interface
 
     def save(self, *args, **kwargs):
+        # init and checks
+        if not self.changed_data:
+            return
         if self.instance.id is None:
-            try:
-                # init and checks
-                benchmark = kwargs.pop('benchmark')
-                user = kwargs.pop('user')
-
-                # trial
-                self.instance.benchmark = benchmark
-                self.instance.added_by = user
-                self.instance.date_create = datetime.now()
-                t = super(TrialForm, self).save(*args, **kwargs)
-
-                # creating rd_file
-                if self.cleaned_data['rd_file']:
-                    rd_file = Datafile(
-                        name=self.cleaned_data['rd_file'].name,
-                        file=self.cleaned_data['rd_file'],
-                        filetype=10,
-                        added_by=user,
-                        content_object=t)
-                    rd_file.save()
-                    rd_file.task_id = validate_rawdata_file(rd_file.id)
-
-                # creating gt_file
-                if self.cleaned_data['gt_file']:
-                    gt_file = Datafile(
-                        name=self.cleaned_data['gt_file'].name,
-                        file=self.cleaned_data['gt_file'],
-                        filetype=20,
-                        added_by=user,
-                        content_object=t)
-                    gt_file.save()
-                    gt_file.task_id = validate_groundtruth_file(gt_file.id)
-
-            except Exception, ex:
-                print 'shit happened during save'
-                print str(ex)
-                raise
-            else:
-                return t
+            benchmark = kwargs.pop('benchmark')
+            user = kwargs.pop('user')
+            self.instance.benchmark = benchmark
+            self.instance.added_by = user
+            self.instance.date_create = datetime.now()
+            if 'rd_upload' not in self.changed_data:
+                # XXX: check before save!!
+                # TODO: better handling??
+                raise forms.ValidationError
         else:
-            return super(TrialForm, self).save(*args, **kwargs)
+            user = self.instance.added_by
+        t = super(TrialForm, self).save(*args, **kwargs)
+
+        # handling rd_file upload
+        if 'rd_upload' in self.changed_data:
+            if t.rd_file:
+                t.rd_file.delete()
+            rd_file = Datafile(
+                name=self.cleaned_data['rd_upload'].name,
+                file=self.cleaned_data['rd_upload'],
+                filetype=10,
+                added_by=user,
+                content_object=t)
+            rd_file.save()
+            rd_file.task_id = validate_rawdata_file(rd_file.id)
+
+        # handling gt_file upload
+        if 'gt_upload' in self.changed_data:
+            if t.gt_file:
+                t.gt_file.delete()
+            gt_file = Datafile(
+                name=self.cleaned_data['gt_upload'].name,
+                file=self.cleaned_data['gt_upload'],
+                filetype=20,
+                added_by=user,
+                content_object=t)
+            gt_file.save()
+            gt_file.task_id = validate_groundtruth_file(gt_file.id)
+
+        # return
+        return t
 
 
 class EvaluationSubmitForm(forms.ModelForm):
@@ -122,18 +125,6 @@ class EvaluationSubmitForm(forms.ModelForm):
             self.fields['sub-t-%s' % t.id] = forms.FileField(
                 label='Upload Trial: %s' % t.name,
                 required=False)
-
-            ## form interface
-
-        #    def clean(self):
-        #        cleaned_data = self.cleaned_data
-        #
-        #        if self._errors:
-        #            print self._errors
-        #            for sub_id in self.sub_ids:
-        #                if sub_id in self._errors:
-        #                    self.sub_ommited.append(self._errors.pop(sub_id))
-        #        return cleaned_data
 
     def save(self, *args, **kwargs):
         # init and checks
