@@ -13,8 +13,10 @@
     Evaluations <a href="{% url b_list %}">here</a>.</p>
 
   {% if e_list_self %}
-    <div>
-      <h3>Evaluation Batch List ({% icn_profile user %})</h3>
+    <section>
+      <h3>Evaluation Batch List ({% icn_profile user %})
+        <small>only your Evaluation Batches are listed here</small>
+      </h3>
       {% autosort e_list_self %}
       {% autopaginate e_list_self 20 %}
       <table class="table table-striped table-condensed">
@@ -29,7 +31,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for e in e_list %}
+        {% for e in e_list_self %}
           <tr>
             <td>
               <a href="{{ e.get_absolute_url }}">
@@ -59,11 +61,13 @@
         </tbody>
       </table>
       {% paginate %}
-    </div>
+    </section>
   {% endif %}
 
-  <div>
-    <h3>Evaluation Batch List</h3>
+  <section>
+    <h3>Evaluation Batch List
+      <small>public Evaluation Batches are listed here</small>
+    </h3>
     {% if not e_list %}
       <p>There are no public Evaluations Batches available.</p>
     {% else %}
@@ -91,7 +95,6 @@
           </div>
         </div>
       </form>
-
       <table class="table table-striped table-condensed">
         <thead>
         <tr>
@@ -135,5 +138,5 @@
       </table>
       {% paginate %}
     {% endif %}
-  </div>
+  </section>
 {% endblock %}
