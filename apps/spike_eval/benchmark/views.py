@@ -231,7 +231,7 @@ def resurrect(request, bid):
     messages.info(request, 'Benchmark resurrected: %s' % b.name)
     return redirect('b_list')
 
-#@login_required
+
 @render_to('spike_eval/benchmark/summary.html')
 def summary(request, bid):
     """summary page for benchmark"""
@@ -247,7 +247,7 @@ def summary(request, bid):
     return {'b':b,
             'eb_list':eb_list.order_by('id')}
 
-#@login_required
+
 def summary_plot(request, bid):
     """generate a plot of the benchmark summary"""
 
