@@ -157,8 +157,10 @@ def trial(request, tid):
     # init and checks
     t = get_object_or_404(Trial.objects.all(), id=tid)
     if not t.benchmark.is_editable(request.user):
-        return HttpResponseForbidden(
-            'You don\'t own this benchmark Benchmark!')
+        messages.error(
+            request,
+            'You are not allowed to view or modify this Trial.')
+        redirect(t.benchmark)
     t_form = None
 
     # post request

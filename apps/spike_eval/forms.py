@@ -49,7 +49,6 @@ class TrialForm(forms.ModelForm):
     ## constructor
 
     def __init__(self, *args, **kwargs):
-        print args, kwargs
         pv_label = kwargs.pop('pv_label', None)
         super(TrialForm, self).__init__(*args, **kwargs)
         if self.instance.rd_file:
@@ -137,8 +136,6 @@ class EvaluationSubmitForm(forms.ModelForm):
         eb = super(EvaluationSubmitForm, self).save(*args, **kwargs)
 
         # evaluations
-
-        print self.cleaned_data
         for sub_id in self.sub_ids:
             if not self.cleaned_data[sub_id]:
                 continue
