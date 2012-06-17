@@ -13,15 +13,15 @@
 {% block content %}
 
   {% if user.is_authenticated %}
-    <section>
-      <form class="form well">
+    <section class="well">
+      <form class="actions">
         <span class="label">Actions:</span>
         <a class="btn btn-mini"
          onclick="$('#create-benchmark').toggle();">Create Benchmark</a>
         <a class="btn btn-mini"
          onclick="$('#tagcloud').toggle();">Show Tagcloud</a>
       </form>
-      <form id="create-benchmark" class="form form-horizontal well"
+      <form id="create-benchmark" class="form form-horizontal"
        method="POST"
        {% if not b_form.errors %}style="display:none"{% endif %}>
         <fieldset>
@@ -38,9 +38,9 @@
   {% endif %}
 
   <section id="tagcloud" style="display: none;">
-    <h3>Benchmark Tagcloud
+    <h2>Benchmark Tagcloud
       <small>visualisation of the Benchmark tag space</small>
-    </h3>
+    </h2>
     <div class="well">
       {% include_tagcloud 'benchmark.Benchmark' %}
     </div>
@@ -48,9 +48,9 @@
 
   {% if b_list_self %}
     <section>
-      <h3>Benchmark List ({% icn_profile user %})
+      <h2>Benchmark List ({% icn_profile user %})
         <small>only your Benchmarks are listed here</small>
-      </h3>
+      </h2>
       {% autosort b_list_self %}
       {% autopaginate b_list_self 20 %}
       <table class="table table-striped table-condensed">
@@ -122,9 +122,9 @@
   {% endif %}
 
   <section>
-    <h3>Benchmark List
+    <h2>Benchmark List
       <small>public Benchmarks are listed here</small>
-    </h3>
+    </h2>
     {% if not b_list %}
       <p>{% if user.is_authenticated %}
         You don't have any private Benchmarks.

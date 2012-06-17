@@ -1,5 +1,6 @@
 ##---IMPORTS
 
+from captcha.fields import CaptchaField
 from datetime import datetime
 from django import forms
 from .benchmark.models import Benchmark, Trial
@@ -108,10 +109,20 @@ class TrialForm(forms.ModelForm):
         return t
 
 
+class EvalBatchEditForm(forms.ModelForm):
+    class Meta:
+        model = EvaluationBatch
+        exclude = ('added_by', 'date_created', 'access', 'benchmark')
+
+
 class EvaluationSubmitForm(forms.ModelForm):
     class Meta:
         model = EvaluationBatch
         exclude = ('added_by', 'date_created', 'access', 'benchmark')
+
+    ## fields
+
+    captcha = CaptchaField()
 
     ## constructor
 

@@ -9,25 +9,24 @@
 
 {% block content %}
 
-
   <section>
-    <h3>Summary: <a href="{{ b.get_absolute_url }}">{{ b }}</a>
+    <h2>Summary: <a href="{{ b.get_absolute_url }}">{{ b }}</a>
       <small>visualisation and listing of evaluation results</small>
-    </h3>
+    </h2>
   </section>
 
   <section>
-    <h3>Visual Summary
+    <h2>Visual Summary
       <small>plots visualising the performance for this Benchmark</small>
-    </h3>
+    </h2>
     <img src="{% url b_summary_plot b.id %}" alt="Summary Plot"
      border="1px"/>
   </section>
 
   <section>
-    <h3>Table Summary
+    <h2>Table Summary
       <small>tabular summary of performance for this Benchmark</small>
-    </h3>
+    </h2>
     {% if not eb_list %}
       <p>There are no evaluations available yet to summarise.</p>
     {% else %}

@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
 from .models import Algorithm, Evaluation, EvaluationBatch
-from ..forms import AlgorithmForm, SupplementaryForm
+from ..forms import AlgorithmForm, SupplementaryForm, EvalBatchEditForm
 from ..tasks import start_eval
 from ..util import render_to
 
@@ -65,6 +65,7 @@ def batch(request, ebid):
 
     # init and checks
     eb = get_object_or_404(EvaluationBatch.objects.all(), id=ebid)
+    eb_form = None
     if not eb.is_accessible(request.user):
         messages.error(
             request, 'You are not allowed to view this Evaluation Batch.')
@@ -72,7 +73,7 @@ def batch(request, ebid):
 
     # post request
     if request.method == 'POST':
-        if 'switch' in request.POST:
+        if 'eb_switch' in request.POST:
             if eb.added_by == request.user:
                 eb.switch()
                 messages.success(request, 'switch successful!')
@@ -84,9 +85,17 @@ def batch(request, ebid):
                 messages.info(request, 'Evalulation is been restarted!')
             else:
                 messages.error(request, 'Evalulation restart failed!')
+        elif 'eb_edit' in request.POST:
+            eb_form = EvalBatchEditForm(instance=eb)
+            if eb_form.is_valid():
+                eb_form.save()
+                messages.success(request, 'edit successfull')
+            else:
+                messages.error(request, 'edit failed')
 
     # response
-    return {'eb':eb}
+    return {'eb':eb,
+            'eb_form':eb_form or EvalBatchEditForm()}
 
 
 @render_to('spike_eval/evaluation/detail.html')
@@ -153,15 +162,10 @@ def algo(request, aid):
             else:
                 messages.warning(request, 'Supplementary creation failed!')
 
-    if not a_form:
-        a_form = AlgorithmForm(instance=a)
-    if not s_form:
-        s_form = SupplementaryForm()
-
     # response
     return {'a':a,
-            'a_form':a_form,
-            's_form':s_form}
+            'a_form':a_form or AlgorithmForm(instance=a),
+            's_form':s_form or SupplementaryForm()}
 
 ##---MAIN
 

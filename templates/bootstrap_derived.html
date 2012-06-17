@@ -75,7 +75,9 @@
       </div>
     {% endblock %}
     {% include "_messages.html" %}
-    {% include "_signup_block.html" %}
+    {% block signup_banner %}
+      {% include "_signup_block.html" %}
+    {% endblock %}
     {% block body %}{% endblock %}
     {% block footer_base %}
       <footer id="footer">

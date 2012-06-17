@@ -14,9 +14,9 @@
 
   {% if e_list_self %}
     <section>
-      <h3>Evaluation Batch List ({% icn_profile user %})
+      <h2>Evaluation Batch List ({% icn_profile user %})
         <small>only your Evaluation Batches are listed here</small>
-      </h3>
+      </h2>
       {% autosort e_list_self %}
       {% autopaginate e_list_self 20 %}
       <table class="table table-striped table-condensed">
@@ -65,9 +65,9 @@
   {% endif %}
 
   <section>
-    <h3>Evaluation Batch List
+    <h2>Evaluation Batch List
       <small>public Evaluation Batches are listed here</small>
-    </h3>
+    </h2>
     {% if not e_list %}
       <p>There are no public Evaluations Batches available.</p>
     {% else %}

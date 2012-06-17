@@ -9,7 +9,7 @@ import os.path
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 # tells Pinax to serve media through the staticfiles app.
@@ -177,6 +177,7 @@ INSTALLED_APPS = [
     "pagination",
     "idios",
     "metron",
+    "captcha",
 
     # Pinax
     "pinax.apps.account",
@@ -222,6 +223,8 @@ EMAIL_CONFIRMATION_DAYS = 2
 EMAIL_DEBUG = DEBUG
 
 def dbt_visible(request):
+    if DEBUG:
+        return True
     if not request.user.is_authenticated():
         return False
     else:

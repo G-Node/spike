@@ -2,16 +2,17 @@
 
 from django.conf import settings
 from django.conf.urls.defaults import *
-from django.views.generic.simple import direct_to_template
 from django.conf.urls.static import static
-
 from django.contrib import admin
+from django.views.generic.simple import direct_to_template
+from pinax.apps.account.openid_consumer import PinaxConsumer
+from pinax.apps.account.urls import signup_view
+from staticfiles.urls import staticfiles_urlpatterns
+from forms import CaptchaSignupForm
+
+##---INITS
 
 admin.autodiscover()
-
-from staticfiles.urls import staticfiles_urlpatterns
-from pinax.apps.account.openid_consumer import PinaxConsumer
-
 handler500 = 'pinax.views.server_error'
 
 ##---URLS
@@ -37,6 +38,11 @@ urlpatterns = patterns(
     url(r'^profiles/', include('idios.urls')),
     url(r'^notices/', include('notification.urls')),
     url(r'^announcements/', include('announcements.urls')),
+
+    # captcha
+    url(r'^captcha/', include('captcha.urls')),
+    url(r"^signup/$", signup_view, {'form_class':CaptchaSignupForm},
+        name="acct_signup"),
 
     # spike-eval
     url(r'^spike_eval/', include('spike_eval.urls')),

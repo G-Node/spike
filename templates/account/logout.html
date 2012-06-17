@@ -1,0 +1,12 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Logged Out" %}{% endblock %}
+
+{% block body %}
+    <header class="jumbotron subhead" id="overview">
+        <h1>{% trans "Logged Out" %}</h1>
+        <p class="lead">{% trans "You've been logged out. Come back soon." %}</p>
+    </header>
+{% endblock %}

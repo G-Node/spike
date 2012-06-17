@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load spike_eval_tags %}
+{% load bootstrap_tags %}
 
 {% block head_title %}{E:{{ eb.id }}}&nbsp;{{ eb.benchmark }}{% endblock %}
 
@@ -22,11 +23,38 @@
 
 {% block content %}
 
+  {% if eb|is_editable:user %}
+    <section class="well">
+      <form class="actions" method="POST">
+        {% csrf_token %}
+        <span class="label">Actions:</span>
+        <input type="submit" class="btn btn-mini" name="eb_switch"
+         {% if e.is_public %}
+           value="{% trans "Unpublish Evaluation Batch" %}"
+         {% else %}
+           value="{% trans "Publish Evalulation Batch" %}"
+         {% endif %}/>
+        <a id="edit-batch-toggle" class="btn btn-mini">
+          Edit Evaluation Batch</a>
+      </form>
+      <form id="edit-batch" class="form form-horizontal well" method="POST"
+       style="display: none;">
+        {% csrf_token %}
+        <fieldset>
+          {{ eb_form|as_bootstrap }}
+          <div class="form-actions">
+            <input type="submit" class="btn btn-primary" name="t_edit"
+             value="{% trans 'Edit Trial' %}"/>
+          </div>
+        </fieldset>
+      </form>
+    </section>
+  {% endif %}
   <section id="batch">
-    <h3>
+    <h1>
       Evaluation Batch #{{ eb.id }}
-      {% if eb.is_public %}- published{% endif %}
-    </h3>
+      <small>({{ eb.get_access_display }})</small>
+    </h1>
     <dl class="dl-horizontal">
       <dt>
         <strong>Benchmark:</strong>
@@ -60,18 +88,6 @@
         {% icn_time eb %}
       </dd>
     </dl>
-    {% if eb|is_editable:user %}
-      <form class="form well" method="POST">
-        {% csrf_token %}
-        <span class="label">Actions:</span>
-        <input type="submit" class="btn btn-mini" name="eb_switch"
-         {% if e.is_public %}
-           value="{% trans "Unpublish Evaluation" %}"
-         {% else %}
-           value="{% trans "Publish Evalulation" %}"
-         {% endif %}/>
-      </form>
-    {% endif %}
   </section>
 
   {% for e in eb.evaluation_set.all %}
@@ -80,4 +96,20 @@
     </section>
   {% endfor %}
 
+{% endblock %}
+
+{% block extra_body %}
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('#edit-batch-toggle').click(function() {
+        $('#edit-batch').toggle();
+        return false;
+      });
+      if($('#edit-batch .error').length) {
+        $('#edit-batch').show();
+        $('#edit-batch .error').autoscroll();
+      }
+      ;
+    });
+  </script>
 {% endblock %}
