@@ -1,15 +1,9 @@
 {% load staticfiles %}
 
 <h2>Welcome to the Spike Sorting Evaluation Project</h2>
-<p>Extracellular recordings are a standard procedure to analyzing the activity
-  of neurons. The problem with this kind of recording is, that not a single
-  neuron but a small local population of neurons are recorded. To estimate the
-  single neuron activity (the so called spike train) from this mulit neuron
-  activity, spike sorting is applied. Many different algorithms for spike
-  sorting were proposed. However, despite many efforts to tackle this problem,
-  it is still difficult to tell under which circumstances which spike sorting
-  algorithm is the best. If you are interested in some basic reading about
-  spike sorting please consult the following references.</p>
+<p>Extracellular recordings are a standard procedure to analyzing the activity of neurons. A problem with this kind of recording is the simultaneous recording of not a single neuron but a small local population of neurons. It is not straight-forward to reconstruct the single neuronal activities. To estimate the single neuron activity (the so called spike train) from this multi neuron activity, spike sorting is applied. Many different algorithms for spike sorting were proposed. However, despite many efforts to tackle this problem, it is still difficult to tell under which circumstances which spike sorting algorithm is the best. 
+
+If you are interested in some basic reading about spike sorting please consult the following references.</p>
 <blockquote>
   <a href="http://www.tsolab.org/jclub/20090429/lewicki.pdf">
     "A review of methods for spike sorting: the detection and classification
@@ -20,12 +14,15 @@
   </small>
 </blockquote>
 <blockquote>
-  <a href="http://dx.doi.org/10.4249/scholarpedia.3583">
-    "Spike sorting"</a>
-  <small>R. Q. Quiroga (2007),
-    <cite title>Scholarpedia, 2(12):3583.</cite>
+  <a href="http://www.sciencedirect.com/science/article/pii/S0959438811001565">
+    "Towards reliable spike-train recordings from thousands of neurons with multielectrodes."</a>
+  <small>Einevoll GT, Franke F, Hagen E, Pouzat C, Harris KD (2011),
+    <cite title>Curr Opin Neurobiol. 2011 Oct 22. </cite>
   </small>
 </blockquote>
+
+In May 2011, a workshop on <a href="http://spike.ni.tu-berlin.de/workshop/">Validation of Automatic Spike Sorting Methods</a> took place in Ski, Norway.
+
 
 <h2>The Problem - No Benchmark</h2>
 <p>In our opinion the lack of systematic evaluations of different spike
@@ -74,6 +71,4 @@
   to the published results of other users.</p>
 
 <h2>What this website is not</h2>
-<p>This website does currently not provide spike sorting in any way.</p>
-<p>For more information about Spike Sorting Evaluation and G-Node, see
-  <a href="http://www.g-node.org/">http://www.g-node.org/</a>.</p>
+<p>This website is not providing spike sorting algorithms or the functionality to actually sort your data. It is just about validation of spike sorting methods.</p>
