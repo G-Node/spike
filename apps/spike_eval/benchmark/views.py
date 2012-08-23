@@ -118,6 +118,14 @@ def detail(request, bid):
                         'Supplementary creation successful: \'%s\'' % s)
                 else:
                     messages.warning(request, 'Supplementary creation failed!')
+            elif 's_delete' in request.POST:
+                try:
+                    sid = int(request.POST['s_id'])
+                    s = get_object_or_404(Datafile.objects, id=sid)
+                    s.delete()
+                    messages.success(request, 'Supplementary deleted!')
+                except:
+                    messages.error(request, 'Supplementary delete failed!')
 
         # user submission
         if 'e_submit' in request.POST:

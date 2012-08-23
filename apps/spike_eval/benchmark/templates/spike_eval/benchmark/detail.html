@@ -21,40 +21,40 @@
       </form>
 
       <form id="edit-benchmark" class="form form-horizontal" method="POST"
-       style="display:none">
+            style="display:none">
         <fieldset>
           <legend>Edit Benchmark</legend>
           {% csrf_token %}
           {{ b_form|as_bootstrap }}
           <div class="form-actions">
             <input type="submit" class="btn btn-primary" name="b_edit"
-             value="{% trans 'Edit Benchmark' %}"/>
+                   value="{% trans 'Edit Benchmark' %}"/>
           </div>
         </fieldset>
       </form>
 
       <form id="create-trial" class="form form-horizontal" method="POST"
-       enctype="multipart/form-data" style="display:none">
+            enctype="multipart/form-data" style="display:none">
         <fieldset>
           <legend>Create Trial</legend>
           {% csrf_token %}
           {{ t_form|as_bootstrap }}
           <div class="form-actions">
             <input type="submit" class="btn btn-primary" name="t_create"
-             value="{% trans 'Create Trial' %}"/>
+                   value="{% trans 'Create Trial' %}"/>
           </div>
         </fieldset>
       </form>
 
       <form id="create-suppl" class="form form-horizontal" method="POST"
-       enctype="multipart/form-data" style="display:none">
+            enctype="multipart/form-data" style="display:none">
         <fieldset>
           <legend>Create Supplementary</legend>
           {% csrf_token %}
           {{ s_form|as_bootstrap }}
           <div class="form-actions">
             <input type="submit" class="btn btn-primary" name="s_create"
-             value="{% trans 'Create Supplementary' %}"/>
+                   value="{% trans 'Create Supplementary' %}"/>
           </div>
         </fieldset>
       </form>
@@ -215,6 +215,11 @@
           <th>{% trans "Filename" %}</th>
           <th>{% trans "Size" %}</th>
           <th>{% trans "Created" %}</th>
+          {% if user.is_authenticated %}
+            {% if b.added_by == user or user.is_superuser %}
+              <th>{% trans "Actions" %}</th>
+            {% endif %}
+          {% endif %}
         </tr>
         </thead>
         <tbody>
@@ -234,6 +239,17 @@
             <td>
               {% icn_time d %}
             </td>
+            {% if user.is_authenticated %}
+              {% if b.added_by == user or user.is_superuser %}
+                <td>
+                  <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="s_id" value="{{ d.id }}">
+                    <input type="submit" name="s_delete" value="delete">
+                  </form>
+                </td>
+              {% endif %}
+            {% endif %}
           </tr>
         {% endfor %}
         </tbody>
@@ -257,14 +273,14 @@
     {% else %}
       {% if b.trial_set.all %}
         <form method="POST" enctype="multipart/form-data"
-         class="form form-horizontal well">
+              class="form form-horizontal well">
           <fieldset>
             <legend>Submit Evaluation</legend>
             {% csrf_token %}
             {{ e_form|as_bootstrap }}
             <div class="form-actions" style="clear: both;">
               <input type="submit" class="btn btn-primary" name="e_submit"
-               value="{% trans 'Submit Evaluations' %}"/>
+                     value="{% trans 'Submit Evaluations' %}"/>
             </div>
           </fieldset>
         </form>
@@ -277,36 +293,36 @@
 
 {% block extra_body %}
   <script type="text/javascript">
-    $(document).ready(function() {
-      $('#edit-benchmark-toggle').click(function() {
+    $(document).ready(function () {
+      $('#edit-benchmark-toggle').click(function () {
         $('#create-trial').hide();
         $('#create-suppl').hide();
         $('#edit-benchmark').toggle();
         return false;
       });
-      if($('#edit-benchmark .error').length) {
+      if ($('#edit-benchmark .error').length) {
         $('#edit-benchmark').show();
         $('#edit-benchmark .error').autoscroll();
       }
       ;
-      $('#create-trial-toggle').click(function() {
+      $('#create-trial-toggle').click(function () {
         $('#edit-benchmark').hide();
         $('#create-suppl').hide();
         $('#create-trial').toggle();
         return false;
       });
-      if($('#create-trial .error').length) {
+      if ($('#create-trial .error').length) {
         $('#create-trial').show();
         $('#create-trial .error').autoscroll();
       }
       ;
-      $('#create-suppl-toggle').click(function() {
+      $('#create-suppl-toggle').click(function () {
         $('#edit-benchmark').hide();
         $('#create-trial').hide();
         $('#create-suppl').toggle();
         return false;
       });
-      if($('#create-suppl .error').length) {
+      if ($('#create-suppl .error').length) {
         $('#create-suppl').show();
         $('#create-suppl .error').autoscroll();
       }

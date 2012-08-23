@@ -100,10 +100,8 @@
           <th>{% trans "Filename" %}</th>
           <th>{% trans "Size" %}</th>
           <th>{% trans "Created" %}</th>
-          {% if user.is_authenticated %}
-            {% if a.added_by == user or user.is_superuser %}
-              <th>{% trans "Actions" %}</th>
-            {% endif %}
+          {% if a|is_editable:user %}
+            <th>{% trans "Actions" %}</th>
           {% endif %}
         </tr>
         </thead>
@@ -127,16 +125,14 @@
                 {{ d.date_created|date }}
               </nobr>
             </td>
-            {% if user.is_authenticated %}
-              {% if a.added_by == user or user.is_superuser %}
-                <td>
-                  <form method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="s_id" value="{{ d.id }}">
-                    <input type="submit" name="s_delete" value="delete">
-                  </form>
-                </td>
-              {% endif %}
+            {% if b|is_editable:user %}
+              <td>
+                <form method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="s_id" value="{{ d.id }}">
+                  <input type="submit" name="s_delete" value="delete">
+                </form>
+              </td>
             {% endif %}
           </tr>
         {% endfor %}
@@ -144,10 +140,10 @@
       </table>
     {% else %}
       <p>This Algorithm has no Supplementaries yet.
-        {% ifequal a.owner user %}
+        {% if a|is_editable:user %}
           You can add new Supplementary Files by clicking on the "Create
           Supplementary" button under "Actions:" above.
-        {% endifequal %}
+        {% endif %}
       </p>
     {% endif %}
   </div>
