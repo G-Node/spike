@@ -29,22 +29,22 @@
         {% csrf_token %}
         <span class="label">Actions:</span>
         <input type="submit" class="btn btn-mini" name="eb_switch"
-         {% if e.is_public %}
-           value="{% trans "Unpublish Evaluation Batch" %}"
-         {% else %}
-           value="{% trans "Publish Evalulation Batch" %}"
-         {% endif %}/>
+                {% if e.is_public %}
+               value="{% trans "Unpublish Evaluation Batch" %}"
+                {% else %}
+               value="{% trans "Publish Evalulation Batch" %}"
+                {% endif %}/>
         <a id="edit-batch-toggle" class="btn btn-mini">
           Edit Evaluation Batch</a>
       </form>
       <form id="edit-batch" class="form form-horizontal well" method="POST"
-       style="display: none;">
+            style="display: none;">
         {% csrf_token %}
         <fieldset>
           {{ eb_form|as_bootstrap }}
           <div class="form-actions">
             <input type="submit" class="btn btn-primary" name="t_edit"
-             value="{% trans 'Edit Trial' %}"/>
+                   value="{% trans 'Edit Trial' %}"/>
           </div>
         </fieldset>
       </form>
@@ -73,7 +73,7 @@
         <strong>Algorithm:</strong>
       </dt>
       <dd>
-        <a href="{% url e_algo eb.algorithm.id %}">{{ eb.algorithm }}</a>
+        <a href="{{ eb.algorithm.get_absolute_url }}">{{ eb.algorithm }}</a>
       </dd>
       <dt>
         <strong>Author:</strong>
@@ -100,12 +100,12 @@
 
 {% block extra_body %}
   <script type="text/javascript">
-    $(document).ready(function() {
-      $('#edit-batch-toggle').click(function() {
+    $(document).ready(function () {
+      $('#edit-batch-toggle').click(function () {
         $('#edit-batch').toggle();
         return false;
       });
-      if($('#edit-batch .error').length) {
+      if ($('#edit-batch .error').length) {
         $('#edit-batch').show();
         $('#edit-batch .error').autoscroll();
       }

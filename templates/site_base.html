@@ -21,6 +21,9 @@
     <li id="tab_evaluation">
       <a href="{% url e_list %}">{% trans "Evaluations" %}</a>
     </li>
+    <li id="tab_algorithm">
+      <a href="{% url a_list %}">{% trans "Algorithms" %}</a>
+    </li>
     {# profile and notices #}
     {% if user.is_authenticated %}
       <li class="divider-vertical"></li>
