@@ -174,70 +174,80 @@ class EvaluationSubmitForm(forms.ModelForm):
             e.save()
         return eb
 
-
-class EvaluationForm(forms.ModelForm):
-    class Meta:
-        model = Evaluation
-        fields = ()
-
-    ## fields
-
-    ev_file = forms.FileField(label='Evaluation File')
-
-    ## constructor
-
-    def __init__(self, *args, **kwargs):
-        super(EvaluationForm, self).__init__(*args, **kwargs)
-        self.tid = None
-        self.trial = None
-        if self.prefix is not None:
-            self.tid = int(self.prefix.split('-')[1])
-            self.trial = Trial.objects.get(id=self.tid)
-
-    ## form interface
-
-    def clean(self):
-        cleaned_data = self.cleaned_data
-
-        if self._errors and 'file' in self._errors:
-            self._errors.clear()
-            raise forms.ValidationError('nothing submitted')
-        else:
-            return cleaned_data
-
-    def save(self, *args, **kwargs):
-        # init and checks
-        batch = kwargs.pop('batch')
-        user = kwargs.pop('user')
-        if self.tid is None:
-            self.tid = int(kwargs.pop('tid'))
-        self.trial = Trial.objects.get(id=self.tid)
-
-        # build instance
-        self.instance.added_by = user
-        self.instance.trial = self.trial
-        self.instance.task_state = 10
-        self.instance.evaluation_batch = batch
-        e = super(EvaluationForm, self).save(*args, **kwargs)
-
-        # datafile
-        ev_file = Datafile(
-            name=self.cleaned_data['ev_file'].name,
-            file=self.cleaned_data['ev_file'],
-            filetype=30,
-            added_by=user,
-            content_object=e)
-        ev_file.save()
-
-        # trigger evaluation
-        e.task_id = start_eval(e.id)
-        e.save()
-        return e
+#
+#class EvaluationForm(forms.ModelForm):
+#    class Meta:
+#        model = Evaluation
+#        fields = ()
+#
+#    ## fields
+#
+#    ev_file = forms.FileField(label='Evaluation File')
+#
+#    ## constructor
+#
+#    def __init__(self, *args, **kwargs):
+#        super(EvaluationForm, self).__init__(*args, **kwargs)
+#        self.tid = None
+#        self.trial = None
+#        if self.prefix is not None:
+#            self.tid = int(self.prefix.split('-')[1])
+#            self.trial = Trial.objects.get(id=self.tid)
+#
+#    ## form interface
+#
+#    def clean(self):
+#        cleaned_data = self.cleaned_data
+#
+#        if self._errors and 'file' in self._errors:
+#            self._errors.clear()
+#            raise forms.ValidationError('nothing submitted')
+#        else:
+#            return cleaned_data
+#
+#    def save(self, *args, **kwargs):
+#        # init and checks
+#        batch = kwargs.pop('batch')
+#        user = kwargs.pop('user')
+#        if self.tid is None:
+#            self.tid = int(kwargs.pop('tid'))
+#        self.trial = Trial.objects.get(id=self.tid)
+#
+#        # build instance
+#        self.instance.added_by = user
+#        self.instance.trial = self.trial
+#        self.instance.task_state = 10
+#        self.instance.evaluation_batch = batch
+#        e = super(EvaluationForm, self).save(*args, **kwargs)
+#
+#        # datafile
+#        ev_file = Datafile(
+#            name=self.cleaned_data['ev_file'].name,
+#            file=self.cleaned_data['ev_file'],
+#            filetype=30,
+#            added_by=user,
+#            content_object=e)
+#        ev_file.save()
+#
+#        # trigger evaluation
+#        e.task_id = start_eval(e.id)
+#        e.save()
+#        return e
 
 
 class AlgorithmForm(forms.ModelForm):
     class Meta:
         model = Algorithm
+
+    ## constructor
+
+    def __init__(self, *args, **kwargs):
+        super(AlgorithmForm, self).__init__(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        if 'user' in kwargs:
+            self.instance.added_by = kwargs.pop('user')
+        return super(AlgorithmForm, self).save(*args, **kwargs)
 
 
 class SupplementaryForm(forms.ModelForm):
@@ -253,15 +263,13 @@ class SupplementaryForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         # init and checks
         obj = kwargs.pop('obj')
-        user = kwargs.pop('user')
+        user = kwargs.pop('user', obj.added_by)
 
         # build instance
         self.instance.filetype = 40
         self.instance.added_by = user
         self.instance.content_object = obj
-        dfile = super(SupplementaryForm, self).save(*args, **kwargs)
-        dfile.save()
-        return dfile
+        return super(SupplementaryForm, self).save(*args, **kwargs)
 
 if __name__ == '__main__':
     pass

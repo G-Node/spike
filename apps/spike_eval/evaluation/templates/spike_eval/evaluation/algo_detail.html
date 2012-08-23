@@ -1,4 +1,4 @@
-{% extends "spike_eval/evaluation/base.html" %}
+{% extends "spike_eval/evaluation/base_algo.html" %}
 
 {% load i18n %}
 {% load pagination_tags %}
@@ -38,6 +38,7 @@
           {{ a.date_created|date }}</nobr>
       </dd>
       <dt>
+
         <strong>Kind:</strong>
       </dt>
       <dd>
@@ -60,26 +61,26 @@
           {% trans "Create Supplementary" %}</a>
       </form>
       <form id="edit-algorithm" method="POST" style="display:none"
-       class="form form-horizontal well">
+            class="form form-horizontal well">
         <fieldset>
           <legend>Edit Algorithm</legend>
           {% csrf_token %}
           {{ a_form|as_bootstrap }}
           <div class="form-actions">
-            <input type="submit" class="btn btn-primary"
-             value="{% trans 'Edit Benchmark' %}"/>
+            <input type="submit" class="btn btn-primary" name="a_edit"
+                   value="{% trans 'Edit Algorithm' %}"/>
           </div>
         </fieldset>
       </form>
       <form id="create-suppl" method="POST" enctype="multipart/form-data"
-       style="display:none" class="form form-horizontal well">
+            style="display:none" class="form form-horizontal well">
         <fieldset>
           <legend>Create Supplementary</legend>
           {% csrf_token %}
           {{ s_form|as_bootstrap }}
           <div class="form-actions">
-            <input type="submit" class="btn btn-primary"
-             value="{% trans 'Create Supplementary' %}"/>
+            <input type="submit" class="btn btn-primary" name="s_create"
+                   value="{% trans 'Create Supplementary' %}"/>
           </div>
         </fieldset>
       </form>
@@ -99,6 +100,11 @@
           <th>{% trans "Filename" %}</th>
           <th>{% trans "Size" %}</th>
           <th>{% trans "Created" %}</th>
+          {% if user.is_authenticated %}
+            {% if a.added_by == user or user.is_superuser %}
+              <th>{% trans "Actions" %}</th>
+            {% endif %}
+          {% endif %}
         </tr>
         </thead>
         <tbody>
@@ -121,6 +127,17 @@
                 {{ d.date_created|date }}
               </nobr>
             </td>
+            {% if user.is_authenticated %}
+              {% if a.added_by == user or user.is_superuser %}
+                <td>
+                  <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="s_id" value="{{ d.id }}">
+                    <input type="submit" name="s_delete" value="delete">
+                  </form>
+                </td>
+              {% endif %}
+            {% endif %}
           </tr>
         {% endfor %}
         </tbody>
@@ -138,23 +155,23 @@
 
 {% block extra_body %}
   <script type="text/javascript">
-    $(document).ready(function() {
-      $('#edit-algorithm-toggle').click(function() {
+    $(document).ready(function () {
+      $('#edit-algorithm-toggle').click(function () {
         $('#create-suppl').hide();
         $('#edit-algorithm').toggle();
         return false;
       });
-      if($('#edit-algorithm .error').length) {
+      if ($('#edit-algorithm .error').length) {
         $('#edit-algorithm').show();
         $('#edit-algorithm .error').autoscroll();
       }
       ;
-      $('#create-suppl-toggle').click(function() {
+      $('#create-suppl-toggle').click(function () {
         $('#edit-algorithm').hide();
         $('#create-suppl').toggle();
         return false;
       });
-      if($('#create-suppl .error').length) {
+      if ($('#create-suppl .error').length) {
         $('#create-suppl').show();
         $('#create-suppl .error').autoscroll();
       }

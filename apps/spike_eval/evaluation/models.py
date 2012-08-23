@@ -50,7 +50,13 @@ class Algorithm(CommonInfo):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'e_algo', (), {'aid':self.pk}
+        return 'a_detail', (), {'aid':self.pk}
+
+    ## interface
+
+    @property
+    def datafile_set(self):
+        return Datafile.objects.for_obj(self)
 
 
 class EvaluationBatch(CommonInfo):
@@ -85,6 +91,10 @@ class EvaluationBatch(CommonInfo):
         return 'e_batch', (), {'ebid':self.pk}
 
     ## interface
+
+    @property
+    def datafile_set(self):
+        return Datafile.objects.for_obj(self)
 
     def switch(self):
         if self.access == 10:
