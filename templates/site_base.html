@@ -8,12 +8,6 @@
   <link href="{% static "css/gnode.css" %}" rel="stylesheet">
 {% endblock %}
 
-{% block extra_head %}
-  <script type="text/javascript">var switchTo5x = true;</script>
-  <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
-  <script type="text/javascript" src="http://s.sharethis.com/loader.js"></script>
-{% endblock %}
-
 {% block nav %}
   <ul class="nav">{% spaceless %}
     {# spike_eval #}
@@ -67,26 +61,4 @@
 {% block extra_body_base %}
   {% analytics %}
   {% block extra_body %}{% endblock %}
-  <script>
-    var options = {
-      "publisher":"ur-ebba8615-e5c4-1807-280a-3434c1f6427b",
-      "position":"left",
-      "ad":{
-        "visible":false,
-        "openDelay":5,
-        "closeDelay":0},
-      "chicklets":{
-        "items":[
-          "facebook",
-          "twitter",
-          "googleplus",
-          "citeulike",
-          "linkedin",
-          "digg",
-          "reddit",
-          "wordpress",
-          "blogger",
-          "email"]}};
-    var st_hover_widget = new sharethis.widgets.hoverbuttons(options);
-  </script>
 {% endblock %}

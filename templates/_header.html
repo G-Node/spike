@@ -1,5 +1,4 @@
 {% load staticfiles %}
-
 <div id="logo" class="hero-unit">
   <div id="logo-main-container">
     {% block logo_pre_main %}{% endblock %}
@@ -9,8 +8,8 @@
   </div>
   <div id="logo-other-container">
     <div class="logo-other">
-      {% block logo_other3 %}
-        <img src="{% static "img/logo_tub.png" %}" alt="TUB Logo">
+      {% block logo_other1 %}
+        <img src="{% static "img/logo_incf.png" %}" alt="INCF Logo">
       {% endblock %}
     </div>
     <div class="logo-other">
@@ -19,9 +18,21 @@
       {% endblock %}
     </div>
     <div class="logo-other">
-      {% block logo_other1 %}
-        <img src="{% static "img/logo_incf.png" %}" alt="INCF Logo">
+      {% block logo_other3 %}
+        <img src="{% static "img/logo_tub.png" %}" alt="TUB Logo">
       {% endblock %}
     </div>
   </div>
+  <div id="logo-social-container">
+    <span class="st_facebook"></span>
+    <span class="st_twitter"></span>
+    <span class="st_googleplus"></span>
+    <span class="st_yahoo"></span>
+    <span class="st_email"></span>
+  </div>
 </div>
+
+{% block extra_head %}
+  <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+  <script type="text/javascript">stLight.options({publisher:"ur-204b1c8-1bf2-5bf9-56ec-9c789af349c9"}); </script>
+{% endblock %}
