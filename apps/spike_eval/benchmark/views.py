@@ -66,10 +66,10 @@ def blist(request):
             )
 
     # response
-    return {'b_form':b_form,
-            'b_list':b_list,
-            'b_list_self':b_list_self,
-            'search_terms':search_terms}
+    return {'b_form': b_form,
+            'b_list': b_list,
+            'b_list_self': b_list_self,
+            'search_terms': search_terms}
 
 #@login_required
 @render_to('spike_eval/benchmark/detail.html')
@@ -86,7 +86,7 @@ def detail(request, bid):
         redirect('b_list')
     t_list = b.trial_set.order_by('parameter')
     if not b.is_editable(request.user):
-        t_list = filter(lambda x:x.is_validated(), t_list)
+        t_list = filter(lambda x: x.is_validated(), t_list)
 
     # post request
     if request.method == 'POST':
@@ -149,12 +149,12 @@ def detail(request, bid):
         e_form = EvaluationSubmitForm(benchmark=b)
 
     # response
-    return {'b':b,
-            't_list':t_list,
-            'b_form':b_form,
-            'e_form':e_form,
-            's_form':s_form,
-            't_form':t_form}
+    return {'b': b,
+            't_list': t_list,
+            'b_form': b_form,
+            'e_form': e_form,
+            's_form': s_form,
+            't_form': t_form}
 
 
 @login_required
@@ -204,8 +204,8 @@ def trial(request, tid):
         t_form = TrialForm(instance=t, pv_label=t.benchmark.parameter)
 
     # response
-    return {'t':t,
-            't_form':t_form}
+    return {'t': t,
+            't_form': t_form}
 
 
 @login_required
@@ -252,8 +252,8 @@ def summary(request, bid):
         if not request.user.is_superuser:
             eb_list_self = eb_list_self.filter(added_by=request.user)
         eb_list |= eb_list_self
-    return {'b':b,
-            'eb_list':eb_list.order_by('id')}
+    return {'b': b,
+            'eb_list': eb_list.order_by('id')}
 
 
 def summary_plot(request, bid):
@@ -309,6 +309,26 @@ def summary_plot(request, bid):
         except:
             pass
         return response
+
+
+def download_file(request, bid):
+    import zipfile, os
+    from StringIO import StringIO
+
+    try:
+        buffer = StringIO()
+        zipf = zipfile.ZipFile(buffer, mode="w")
+        zipf.writestr(po_fn, unicode(rosetta_i18n_pofile).encode("utf8"))
+        zipf.writestr(mo_fn, rosetta_i18n_pofile.to_binary())
+        zipf.close()
+        buffer.seek(0)
+
+        response = HttpResponse(buffer.read())
+        response['Content-Disposition'] = 'attachment; filename=%s.%s.zip' % (offered_fn, rosetta_i18n_lang_code)
+        response['Content-Type'] = 'application/x-zip'
+        return response
+    except Exception, e:
+        return redirect('b_list')
 
 ##---MAIN
 
