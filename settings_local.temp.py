@@ -23,13 +23,13 @@ CONTACT_EMAIL = 'support@example.com'
 ##---DATABASE
 
 DATABASES = {
-    "default":{
-        "ENGINE":"django.db.backends.mysql",
-        "NAME":"db-name",
-        "USER":"db-user",
-        "PASSWORD":"db-user-pass",
-        "HOST":"",
-        "PORT":"",
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "db-name",
+        "USER": "db-user",
+        "PASSWORD": "db-user-pass",
+        "HOST": "",
+        "PORT": "",
         }
 }
 
@@ -40,7 +40,7 @@ LANGUAGE_CODE = "en-gb"
 USE_I18N = True
 
 # restrict available language choices
-gettext_noop = lambda s:s
+gettext_noop = lambda s: s
 LANGUAGES = (
     ('de', gettext_noop('German')),
     ('en', gettext_noop('English')),
@@ -99,3 +99,11 @@ EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""
 EMAIL_USE_TSL = True
 DEFAULT_FROM_EMAIL = "nopeply@spike.g-node.org"
+
+##---MATPLOTLIB-BACKEND
+
+import matplotlib
+
+matplotlib.use('Agg')
+
+##---EOF
