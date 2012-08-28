@@ -46,7 +46,7 @@ AP_CFG_TEXT = """## apache config file for the spikesorting evaluation website
 
   # wsgi script
   WSGIScriptAlias / {PROJECT_ROOT}/wsgi.py
-  WSGIDaemonProcess spike display-name=spike home={PROJECT_ROOT} threads=25
+  WSGIDaemonProcess spike display-name=spike home={PROJECT_ROOT} processes=1 threads=1 maximum-requests=32 inactivity-timeout=30
   WSGIProcessGroup spike
   <Directory {PROJECT_ROOT}>
     <Files wsgi.py>
