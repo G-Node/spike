@@ -48,6 +48,7 @@ AP_CFG_TEXT = """## apache config file for the spikesorting evaluation website
   WSGIScriptAlias / {PROJECT_ROOT}/django.wsgi
   WSGIDaemonProcess spike display-name=spike home={PROJECT_ROOT} processes=1 threads=1 maximum-requests=32 inactivity-timeout=30
   WSGIProcessGroup spike
+  WSGIRestrictEmbedded On
   <Directory {PROJECT_ROOT}>
     <Files wsgi.py>
       Order allow,deny
