@@ -17,14 +17,11 @@ handler500 = 'pinax.views.server_error'
 
 ##---URLS
 
-urlpatterns = patterns(
-    "",
-
-    # sandbox
+urlpatterns = patterns("",
 
     # landing page and admin
     url(r'^$', direct_to_template, {
-        'template':'homepage.html',
+        'template': 'homepage.html',
         }, name='home'),
     url(r"^admin/invite_user/$",
         'pinax.apps.signup_codes.views.admin_invite_user',
@@ -41,12 +38,15 @@ urlpatterns = patterns(
 
     # captcha
     url(r'^captcha/', include('captcha.urls')),
-    url(r"^signup/$", signup_view, {'form_class':CaptchaSignupForm},
+    url(r"^signup/$", signup_view, {'form_class': CaptchaSignupForm},
         name="acct_signup"),
 
     # spike-eval
     url(r'^spike_eval/', include('spike_eval.urls')),
-    )
+
+    # debug
+    url('^dowser/', include('django_dowser.urls')),
+)
 
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

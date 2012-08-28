@@ -32,20 +32,20 @@ ADMINS = [
 MANAGERS = ADMINS
 
 DATABASES = {
-    "default":{
-        "ENGINE":"django.db.backends.mysql",
-        "NAME":"db-name",
-        "USER":"db-user",
-        "PASSWORD":"db-user-pass",
-        "HOST":"",
-        "PORT":"",
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "db-name",
+        "USER": "db-user",
+        "PASSWORD": "db-user-pass",
+        "HOST": "",
+        "PORT": "",
         }
 }
 
 CACHES = {
-    'default':{
-        'BACKEND':'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION':'127.0.0.1:11211',
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
         }
 }
 
@@ -168,7 +168,6 @@ INSTALLED_APPS = [
     "notification", # must be first
     "staticfiles",
     "compressor",
-    "debug_toolbar",
     "mailer",
     "django_openid",
     "timezones",
@@ -178,6 +177,10 @@ INSTALLED_APPS = [
     "idios",
     "metron",
     "captcha",
+
+    # debug
+    "debug_toolbar",
+    "django_dowser",
 
     # Pinax
     "pinax.apps.account",
@@ -198,7 +201,7 @@ MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 EMAIL_BACKEND = "mailer.backend.DbBackend"
 
 ABSOLUTE_URL_OVERRIDES = {
-    "auth.user":lambda o:"/profiles/profile/%s/" % o.username,
+    "auth.user": lambda o: "/profiles/profile/%s/" % o.username,
     }
 
 AUTH_PROFILE_MODULE = "profiles.Profile"
@@ -231,10 +234,10 @@ def dbt_visible(request):
         return len(request.user.groups.filter(name='debug_toolbar')) > 0
 
 DEBUG_TOOLBAR_CONFIG = {
-    'INTERCEPT_REDIRECTS':False,
-    'SHOW_TOOLBAR_CALLBACK':dbt_visible,
-    'HIDE_DJANGO_SQL':False,
-    'ENABLE_STACKTRACES':True,
+    'INTERCEPT_REDIRECTS': False,
+    'SHOW_TOOLBAR_CALLBACK': dbt_visible,
+    'HIDE_DJANGO_SQL': False,
+    'ENABLE_STACKTRACES': True,
     }
 
 # settings_local

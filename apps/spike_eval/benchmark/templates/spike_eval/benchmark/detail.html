@@ -191,6 +191,15 @@
             {% endif %}
           </tr>
         {% endfor %}
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td><a href="{% url b_dl_zip b.id %}">ZIP ARCHIVE</a></td>
+          {% ifequal b.owner user %}
+            <td></td>{% endifequal %}
+        </tr>
         </tbody>
       </table>
     {% else %}

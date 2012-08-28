@@ -307,24 +307,34 @@ def summary_plot(request, bid):
         return response
 
 
-def download_file(request, bid):
+def dl_zip(request, bid):
+    # imports
     import zipfile, os
     from StringIO import StringIO
+    from django.template.defaultfilters import slugify
 
+    # init and checks
+    b = get_object_or_404(Benchmark.objects.all(), id=bid)
+    t_list = [t for t in b.trial_set.order_by('parameter') if t.is_validated()]
+
+    # build archive
     try:
-        buffer = StringIO()
-        zipf = zipfile.ZipFile(buffer, mode="w")
-        zipf.writestr(po_fn, unicode(rosetta_i18n_pofile).encode("utf8"))
-        zipf.writestr(mo_fn, rosetta_i18n_pofile.to_binary())
-        zipf.close()
-        buffer.seek(0)
+        # build buffer and archive
+        buf = StringIO()
+        with zipfile.ZipFile(buf, mode='w') as arc:
+            for t in t_list:
+                arc.writestr(t.rd_file.name, t.rd_file.file.read())
+                if b.gt_access == 20 and t.gt_file:
+                    arc.writestr(t.gt_file.name, t.gt_file.file.read())
+        buf.seek(0)
 
-        response = HttpResponse(buffer.read())
-        response['Content-Disposition'] = 'attachment; filename=%s.%s.zip' % (offered_fn, rosetta_i18n_lang_code)
+        response = HttpResponse(buf.read())
+        fname = slugify(b.name)
+        response['Content-Disposition'] = 'attachment; filename=%s.zip' % fname
         response['Content-Type'] = 'application/x-zip'
         return response
-    except Exception, e:
-        return redirect('b_list')
+    except:
+        return redirect(b)
 
 ##---MAIN
 

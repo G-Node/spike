@@ -13,7 +13,8 @@ urlpatterns = patterns(
     url(r'^summary/(?P<bid>\d+)/', 'summary', name='b_summary'),
     url(r'^summary_plot/(?P<bid>\d+)/', 'summary_plot', name='b_summary_plot'),
     url(r'^trial/(?P<tid>\d+)/', 'trial', name='b_trial'),
-    )
+    url(r'^dl_zip/(?P<bid>\d+)/', 'dl_zip', name='b_dl_zip'),
+)
 
 ##---MAIN
 
