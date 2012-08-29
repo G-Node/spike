@@ -337,6 +337,15 @@ def dl_zip(request, bid):
     except Exception, ex:
         print ex
         return redirect(b)
+    finally:
+        try:
+            del arc
+        except:
+            pass
+        try:
+            del buf
+        except:
+            pass
 
 ##---MAIN
 
