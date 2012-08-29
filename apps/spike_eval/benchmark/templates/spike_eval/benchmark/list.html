@@ -17,20 +17,20 @@
       <form class="actions">
         <span class="label">Actions:</span>
         <a class="btn btn-mini"
-         onclick="$('#create-benchmark').toggle();">Create Benchmark</a>
+           onclick="$('#create-benchmark').toggle();">Create Benchmark</a>
         <a class="btn btn-mini"
-         onclick="$('#tagcloud').toggle();">Show Tagcloud</a>
+           onclick="$('#tagcloud').toggle();">Show Tagcloud</a>
       </form>
       <form id="create-benchmark" class="form form-horizontal"
-       method="POST"
-       {% if not b_form.errors %}style="display:none"{% endif %}>
+            method="POST"
+            {% if not b_form.errors %}style="display:none"{% endif %}>
         <fieldset>
           <legend>Create Benchmark</legend>
           {% csrf_token %}
           {{ b_form|as_bootstrap }}
           <div class="form-actions">
             <input type="submit" class="btn btn-primary"
-             value="{% trans 'Create Benchmark' %}"/>
+                   value="{% trans 'Create Benchmark' %}"/>
           </div>
         </fieldset>
       </form>
@@ -92,25 +92,15 @@
             <td>{{ b.description|truncatewords:11|escape }}</td>
             <td>
               <div class="btn-group">
-                <a href="{{ b.get_absolute_url }}" class="btn btn-mini">
-                  {% trans "download" %}
-                </a>
+                <a href="{% url b_dl_zip b.id %}" class="btn btn-mini">{% trans "download" %}</a>
                 {% if b|is_editable:user %}
                   {% if b.state != 30 %}
-                    <a href="{% url b_archive b.id %}" class="btn
-                        btn-mini">
-                      {% trans "archive" %}
-                    </a>
+                    <a href="{% url b_archive b.id %}" class="btn btn-mini">{% trans "archive" %}</a>
                   {% else %}
-                    <a href="{% url b_resurrect b.id %}" class="btn
-                      btn-mini">
-                      {% trans "resurrect" %}
-                    </a>
+                    <a href="{% url b_resurrect b.id %}" class="btn btn-mini">{% trans "resurrect" %}</a>
                   {% endif %}
                 {% endif %}
-                <a href="{% url b_summary b.id %}" class="btn btn-mini">
-                  {% trans "summary" %}
-                </a>
+                <a href="{% url b_summary b.id %}" class="btn btn-mini">{% trans "summary" %}</a>
               </div>
             </td>
           </tr>
@@ -144,7 +134,7 @@
             <div class="input-prepend input-append">
               <span class="add-on"><i class="icon-search"></i></span>
               <input type="text" name="search" value="{{ search_terms }}"
-               class="input-medium search-query"/>
+                     class="input-medium search-query"/>
               <input class="btn" type="submit" value="Search"/>
               {% if search_terms %}
                 <a class="btn" href="{% clear_search_url request %}">Clear</a>
@@ -197,24 +187,15 @@
             <td>{{ b.description|truncatewords:11|escape }}</td>
             <td>
               <div class="btn-group">
-                <a href="{{ b.get_absolute_url }}" class="btn btn-mini">
-                  {% trans "download" %}
-                </a>
+                <a href="{% url b_dl_zip b.id %}" class="btn btn-mini">{% trans "download" %}</a>
                 {% if b|is_editable:user %}
                   {% if b.state != 30 %}
-                    <a href="{% url b_archive b.id %}" class="btn btn-mini">
-                      {% trans "archive" %}
-                    </a>
+                    <a href="{% url b_archive b.id %}" class="btn btn-mini">{% trans "archive" %}</a>
                   {% else %}
-                    <a href="{% url b_resurrect b.id %}" class="btn
-                      btn-mini">
-                      {% trans "resurrect" %}
-                    </a>
+                    <a href="{% url b_resurrect b.id %}" class="btn btn-mini">{% trans "resurrect" %}</a>
                   {% endif %}
                 {% endif %}
-                <a href="{% url b_summary b.id %}" class="btn btn-mini">
-                  {% trans "summary" %}
-                </a>
+                <a href="{% url b_summary b.id %}" class="btn btn-mini">{% trans "summary" %}</a>
               </div>
             </td>
           </tr>
