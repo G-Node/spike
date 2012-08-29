@@ -255,6 +255,7 @@ def summary(request, bid):
 def summary_plot(request, bid):
     """generate a plot of the benchmark summary"""
 
+    fig, response = None, None
     try:
         # init and checks
         b = get_object_or_404(Benchmark.objects.all(), id=bid)
@@ -316,6 +317,7 @@ def dl_zip(request, bid):
     # init and checks
     b = get_object_or_404(Benchmark.objects.all(), id=bid)
     t_list = [t for t in b.trial_set.order_by('parameter') if t.is_validated()]
+    arc, buf = None, None
 
     # build archive
     try:
