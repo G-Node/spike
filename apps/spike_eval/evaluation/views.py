@@ -188,7 +188,7 @@ def alist(request):
     a_form = None
     a_list_self = None
     if request.user.is_authenticated():
-        a_list_self = EvaluationBatch.objects.filter(added_by=request.user)
+        a_list_self = Algorithm.objects.filter(added_by=request.user)
 
     # post request
     if request.method == 'POST':
@@ -205,7 +205,7 @@ def alist(request):
     if search_terms:
         a_list = (
             a_list.filter(name__icontains=search_terms) |
-            a_list.filter(added_by__icontains=search_terms))
+            a_list.filter(added_by__username__icontains=search_terms))
 
     # response
     return {'a_list': a_list,

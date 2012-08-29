@@ -5,6 +5,7 @@
 {% load pagination_tags %}
 {% load sorting_tags %}
 {% load spike_eval_tags %}
+{% load taggit_extras %}
 
 {% block head_title %}{% trans "Algorithms" %}{% endblock %}
 
@@ -16,6 +17,8 @@
         <span class="label">Actions:</span>
         <a class="btn btn-mini"
            onclick="$('#create-algorithm').toggle();">Create Algorithm</a>
+        <a class="btn btn-mini"
+           onclick="$('#tagcloud').toggle();">Show Tagcloud</a>
       </form>
       <form id="create-algorithm" class="form form-horizontal"
             method="POST"
@@ -33,6 +36,15 @@
     </section>
   {% endif %}
 
+  <section id="tagcloud" style="display: none;">
+    <h2>Algorithm Tagcloud
+      <small>visualisation of the Algorithm tag space</small>
+    </h2>
+    <div class="well">
+      {% include_tagcloud 'evaluation.Algorithm' %}
+    </div>
+  </section>
+
   {% if a_list_self %}
     <section>
       <h2>Algorithm List ({% icn_profile user %})
@@ -46,7 +58,6 @@
           <th>{% trans "Algorithm" %}</th>
           <th>{% trans "Owner" %}</th>
           <th>{% trans "Date" %}</th>
-          <th>{% trans "Kind" %}</th>
         </tr>
         </thead>
         <tbody>
@@ -60,10 +71,6 @@
             </td>
             <td>
               {% icn_time a %}
-            </td>
-            <td>
-              {# TODO: implement kind list #}
-              "kind list here"
             </td>
           </tr>
         {% endfor %}
@@ -88,7 +95,7 @@
             <div class="input-prepend input-append">
               <span class="add-on"><i class="icon-search"></i></span>
               <input type="text" name="search" value="{{ search_terms }}"
-               class="input-medium search-query"/>
+                     class="input-medium search-query"/>
               <input class="btn" type="submit" value="Search"/>
               {% if search_terms %}
                 <a class="btn" href="{% clear_search_url request %}">Clear</a>
@@ -109,7 +116,6 @@
           <th>{% trans "Algorithm" %}</th>
           <th>{% trans "Owner" %}</th>
           <th>{% trans "Date" %}</th>
-          <th>{% trans "Kind" %}</th>
         </tr>
         </thead>
         <tbody>
@@ -124,10 +130,6 @@
             <td>
               {% icn_time a %}
             </td>
-              <td>
-                {# TODO: implement kind list #}
-                "kind list here"
-              </td>
           </tr>
         {% endfor %}
         </tbody>
