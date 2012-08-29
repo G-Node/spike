@@ -42,8 +42,8 @@
         <strong>Kind:</strong>
       </dt>
       <dd>
-        {% for tag in a.tags.all %}
-          <i class="icon-tag"></i>{{ tag }}&nbsp;
+        {% for kind in a.kind.all %}
+          <i class="icon-tag"></i>{{ kind }}&nbsp;
         {% empty %}
           &nbsp;
         {% endfor %}
