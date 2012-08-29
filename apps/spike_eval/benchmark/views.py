@@ -321,11 +321,12 @@ def dl_zip(request, bid):
     try:
         # build buffer and archive
         buf = StringIO()
-        with zipfile.ZipFile(buf, mode='w') as arc:
-            for t in t_list:
-                arc.writestr(t.rd_file.name, t.rd_file.file.read())
-                if b.gt_access == 20 and t.gt_file:
-                    arc.writestr(t.gt_file.name, t.gt_file.file.read())
+        arc = zipfile.ZipFile(buf, mode='w'):
+        for t in t_list:
+            arc.writestr(t.rd_file.name, t.rd_file.file.read())
+            if b.gt_access == 20 and t.gt_file:
+                arc.writestr(t.gt_file.name, t.gt_file.file.read())
+        arc.close()
         buf.seek(0)
 
         response = HttpResponse(buf.read())
