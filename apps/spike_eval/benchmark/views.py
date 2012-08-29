@@ -333,7 +333,8 @@ def dl_zip(request, bid):
         response['Content-Disposition'] = 'attachment; filename=%s.zip' % fname
         response['Content-Type'] = 'application/x-zip'
         return response
-    except:
+    except Exception, ex:
+        print ex
         return redirect(b)
 
 ##---MAIN
