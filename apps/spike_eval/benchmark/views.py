@@ -321,7 +321,7 @@ def dl_zip(request, bid):
     try:
         # build buffer and archive
         buf = StringIO()
-        arc = zipfile.ZipFile(buf, mode='w'):
+        arc = zipfile.ZipFile(buf, mode='w')
         for t in t_list:
             arc.writestr(t.rd_file.name, t.rd_file.file.read())
             if b.gt_access == 20 and t.gt_file:
