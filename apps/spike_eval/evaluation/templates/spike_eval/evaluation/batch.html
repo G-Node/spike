@@ -21,6 +21,7 @@
                 {% endif %}/>
         <a id="edit-batch-toggle" class="btn btn-mini">
           Edit Evaluation Batch</a>
+        <a href="{% url e_dl_zip eb.id %}" class="btn btn-mini">{% trans "Export Results" %}</a>
       </form>
       <form id="edit-batch" class="form form-horizontal well" method="POST"
             style="display: none;">

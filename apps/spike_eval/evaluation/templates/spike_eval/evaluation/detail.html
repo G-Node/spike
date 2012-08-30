@@ -146,7 +146,7 @@
           </tr>
           </tfoot>
           <tbody>
-          {% for r in e.evaluationresults_set.all %}
+          {% for r in e.eval_res %}
             <tr>
               {% for v in r.display %}
                 <td>{{ v }}</td>
@@ -157,7 +157,7 @@
         </table>
       </div>
 
-      {% if e.evaluationresultsimg_set.all %}
+      {% if e.eval_res_img %}
         <div>
           <h2>Evaluation Plots</h2>
           <table class="table">

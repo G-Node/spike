@@ -1,10 +1,12 @@
 ##---IMPORTS
 
-from datetime import datetime
+import zipfile
+from StringIO import StringIO
 from django.contrib import messages
-from django.http import HttpResponseForbidden
-from django.shortcuts import get_object_or_404, redirect
 from django.db import models
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.template.defaultfilters import slugify
 from .models import Algorithm, Evaluation, EvaluationBatch
 from ..forms import AlgorithmForm, SupplementaryForm, EvalBatchEditForm
 from ..tasks import start_eval
@@ -173,6 +175,63 @@ def alist(request):
             'a_list_self': a_list_self,
             'a_form': a_form or AlgorithmForm(),
             'search_terms': search_terms}
+
+
+def dl_zip(request, ebid):
+    # init and checks
+    eb = get_object_or_404(EvaluationBatch.objects.all(), id=ebid)
+    e_list = [e for e in eb.evaluation_set.order_by('trial__parameter')]
+    arc, arc_buf, buf = None, None, None
+
+    # build archive
+    try:
+        # build buffer and archive
+        arc_buf = StringIO()
+        arc = zipfile.ZipFile(arc_buf, mode='w')
+
+        # write introduction | TODO: add a proper README file
+        arc.writestr('README', "RESULTS FOR %s\n\nsome explanation should go here!\n" % (str(eb)))
+
+        # write evaluations
+        for e in e_list:
+            e_name = slugify(e.trial.name)
+            buf = StringIO()
+            for r in e.eval_res:
+                buf.write('%s\n' % ','.join(map(str, r.display())))
+            buf.seek(0)
+            arc.writestr('%s/tbl.csv' % e_name, buf.read())
+            buf.close()
+            for ri in e.eval_res_img:
+                arc.writestr(
+                    '%s/img_%s.%s' % (e_name, ri.img_type, ri.img_data.path.split('.')[-1]),
+                    ri.img_data.read())
+        arc.close()
+        arc_buf.seek(0)
+
+        # send response
+        response = HttpResponse(arc_buf.read())
+        response['Content-Disposition'] = 'attachment; filename=%s.zip' % slugify(str(eb))
+        response['Content-Type'] = 'application/x-zip'
+        return response
+    except Exception, ex:
+        print ex
+        return redirect(eb)
+    finally:
+        try:
+            arc.close()
+            del arc
+        except:
+            pass
+        try:
+            arc_buf.close()
+            del arc_buf
+        except:
+            pass
+        try:
+            buf.close()
+            del buf
+        except:
+            pass
 
 ##---MAIN
 

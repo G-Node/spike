@@ -50,7 +50,7 @@ class Algorithm(CommonInfo):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'a_detail', (), {'aid':self.pk}
+        return 'a_detail', (), {'aid': self.pk}
 
     ## interface
 
@@ -88,7 +88,7 @@ class EvaluationBatch(CommonInfo):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'e_batch', (), {'ebid':self.pk}
+        return 'e_batch', (), {'ebid': self.pk}
 
     ## interface
 
@@ -161,9 +161,17 @@ class Evaluation(CommonInfo):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'e_detail', (), {'eid':self.pk}
+        return 'e_detail', (), {'eid': self.pk}
 
     ## interface
+
+    @property
+    def eval_res(self):
+        return self.evaluationresults_set.order_by('gt_unit')
+
+    @property
+    def eval_res_img(self):
+        return self.evaluationresultsimg_set.all()
 
     @property
     def datafile_set(self):
@@ -208,44 +216,44 @@ class Evaluation(CommonInfo):
         sFP = er.aggregate(Sum("FP")).values()[0]
 
         return {
-            'KS':sKS,
-            'KSO':sKSO,
+            'KS': sKS,
+            'KSO': sKSO,
 
-            'FS':sFS,
+            'FS': sFS,
 
-            'TP':sTP,
-            'TPO':sTPO,
+            'TP': sTP,
+            'TPO': sTPO,
 
-            'FPAE':sFPAE,
-            'FPAOE':sFPAOE,
-            'FP':sFP,
+            'FPAE': sFPAE,
+            'FPAOE': sFPAOE,
+            'FP': sFP,
 
-            'FPA':sFPA,
-            'FPAO':sFPAO,
+            'FPA': sFPA,
+            'FPAO': sFPAO,
 
-            'FN':sFN,
-            'FNO':sFNO
+            'FN': sFN,
+            'FNO': sFNO
         }
 
     def summary_table(self):
         er = self.summary()
-        return{'FP':er['FP'],
+        return{'FP': er['FP'],
 
-               'FN':er['FN'] + er['FNO'],
-               'FNno':er['FN'],
-               'FNo':er['FNO'],
+               'FN': er['FN'] + er['FNO'],
+               'FNno': er['FN'],
+               'FNo': er['FNO'],
 
-               'FPAE':er['FPAE'] + er['FPAOE'],
-               'FPAEno':er['FPAE'],
-               'FPAEo':er['FPAOE'],
+               'FPAE': er['FPAE'] + er['FPAOE'],
+               'FPAEno': er['FPAE'],
+               'FPAEo': er['FPAOE'],
 
-               'error_sum':er['FP'] + er['FN'] + er['FPAE']}
+               'error_sum': er['FP'] + er['FN'] + er['FPAE']}
 
     def summary_short(self):
         er = self.summary()
         return {
-            'TP':(er['TP'] + er['TPO']) / float(er['KS']) * 100,
-            'FP':(er['FS'] - er['TP'] - er['TPO']) / float(er['KS']) * 100, }
+            'TP': (er['TP'] + er['TPO']) / float(er['KS']) * 100,
+            'FP': (er['FS'] - er['TP'] - er['TPO']) / float(er['KS']) * 100, }
 
 
 class EvaluationResults(DateCreated):

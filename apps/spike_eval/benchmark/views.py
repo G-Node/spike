@@ -1,10 +1,13 @@
 ##---IMPORTS
 
+import zipfile
+from StringIO import StringIO
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import models
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
+from django.template.defaultfilters import slugify
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from numpy import nan, nanmax, nanmin
@@ -306,11 +309,6 @@ def summary_plot(request, bid):
 
 
 def dl_zip(request, bid):
-    # imports
-    import zipfile, os
-    from StringIO import StringIO
-    from django.template.defaultfilters import slugify
-
     # init and checks
     b = get_object_or_404(Benchmark.objects.all(), id=bid)
     t_list = [t for t in b.trial_set.order_by('parameter') if t.is_validated()]
@@ -329,8 +327,7 @@ def dl_zip(request, bid):
         buf.seek(0)
 
         response = HttpResponse(buf.read())
-        fname = slugify(b.name)
-        response['Content-Disposition'] = 'attachment; filename=%s.zip' % fname
+        response['Content-Disposition'] = 'attachment; filename=%s.zip' % slugify(b.name)
         response['Content-Type'] = 'application/x-zip'
         return response
     except Exception, ex:
