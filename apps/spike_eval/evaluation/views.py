@@ -33,10 +33,7 @@ def elist(request, bid=None):
     e_list = EvaluationBatch.objects.filter(access=20)
     e_list_self = None
     if request.user.is_authenticated():
-        if not request.user.is_superuser:
-            e_list |= EvaluationBatch.objects.filter(
-                added_by=request.user, access=10)
-        else:
+        if request.user.is_superuser:
             e_list = EvaluationBatch.objects.all()
         e_list_self = EvaluationBatch.objects.filter(added_by=request.user)
 

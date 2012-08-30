@@ -45,10 +45,7 @@ def blist(request):
     b_list = Benchmark.objects.exclude(state__in=[10, 30])
     b_list_self = None
     if request.user.is_authenticated():
-        if not request.user.is_superuser:
-            b_list |= Benchmark.objects.filter(
-                owner=request.user, state__in=[10, 30])
-        else:
+        if request.user.is_superuser:
             b_list = Benchmark.objects.all()
         b_list_self = Benchmark.objects.filter(owner=request.user)
 
