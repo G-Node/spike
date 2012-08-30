@@ -1,172 +1,180 @@
 {% load i18n %}
 {% load spike_eval_tags %}
 
-<div class="well clearfix">
-  <div class="pull-right">
+<div class="accordion-group">
+  <div class="accordion-heading clearfix">
+    <div class="pull-right">
+      {% if e.processed %}
+        {% with e.summary_short as e_sum %}
+          <p>True positive: {{ e_sum.TP|floatformat:2 }}%</p>
+          <p>False positive: {{ e_sum.FP|floatformat:2 }}%</p>
+        {% endwith %}
+      {% else %}
+        <p>No results available yet.</p>
+      {% endif %}
+    </div>
+    <dl class="dl-horizontal pull-left">
+      <dt>
+        <strong>Benchmark:</strong>
+      </dt>
+      <dd>
+        {{ e.benchmark }}
+      </dd>
+      <dt>
+        <strong>Trial:</strong>
+      </dt>
+      <dd>
+        {{ e.trial }}
+      </dd>
+      <dt>
+        <strong>Task State:</strong>
+      </dt>
+      <dd>
+        <strong style="{% state_color e.task_state %}">
+          {{ e.get_task_state_display }}</strong>
+      </dd>
+      <dt></dt>
+      <dd><a class="accordion-toogle" href="#eval-{{ e.id }}"
+             data-toggle="collapse" data-parent="#trial-container">TOGGLE DETAILS</a>
+      </dd>
+    </dl>
+  </div>
+
+  <div id="eval-{{ e.id }}" class="accordion-body collapse" style="margin: 5px;">
+    {% if user.is_authenticated %}
+      {% if eb|is_editable:user %}
+        <form class="form well" method="POST">
+          {% csrf_token %}
+          <span class="label">Actions:</span>
+          <input type="hidden" name="restart_eid" value="{{ e.id }}">
+          <input type="submit" class="btn btn-mini" name="restart"
+                 value="{% trans "Restart Evaluation" %}"/>
+          <a href="#" class="btn btn-mini"
+             onclick="$('#show_log-{{ e.id }}').toggle();return false;">
+            {% trans "Show Log" %}
+          </a>
+        </form>
+        <pre id="show_log-{{ e.id }}" class="well"
+             {% if e.processed %}style="display:none"{% endif %}
+                >{{ e.task_log }}</pre>
+      {% endif %}
+    {% endif %}
+
     {% if e.processed %}
-      {% with e.summary_short as e_sum %}
-        <p>True positive: {{ e_sum.TP|floatformat:2 }}%</p>
-        <p>False positive: {{ e_sum.FP|floatformat:2 }}%</p>
-      {% endwith %}
-    {% else %}
-      <p>No results available yet.</p>
+      <div>
+        <h3>Evaluation summary:</h3>
+
+        <table class="table table-striped table-condensed table-bordered">
+          <thead>
+          <tr>
+            <th colspan=4>{% trans "Detection Errors" %}</th>
+            <th colspan=3>{% trans "Classification Errors" %}</th>
+          </tr>
+          <tr>
+            <th colspan=1>{% trans "False Positives" %}</th>
+            <th colspan=3>{% trans "False Negatives" %}</th>
+            <th colspan=3></th>
+          </tr>
+          <tr>
+            <th>{% trans "Total" %}</th>
+            <th>{% trans "Total" %}</th>
+            <th>{% trans "Non-Overlaps" %}</th>
+            <th>{% trans "Overlaps" %}</th>
+            <th>{% trans "Total" %}</th>
+            <th>{% trans "Non-Overlaps" %}</th>
+            <th>{% trans "Overlaps" %}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            {% with e.summary_table as e_sum %}
+              <td>{{ e_sum.FP }}</td>
+              <td>{{ e_sum.FN }}</td>
+              <td>{{ e_sum.FNno }}</td>
+              <td>{{ e_sum.FNo }}</td>
+              <td>{{ e_sum.FPAE }}</td>
+              <td>{{ e_sum.FPAEno }}</td>
+              <td>{{ e_sum.FPAEo }}</td>
+            {% endwith %}
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div>
+        <h2>Evaluation results:</h2>
+
+        <table class="table table-striped table-condensed table-bordered">
+          <thead>
+          <tr>
+            <th rowspan=3>{% trans "GT Unit" %}</th>
+            <th rowspan=3>{% trans "Found Unit" %}</th>
+            <th colspan=3>{% trans "Ground Truth" %}</th>
+            <th colspan=3>{% trans "Found Spikes of Unit" %}</th>
+            <th colspan=3>{% trans "False Positives" %}</th>
+            <th colspan=4>{% trans "False Negatives" %}</th>
+          </tr>
+          <tr>
+            <th colspan=3>{% trans "(True Spikes)" %}</th>
+            <th colspan=3>{% trans "(True Positives)" %}</th>
+            <th colspan=2>{% trans "Other Spikes" %}</th>
+            <th colspan=1>{% trans "Noise" %}</th>
+            <th colspan=2>{% trans "Found by other Unit" %}</th>
+            <th colspan=2>{% trans "Not detected" %}</th>
+          </tr>
+          <tr>
+            <th>{% trans "Total" %}</th>
+            <th>{% trans "N-O" %}</th>
+            <th>{% trans "O" %}</th>
+            <th>{% trans "Total" %}</th>
+            <th>{% trans "N-O" %}</th>
+            <th>{% trans "O" %}</th>
+            <th>{% trans "N-O" %}</th>
+            <th>{% trans "O" %}</th>
+            <th>{% trans "FP" %}</th>
+            <th>{% trans "N-O" %}</th>
+            <th>{% trans "O" %}</th>
+            <th>{% trans "N-O" %}</th>
+            <th>{% trans "O" %}</th>
+          </tr>
+          </thead>
+          <tfoot>
+          <tr>
+            <td colspan="15">
+              GT = Ground Truth, O = Overlaps, N-O = Non-Overlaps
+            </td>
+          </tr>
+          </tfoot>
+          <tbody>
+          {% for r in e.evaluationresults_set.all %}
+            <tr>
+              {% for v in r.display %}
+                <td>{{ v }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if e.evaluationresultsimg_set.all %}
+        <div>
+          <h2>Evaluation Plots</h2>
+          <table class="table">
+            <tbody>
+            {% for img_obj in e.evaluationresultsimg_set.all %}
+              <tr>
+                <td>
+                  <h3>{{ img_obj.img_type }}</h3>
+                  <img src="{{ img_obj.img_data.url }}"/>
+                </td>
+                <td>some explanation should go here</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
     {% endif %}
   </div>
-  <dl class="dl-horizontal pull-left">
-    <dt>
-      <strong>Benchmark:</strong>
-    </dt>
-    <dd>
-      {{ e.benchmark }}
-    </dd>
-    <dt>
-      <strong>Trial:</strong>
-    </dt>
-    <dd>
-      {{ e.trial }}
-    </dd>
-    <dt>
-      <strong>Task State:</strong>
-    </dt>
-    <dd>
-      <strong style="{% state_color e.task_state %}">
-        {{ e.get_task_state_display }}</strong>
-    </dd>
-  </dl>
 </div>
-
-{% if user.is_authenticated %}
-  {% if eb|is_editable:user %}
-    <form class="form well" method="POST">
-      {% csrf_token %}
-      <span class="label">Actions:</span>
-      <input type="hidden" name="restart_eid" value="{{ e.id }}">
-      <input type="submit" class="btn btn-mini" name="restart"
-       value="{% trans "Restart Evaluation" %}"/>
-      <a href="#" class="btn btn-mini"
-       onclick="$('#show_log').toggle();return false;">
-        {% trans "Show Log" %}
-      </a>
-    </form>
-    <pre id="show_log" class="well"
-     {% if e.processed %}style="display:none"{% endif %}
-     >{{ e.task_log }}</pre>
-  {% endif %}
-{% endif %}
-
-{% if e.processed %}
-  <div>
-    <h3>Evaluation summary:</h3>
-
-    <table class="table table-striped table-condensed table-bordered">
-      <thead>
-      <tr>
-        <th colspan=4>{% trans "Detection Errors" %}</th>
-        <th colspan=3>{% trans "Classification Errors" %}</th>
-      </tr>
-      <tr>
-        <th colspan=1>{% trans "False Positives" %}</th>
-        <th colspan=3>{% trans "False Negatives" %}</th>
-        <th colspan=3></th>
-      </tr>
-      <tr>
-        <th>{% trans "Total" %}</th>
-        <th>{% trans "Total" %}</th>
-        <th>{% trans "Non-Overlaps" %}</th>
-        <th>{% trans "Overlaps" %}</th>
-        <th>{% trans "Total" %}</th>
-        <th>{% trans "Non-Overlaps" %}</th>
-        <th>{% trans "Overlaps" %}</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        {% with e.summary_table as e_sum %}
-          <td>{{ e_sum.FP }}</td>
-          <td>{{ e_sum.FN }}</td>
-          <td>{{ e_sum.FNno }}</td>
-          <td>{{ e_sum.FNo }}</td>
-          <td>{{ e_sum.FPAE }}</td>
-          <td>{{ e_sum.FPAEno }}</td>
-          <td>{{ e_sum.FPAEo }}</td>
-        {% endwith %}
-      </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div>
-    <h2>Evaluation results:</h2>
-
-    <table class="table table-striped table-condensed table-bordered">
-      <thead>
-      <tr>
-        <th rowspan=3>{% trans "GT Unit" %}</th>
-        <th rowspan=3>{% trans "Found Unit" %}</th>
-        <th colspan=3>{% trans "Ground Truth" %}</th>
-        <th colspan=3>{% trans "Found Spikes of Unit" %}</th>
-        <th colspan=3>{% trans "False Positives" %}</th>
-        <th colspan=4>{% trans "False Negatives" %}</th>
-      </tr>
-      <tr>
-        <th colspan=3>{% trans "(True Spikes)" %}</th>
-        <th colspan=3>{% trans "(True Positives)" %}</th>
-        <th colspan=2>{% trans "Other Spikes" %}</th>
-        <th colspan=1>{% trans "Noise" %}</th>
-        <th colspan=2>{% trans "Found by other Unit" %}</th>
-        <th colspan=2>{% trans "Not detected" %}</th>
-      </tr>
-      <tr>
-        <th>{% trans "Total" %}</th>
-        <th>{% trans "N-O" %}</th>
-        <th>{% trans "O" %}</th>
-        <th>{% trans "Total" %}</th>
-        <th>{% trans "N-O" %}</th>
-        <th>{% trans "O" %}</th>
-        <th>{% trans "N-O" %}</th>
-        <th>{% trans "O" %}</th>
-        <th>{% trans "FP" %}</th>
-        <th>{% trans "N-O" %}</th>
-        <th>{% trans "O" %}</th>
-        <th>{% trans "N-O" %}</th>
-        <th>{% trans "O" %}</th>
-      </tr>
-      </thead>
-      <tfoot>
-      <tr>
-        <td colspan="15">
-          GT = Ground Truth, O = Overlaps, N-O = Non-Overlaps
-        </td>
-      </tr>
-      </tfoot>
-      <tbody>
-      {% for r in e.evaluationresults_set.all %}
-        <tr>
-          {% for v in r.display %}
-            <td>{{ v }}</td>
-          {% endfor %}
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-  {% if e.evaluationresultsimg_set.all %}
-    <div>
-      <h2>Evaluation Plots</h2>
-      <table class="table">
-        <tbody>
-        {% for img_obj in e.evaluationresultsimg_set.all %}
-          <tr>
-            <td>
-              <h3>{{ img_obj.img_type }}</h3>
-              <img src="{{ img_obj.img_data.url }}"/>
-            </td>
-            <td>some explanation should go here</td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  {% endif %}
-{% endif %}

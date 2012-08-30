@@ -6,21 +6,6 @@
 
 {% block head_title %}{E:{{ eb.id }}}&nbsp;{{ eb.benchmark }}{% endblock %}
 
-{% block subnav %}
-  <div class="subnav subnav-fixed" id="subnav">
-    <ul class="nav nav-pills">
-      <li>
-        <a href="#batch">{{ eb }}</a>
-      </li>
-      {% for e in eb.evaluation_set.all %}
-        <li>
-          <a href="#trial-id-{{ e.id }}">Trial: {{ e.trial }}</a>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
-{% endblock %}
-
 {% block content %}
 
   {% if eb|is_editable:user %}
@@ -90,11 +75,11 @@
     </dl>
   </section>
 
-  {% for e in eb.evaluation_set.all %}
-    <section id="trial-id-{{ e.id }}">
+  <section id="#trial-container" class="accordion" data-collapse-type="manual">
+    {% for e in eb.evaluation_set.all %}
       {% include "spike_eval/evaluation/detail.html" %}
-    </section>
-  {% endfor %}
+    {% endfor %}
+  </section>
 
 {% endblock %}
 
