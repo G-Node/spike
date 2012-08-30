@@ -226,12 +226,10 @@ EMAIL_CONFIRMATION_DAYS = 2
 EMAIL_DEBUG = DEBUG
 
 def dbt_visible(request):
-    if DEBUG:
-        return True
     if not request.user.is_authenticated():
         return False
     else:
-        return len(request.user.groups.filter(name='debug_toolbar')) > 0
+        return DEBUG or request.user.is_superuser() or request.user.is_staff()
 
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,

@@ -99,42 +99,6 @@ def batch(request, ebid):
             'eb_form': eb_form or EvalBatchEditForm()}
 
 
-@render_to('spike_eval/evaluation/detail.html')
-def detail(request, eid):
-    """renders details of an evaluation
-
-    DEPRECATED SINCE EVALUATION BATCHES!!
-    """
-
-    # init and checks
-    e = get_object_or_404(Evaluation.objects.all(), id=eid)
-    if not e.is_accessible(request.user):
-        return HttpResponseForbidden(
-            'You don\'t have rights to view this Evaluation.')
-    er = e.evaluationresults_set.all()
-    if er:
-        er = sorted(er, cmp=sort_er, key=lambda x: x.gt_unit)
-    image_results = e.evaluationresultsimg_set.all()
-
-    # status check
-    if e.task_state == 10:
-        dt = datetime.now() - e.date_created
-        if dt.days > 0:
-            e.task_state = 0 # Failure
-            e.task_log = '\n'.join([
-                e.task_log or '',
-                '',
-                'Unrecoverable Processing-Error: idle time > 1day!'])
-            e.save()
-
-
-
-    # response
-    return {'e': e,
-            'er': er,
-            'image_results': image_results}
-
-
 @render_to('spike_eval/evaluation/algo_detail.html')
 def adetail(request, aid):
     """renders details of an algorithm"""
