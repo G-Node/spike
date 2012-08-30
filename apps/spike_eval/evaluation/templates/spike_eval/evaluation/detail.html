@@ -3,7 +3,7 @@
 
 <div class="accordion-group">
   <div class="accordion-heading clearfix">
-    <div class="pull-right">
+    <div class="well pull-right">
       {% if e.processed %}
         {% with e.summary_short as e_sum %}
           <p>True positive: {{ e_sum.TP|floatformat:2 }}%</p>
