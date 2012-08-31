@@ -229,27 +229,27 @@ def dl_zip(request, ebid):
             response['Content-Disposition'] = 'attachment; filename=%s.zip' % slugify(str(eb))
             response['Content-Type'] = 'application/x-zip'
             return response
-            except Exception, ex:
-            print ex
-            return redirect(eb)
-            finally:
-            try:
-                arc.close()
+        except Exception, ex:
+        print ex
+        return redirect(eb)
+    finally:
+        try:
+            arc.close()
             del arc
-            except:
+        except:
             pass
-            try:
-                arc_buf.close()
+        try:
+            arc_buf.close()
             del arc_buf
-            except:
+        except:
             pass
-            try:
-                buf.close()
+        try:
+            buf.close()
             del buf
-            except:
+        except:
             pass
 
-            ##---MAIN
+##---MAIN
 
-            if __name__ == '__main__':
-                pass
+if __name__ == '__main__':
+    pass
