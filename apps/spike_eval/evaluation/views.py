@@ -229,7 +229,7 @@ def dl_zip(request, ebid):
             response['Content-Disposition'] = 'attachment; filename=%s.zip' % slugify(str(eb))
             response['Content-Type'] = 'application/x-zip'
             return response
-        except Exception, ex:
+    except Exception, ex:
         print ex
         return redirect(eb)
     finally:
