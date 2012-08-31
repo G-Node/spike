@@ -196,6 +196,22 @@ def dl_zip(request, ebid):
         for e in e_list:
             e_name = slugify(e.trial.name)
             buf = StringIO()
+            buf.write(','.join([
+                'GT Unit Name',
+                'Assigned Sorted Unit',
+                'GT Spikes',
+                'GT NO',
+                'GT Overlaps',
+                'Sorted Spikes',
+                'Sorted NO',
+                'Sorted O',
+                'FP(assigned NO from other GT unit)',
+                'FP(assigned O from other GT unit)',
+                'FP noise',
+                'FN(NO detected by other sorted unit)',
+                'FN(O det by other unit)',
+                'FN(NO not detected)',
+                'FN(O not detected)']))
             for r in e.eval_res:
                 buf.write('%s\n' % ','.join(map(str, r.display())))
             buf.seek(0)
@@ -205,35 +221,35 @@ def dl_zip(request, ebid):
                 arc.writestr(
                     '%s/img_%s.%s' % (e_name, ri.img_type, ri.img_data.path.split('.')[-1]),
                     ri.img_data.read())
-        arc.close()
-        arc_buf.seek(0)
-
-        # send response
-        response = HttpResponse(arc_buf.read())
-        response['Content-Disposition'] = 'attachment; filename=%s.zip' % slugify(str(eb))
-        response['Content-Type'] = 'application/x-zip'
-        return response
-    except Exception, ex:
-        print ex
-        return redirect(eb)
-    finally:
-        try:
             arc.close()
+            arc_buf.seek(0)
+
+            # send response
+            response = HttpResponse(arc_buf.read())
+            response['Content-Disposition'] = 'attachment; filename=%s.zip' % slugify(str(eb))
+            response['Content-Type'] = 'application/x-zip'
+            return response
+            except Exception, ex:
+            print ex
+            return redirect(eb)
+            finally:
+            try:
+                arc.close()
             del arc
-        except:
+            except:
             pass
-        try:
-            arc_buf.close()
+            try:
+                arc_buf.close()
             del arc_buf
-        except:
+            except:
             pass
-        try:
-            buf.close()
+            try:
+                buf.close()
             del buf
-        except:
+            except:
             pass
 
-##---MAIN
+            ##---MAIN
 
-if __name__ == '__main__':
-    pass
+            if __name__ == '__main__':
+                pass
