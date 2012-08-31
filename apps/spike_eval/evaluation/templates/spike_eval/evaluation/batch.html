@@ -8,11 +8,12 @@
 
 {% block content %}
 
-  {% if eb|is_editable:user %}
-    <section class="well">
-      <form class="actions" method="POST">
-        {% csrf_token %}
-        <span class="label">Actions:</span>
+
+  <section class="well">
+    <form class="actions" method="POST">
+      {% csrf_token %}
+      <span class="label">Actions:</span>
+      {% if eb|is_editable:user %}
         <input type="submit" class="btn btn-mini" name="eb_switch"
                 {% if e.is_public %}
                value="{% trans "Unpublish Evaluation Batch" %}"
@@ -21,21 +22,23 @@
                 {% endif %}/>
         <a id="edit-batch-toggle" class="btn btn-mini">
           Edit Evaluation Batch</a>
-        <a href="{% url e_dl_zip eb.id %}" class="btn btn-mini">{% trans "Export Results" %}</a>
-      </form>
-      <form id="edit-batch" class="form form-horizontal well" method="POST"
-            style="display: none;">
-        {% csrf_token %}
-        <fieldset>
-          {{ eb_form|as_bootstrap }}
-          <div class="form-actions">
-            <input type="submit" class="btn btn-primary" name="t_edit"
-                   value="{% trans 'Edit Trial' %}"/>
-          </div>
-        </fieldset>
-      </form>
-    </section>
-  {% endif %}
+      {% endif %}
+      <a href="{% url e_dl_zip eb.id %}" class="btn btn-mini">{% trans "Export Results" %}</a>
+    </form>
+    <form id="edit-batch" class="form form-horizontal well" method="POST"
+          style="display: none;">
+      {% csrf_token %}
+      <fieldset>
+        {{ eb_form|as_bootstrap }}
+        <div class="form-actions">
+          <input type="submit" class="btn btn-primary" name="t_edit"
+                 value="{% trans 'Edit Trial' %}"/>
+        </div>
+      </fieldset>
+    </form>
+
+  </section>
+
   <section id="batch">
     <h1>
       Evaluation Batch #{{ eb.id }}
