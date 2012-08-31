@@ -211,7 +211,7 @@ def dl_zip(request, ebid):
                 'FN(NO detected by other sorted unit)',
                 'FN(O det by other unit)',
                 'FN(NO not detected)',
-                'FN(O not detected)']))
+                'FN(O not detected)']) + '\n')
             for r in e.eval_res:
                 buf.write('%s\n' % ','.join(map(str, r.display())))
             buf.seek(0)
