@@ -323,7 +323,14 @@ def summary_plot(request, bid=None, mode=None, legend=False):
             }.get(mode, 'TOTAL ERROR')
         fig.suptitle(figtitle)
         if legend:
-            ax.legend()
+            ax.legend(
+                loc='upper center',
+                ncol=2,
+                fancybox=True,
+                bbox_to_anchor=(.95, 1),
+                numpoints=1,
+                prop={'size': 8},
+            )
         ax.grid()
     except:
         import sys, traceback
