@@ -300,7 +300,7 @@ def summary_plot(request, bid=None, mode=None, legend=False):
             y_curve = map(lambda x: x + 1.0, y_curve)
             if nansum(y_curve) > 0:
                 # TODO: fix "empty" evaluation batches!!
-                ax.semilogy(y_curve, 'o-', label=str(eb))
+                ax.semilogy(y_curve, 'o-', label='EB #%s' % eb.id)
 
         # beautify
         if mode == 'error_sum':
