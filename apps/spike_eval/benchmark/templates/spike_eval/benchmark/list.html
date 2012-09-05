@@ -59,6 +59,7 @@
           <th>{% trans "Name" %}</th>
           <th>{% trans "Author" %}</th>
           <th>{% trans "Date" %}</th>
+          <th>{% trans "Evaluations" %}</th>
           <th>{% trans "Description" %}</th>
           <th>{% trans "Actions" %}</th>
         </tr>
@@ -88,6 +89,9 @@
             </td>
             <td>
               {% icn_time b %}
+            </td>
+            <td>
+              <a href="{% url e_list bid=b.id %}">{{ b.eval_batches|length }}</a>
             </td>
             <td>{{ b.description|truncatewords:11|escape }}</td>
             <td>
