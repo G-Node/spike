@@ -327,7 +327,7 @@ def summary_plot(request, bid=None, mode=None, legend=False):
                 loc='upper center',
                 ncol=2,
                 fancybox=True,
-                bbox_to_anchor=(.95, 1),
+                bbox_to_anchor=(.90, 1),
                 numpoints=1,
                 prop={'size': 8},
             )
