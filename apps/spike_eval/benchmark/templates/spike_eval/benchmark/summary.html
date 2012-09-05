@@ -20,14 +20,11 @@
       <small>plots visualising the performance for this Benchmark</small>
     </h2>
     <div class="row-fluid">
-      <div class="span6">
+      <div class="span4">
         <img src="{% url b_summary_plot bid=b.id %}" alt="Summary Plot" border="1px"/>
       </div>
-      <div class="span3">
-        <img src="{% url b_summary_plot_sub bid=b.id mode='FPAEo' %}" alt="Summary Plot" border="1px"/>
-      </div>
-      <div class="span3">
-        <img src="{% url b_summary_plot_sub bid=b.id mode='FNo' %}" alt="Summary Plot" border="1px"/>
+      <div class="span6 well">
+        FILTER CONTROLS HERE
       </div>
     </div>
     <div class="row-fluid">
@@ -39,6 +36,14 @@
       </div>
       <div class="span3">
         <img src="{% url b_summary_plot_sub bid=b.id mode='FP' %}" alt="Summary Plot" border="1px"/>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span3">
+        <img src="{% url b_summary_plot_sub bid=b.id mode='FPAEo' %}" alt="Summary Plot" border="1px"/>
+      </div>
+      <div class="span3">
+        <img src="{% url b_summary_plot_sub bid=b.id mode='FNo' %}" alt="Summary Plot" border="1px"/>
       </div>
     </div>
   </section>

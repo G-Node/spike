@@ -49,7 +49,7 @@ class Benchmark(CommonInfo):
         help_text='The publication state of the Benchmark.')
     parameter = models.CharField(
         max_length=255,
-        default='Order',
+        default='ID',
         help_text='Trials of the Benchmark will have a parameter attached '\
                   'that can be used to order and distinguish Trials. This is'\
                   ' the caption for that parameter. (character limit: 255')

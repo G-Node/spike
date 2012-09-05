@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template.defaultfilters import slugify
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
-from numpy import nan, nanmax, nanmin
+from numpy import nan, nanmax
 
 from ..forms import (
     BenchmarkForm, TrialForm, EvaluationSubmitForm, SupplementaryForm)
@@ -255,7 +255,7 @@ def summary_plot(request, bid=None, mode=None, legend=False):
     """generate a plot of the benchmark summary"""
 
     ## DEBUG
-    print bid, mode, legend
+    #print bid, mode, legend
     ## GUBED
 
     fig = None
@@ -275,12 +275,11 @@ def summary_plot(request, bid=None, mode=None, legend=False):
         # build figure
         factor = int(2 + (mode is None))
         fig = Figure(
-            figsize=(3 * factor, 2 * factor),
-            dpi=80,
+            figsize=(2 * factor, 2 * factor),
+            #dpi=80,
             facecolor='white',
             edgecolor='white',
             frameon=False)
-        print fig.get_size_inches()
         ax = fig.add_subplot(111)
 
         # plot data
@@ -292,7 +291,9 @@ def summary_plot(request, bid=None, mode=None, legend=False):
             for e in eb.evaluation_set.all():
                 y_curve[t_list.index(e.trial)] = e.summary_table()[mode]
             y_max = max(y_max, nanmax(y_curve))
-            ax.plot(y_curve, 'o-', label=str(eb))
+            #ax.plot(y_curve, 'o-', label=str(eb))
+            y_curve = map(lambda x: x + 1.0, y_curve)
+            ax.semilogy(y_curve, 'o-', label=str(eb))
 
         # beautify
         ax.set_ylabel('Error Count')
