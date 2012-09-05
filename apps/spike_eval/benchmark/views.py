@@ -292,7 +292,9 @@ def summary_plot(request, bid=None, mode=None, legend=False):
                 y_curve[t_list.index(e.trial)] = e.summary_table()[mode]
             y_max = max(y_max, nanmax(y_curve))
             #ax.plot(y_curve, 'o-', label=str(eb))
+            print y_curve
             y_curve = map(lambda x: x + 1.0, y_curve)
+            print y_curve
             ax.semilogy(y_curve, 'o-', label=str(eb))
 
         # beautify
