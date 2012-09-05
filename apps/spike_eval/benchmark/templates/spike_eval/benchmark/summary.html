@@ -19,30 +19,30 @@
     <h2>Visual Summary
       <small>plots visualising the performance for this Benchmark</small>
     </h2>
-    <div class="row-fluid">
-      <div class="span4">
+    <div class="row">
+      <div class="span5">
         <img src="{% url b_summary_plot bid=b.id %}" alt="Summary Plot" border="1px"/>
       </div>
-      <div class="span6 well">
+      <div class="span5 well well-small">
         FILTER CONTROLS HERE
       </div>
     </div>
-    <div class="row-fluid">
-      <div class="span3">
+    <div class="row">
+      <div class="span4">
         <img src="{% url b_summary_plot_sub bid=b.id mode='FPAEno' %}" alt="Summary Plot" border="1px"/>
       </div>
-      <div class="span3">
+      <div class="span4">
         <img src="{% url b_summary_plot_sub bid=b.id mode='FNno' %}" alt="Summary Plot" border="1px"/>
       </div>
-      <div class="span3">
+      <div class="span4">
         <img src="{% url b_summary_plot_sub bid=b.id mode='FP' %}" alt="Summary Plot" border="1px"/>
       </div>
     </div>
-    <div class="row-fluid">
-      <div class="span3">
+    <div class="row">
+      <div class="span4">
         <img src="{% url b_summary_plot_sub bid=b.id mode='FPAEo' %}" alt="Summary Plot" border="1px"/>
       </div>
-      <div class="span3">
+      <div class="span4">
         <img src="{% url b_summary_plot_sub bid=b.id mode='FNo' %}" alt="Summary Plot" border="1px"/>
       </div>
     </div>
