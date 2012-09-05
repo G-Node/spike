@@ -281,7 +281,7 @@ def summary_plot(request, bid=None, mode=None, legend=False):
             edgecolor='white',
             frameon=False)
         ax = fig.add_subplot(111)
-        ax.set_autoscale_on(False)
+        #ax.set_autoscale_on(False)
 
         # plot data
         if mode is None or (mode is not None and mode not in ['FPAEno', 'FNno', 'FP', 'FPAEo', 'FNo']):
@@ -303,8 +303,8 @@ def summary_plot(request, bid=None, mode=None, legend=False):
 
         # beautify
         ax.set_ylabel('Error Count')
-        y_margin = y_max * 0.05
-        ax.set_ylim(-y_margin, y_max + y_margin)
+        #y_margin = y_max * 0.05
+        #ax.set_ylim(-y_margin, y_max + y_margin)
         ax.set_xlabel(b.parameter)
         x_margin = np * 0.05
         ax.set_xlim(-x_margin, (1 + (legend is True)) * np + x_margin - 1)
