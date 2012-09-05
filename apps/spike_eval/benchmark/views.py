@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template.defaultfilters import slugify
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
-from numpy import nan, nanmax
+from numpy import nan, nansum#, nanmax
 
 from ..forms import (
     BenchmarkForm, TrialForm, EvaluationSubmitForm, SupplementaryForm)
@@ -286,23 +286,28 @@ def summary_plot(request, bid=None, mode=None, legend=False):
         # plot data
         if mode is None or (mode is not None and mode not in ['FPAEno', 'FNno', 'FP', 'FPAEo', 'FNo']):
             mode = 'error_sum'
-        y_max = -1
+            #y_max = -1
         for eb in eb_list:
             y_curve = [nan] * np
             for e in eb.evaluation_set.all():
-                y_curve[t_list.index(e.trial)] = e.summary_table()[mode]
-            y_max = max(y_max, nanmax(y_curve))
+                try:
+                    y_curve[t_list.index(e.trial)] = e.summary_table()[mode]
+                except:
+                    pass
+
+            #y_max = max(y_max, nanmax(y_curve))
             #ax.plot(y_curve, 'o-', label=str(eb))
             print y_curve
             y_curve = map(lambda x: x + 1.0, y_curve)
             print y_curve
-            if not any(y_curve):
-                continue
+            if nansum(y_curve) > 0:
                 # TODO: fix "empty" evaluation batches!!
-            ax.semilogy(y_curve, 'o-', label=str(eb))
+                ax.semilogy(y_curve, 'o-', label=str(eb))
 
         # beautify
-        ax.set_ylabel('Error Count')
+        if mode == 'error_sum':
+            ax.set_ylabel('Error Count')
+
         #y_margin = y_max * 0.05
         #ax.set_ylim(-y_margin, y_max + y_margin)
         ax.set_xlabel(b.parameter)
