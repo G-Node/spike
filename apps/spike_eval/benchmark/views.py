@@ -310,7 +310,7 @@ def summary_plot(request, bid=None, mode=None, legend=False):
         #ax.set_ylim(-y_margin, y_max + y_margin)
         ax.set_xlabel(b.parameter)
         x_margin = np * 0.05
-        ax.set_xlim(-x_margin, (1 + (legend is True)) * np + x_margin - 1)
+        ax.set_xlim(-x_margin, (1 + .5 * (legend is True)) * np + x_margin - 1)
         ax.set_xticks(range(np))
         ax.set_xticklabels(param_labels)
         figtitle = {
