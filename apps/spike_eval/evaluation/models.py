@@ -79,7 +79,7 @@ class EvaluationBatch(CommonInfo):
     ## special methods
 
     def __str__(self):
-        return 'Evaluation Batch #%s' % self.pk
+        return 'EB #%s (%s)' % (self.pk, self.algorithm)
 
     def __unicode__(self):
         return unicode(self.__str__())

@@ -241,7 +241,6 @@ def summary(request, bid):
     """summary page for benchmark"""
 
     b = get_object_or_404(Benchmark.objects.all(), id=bid)
-    access = 20
     eb_list = b.eval_batches(access=20)
     if request.user.is_authenticated():
         eb_list_self = b.eval_batches(access=10)
@@ -252,10 +251,14 @@ def summary(request, bid):
             'eb_list': eb_list.order_by('id')}
 
 
-def summary_plot(request, bid):
+def summary_plot(request, bid=None, mode=None, legend=False):
     """generate a plot of the benchmark summary"""
 
-    fig, response = None, None
+    ## DEBUG
+    print bid, mode, legend
+    ## GUBED
+
+    fig = None
     try:
         # init and checks
         b = get_object_or_404(Benchmark.objects.all(), id=bid)
@@ -268,31 +271,49 @@ def summary_plot(request, bid):
             eb_list |= eb_list_self
         param_labels = [t.parameter for t in t_list]
         np = len(param_labels)
-        response = HttpResponse(content_type='image/png')
 
         # build figure
-        fig = Figure(edgecolor='white', facecolor='white')
+        factor = int(2 + (mode is None))
+        fig = Figure(
+            figsize=(3 * factor, 2 * factor),
+            dpi=80,
+            facecolor='white',
+            edgecolor='white',
+            frameon=False)
+        print fig.get_size_inches()
         ax = fig.add_subplot(111)
 
         # plot data
+        if mode is None or (mode is not None and mode not in ['FPAEno', 'FNno', 'FP', 'FPAEo', 'FNo']):
+            mode = 'error_sum'
         y_max = -1
         for eb in eb_list:
             y_curve = [nan] * np
             for e in eb.evaluation_set.all():
-                y_curve[t_list.index(e.trial)] = e.summary_table()['error_sum']
+                y_curve[t_list.index(e.trial)] = e.summary_table()[mode]
             y_max = max(y_max, nanmax(y_curve))
             ax.plot(y_curve, 'o-', label=str(eb))
 
         # beautify
-        ax.set_xlabel(b.parameter)
-        ax.set_ylabel('total error (FP+FN)')
+        ax.set_ylabel('Error Count')
         y_margin = y_max * 0.05
         ax.set_ylim(-y_margin, y_max + y_margin)
+        ax.set_xlabel(b.parameter)
         x_margin = np * 0.05
-        ax.set_xlim(-x_margin, 2 * np)
+        ax.set_xlim(-x_margin, (1 + (legend is True)) * np + x_margin - 1)
         ax.set_xticks(range(np))
         ax.set_xticklabels(param_labels)
-        ax.legend()
+        figtitle = {
+            'error_sum': 'Total Error',
+            'FPAEno': 'Classification Error (NO)',
+            'FNno': 'False Negative (NO)',
+            'FP': 'False Positive (NO)',
+            'FPAEo': 'Classification Error (O)',
+            'FNo': 'False Negative (O)',
+            }.get(mode, 'TOTAL ERROR')
+        fig.suptitle(figtitle)
+        if legend:
+            ax.legend()
         ax.grid()
     except:
         import sys, traceback
@@ -300,9 +321,12 @@ def summary_plot(request, bid):
         traceback.print_exception(*sys.exc_info())
         sys.exc_clear()
     finally:
+        response = HttpResponse(content_type='image/png')
+        #response = HttpResponse(content_type='image/svg+xml')
         try:
             canvas = FigureCanvas(fig)
             canvas.print_png(response)
+            #canvas.print_svg(response)
         except:
             pass
         return response
