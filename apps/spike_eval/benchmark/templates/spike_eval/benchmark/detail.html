@@ -109,6 +109,15 @@
           <i class="icon-tag"></i>{{ tag }}&nbsp;
         {% endfor %}
       </dd>
+      <dt>
+        <strong>Summary</strong>
+      </dt>
+      <dd>
+        <a href="{% url b_summary b.id %}">details</a><br>
+        {% if b.eval_batches %}
+          <img src="{% url b_summary_plot b.id %}" alt="Summary Plot" border="1px"/>
+        {% endif %}
+      </dd>
     </dl>
   </section>
 
