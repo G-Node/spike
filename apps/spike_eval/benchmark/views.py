@@ -281,6 +281,7 @@ def summary_plot(request, bid=None, mode=None, legend=False):
             edgecolor='white',
             frameon=False)
         ax = fig.add_subplot(111)
+        ax.set_autoscale_on(False)
 
         # plot data
         if mode is None or (mode is not None and mode not in ['FPAEno', 'FNno', 'FP', 'FPAEo', 'FNo']):
@@ -295,6 +296,9 @@ def summary_plot(request, bid=None, mode=None, legend=False):
             print y_curve
             y_curve = map(lambda x: x + 1.0, y_curve)
             print y_curve
+            if not any(y_curve):
+                continue
+                # TODO: fix "empty" evaluation batches!!
             ax.semilogy(y_curve, 'o-', label=str(eb))
 
         # beautify
