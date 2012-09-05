@@ -297,9 +297,7 @@ def summary_plot(request, bid=None, mode=None, legend=False):
 
             #y_max = max(y_max, nanmax(y_curve))
             #ax.plot(y_curve, 'o-', label=str(eb))
-            print y_curve
             y_curve = map(lambda x: x + 1.0, y_curve)
-            print y_curve
             if nansum(y_curve) > 0:
                 # TODO: fix "empty" evaluation batches!!
                 ax.semilogy(y_curve, 'o-', label=str(eb))
