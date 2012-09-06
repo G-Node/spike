@@ -62,7 +62,7 @@
 
     {% if e.processed %}
       <div>
-        <h3>Evaluation summary:</h3>
+        <h3>Evaluation Summary:</h3>
 
         <table class="table table-striped table-condensed table-bordered">
           <thead>
@@ -102,7 +102,7 @@
       </div>
 
       <div>
-        <h2>Evaluation results:</h2>
+        <h3>Evaluation Results:</h3>
 
         <table class="table table-striped table-condensed table-bordered">
           <thead>
@@ -159,20 +159,13 @@
 
       {% if e.eval_res_img %}
         <div>
-          <h2>Evaluation Plots</h2>
-          <table class="table">
-            <tbody>
-            {% for img_obj in e.evaluationresultsimg_set.all %}
-              <tr>
-                <td>
-                  <h3>{{ img_obj.img_type }}</h3>
-                  <img src="{{ img_obj.img_data.url }}"/>
-                </td>
-                <td>some explanation should go here</td>
-              </tr>
-            {% endfor %}
-            </tbody>
-          </table>
+          <h3>Evaluation Plots</h3>
+          {% for img_obj in e.evaluationresultsimg_set.all %}
+            <div class="row-fluid" style="margin-bottom: 10px">
+              <div class="span5"><img src="{{ img_obj.img_data.url }}"/></div>
+              <div class="span5">{% result_plot_desc img_obj %}</div>
+            </div>
+          {% endfor %}
         </div>
       {% endif %}
     {% endif %}

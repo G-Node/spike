@@ -87,7 +87,7 @@ def batch(request, ebid):
             else:
                 messages.error(request, 'Evalulation restart failed!')
         elif 'eb_edit' in request.POST:
-            eb_form = EvalBatchEditForm(instance=eb)
+            eb_form = EvalBatchEditForm(request.POST, instance=eb)
             if eb_form.is_valid():
                 eb_form.save()
                 messages.success(request, 'edit successfull')
@@ -96,7 +96,7 @@ def batch(request, ebid):
 
     # response
     return {'eb': eb,
-            'eb_form': eb_form or EvalBatchEditForm()}
+            'eb_form': eb_form or EvalBatchEditForm(instance=eb)}
 
 
 @render_to('spike_eval/evaluation/algo_detail.html')
@@ -208,6 +208,8 @@ def dl_zip(request, ebid):
 
         # write evaluations
         for e in e_list:
+            if not e.processed():
+                continue
             e_name = slugify(e.trial.name)
             buf = StringIO()
             buf.write(','.join([
@@ -235,14 +237,14 @@ def dl_zip(request, ebid):
                 arc.writestr(
                     '%s/img_%s.%s' % (e_name, ri.img_type, ri.img_data.path.split('.')[-1]),
                     ri.img_data.read())
-            arc.close()
-            arc_buf.seek(0)
+        arc.close()
+        arc_buf.seek(0)
 
-            # send response
-            response = HttpResponse(arc_buf.read())
-            response['Content-Disposition'] = 'attachment; filename=%s.zip' % slugify(str(eb))
-            response['Content-Type'] = 'application/x-zip'
-            return response
+        # send response
+        response = HttpResponse(arc_buf.read())
+        response['Content-Disposition'] = 'attachment; filename=%s.zip' % slugify(str(eb))
+        response['Content-Type'] = 'application/x-zip'
+        return response
     except Exception, ex:
         print ex
         return redirect(eb)
