@@ -22,6 +22,7 @@ urlpatterns = patterns("",
     # landing page and admin
     url(r'^$', direct_to_template, {'template': 'homepage.html'}, name='home'),
     url(r'^team$', direct_to_template, {'template': 'team.html'}, name='team'),
+    url(r'^imprint', direct_to_template, {'template': 'imprint.html'}, name='imprint'),
     url(r"^admin/invite_user/$",
         'pinax.apps.signup_codes.views.admin_invite_user',
         name='admin_invite_user'),

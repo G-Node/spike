@@ -29,6 +29,10 @@
     <li id="tab_team">
       <a href="{% url team %}">{% trans "Team" %}</a>
     </li>
+    <li id="tab_imprint">
+      <a href="{% url imprint %}">{% trans "Imprint" %}</a>
+    </li>
+    <li class="divider-vertical"></li>
     {# profile and notices #}
     {% if user.is_authenticated %}
       <li class="divider-vertical"></li>
