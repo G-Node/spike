@@ -42,7 +42,8 @@ def elist(request, bid=None):
     # filters
     if bid is not None:
         e_list = e_list.filter(benchmark=bid)
-        e_list_self = e_list_self.filter(benchmark=bid)
+        if request.user.is_authenticated():
+            e_list_self = e_list_self.filter(benchmark=bid)
 
     # search terms
     search_terms = request.GET.get('search', '')
