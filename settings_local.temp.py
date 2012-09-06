@@ -70,7 +70,7 @@ INSTALLED_APPS += [
 
     # spike_eval
     "spike_eval",
-    "spike_eval.homepage",
+    "spike_eval.website",
     "spike_eval.benchmark",
     "spike_eval.datafile",
     "spike_eval.evaluation",

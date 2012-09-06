@@ -20,9 +20,8 @@ handler500 = 'pinax.views.server_error'
 urlpatterns = patterns("",
 
     # landing page and admin
-    url(r'^$', direct_to_template, {
-        'template': 'homepage.html',
-        }, name='home'),
+    url(r'^$', direct_to_template, {'template': 'homepage.html'}, name='home'),
+    url(r'^team$', direct_to_template, {'template': 'team.html'}, name='team'),
     url(r"^admin/invite_user/$",
         'pinax.apps.signup_codes.views.admin_invite_user',
         name='admin_invite_user'),
@@ -38,8 +37,7 @@ urlpatterns = patterns("",
 
     # captcha
     url(r'^captcha/', include('captcha.urls')),
-    url(r"^signup/$", signup_view, {'form_class': CaptchaSignupForm},
-        name="acct_signup"),
+    url(r"^signup/$", signup_view, {'form_class': CaptchaSignupForm}, name="acct_signup"),
 
     # spike-eval
     url(r'^spike_eval/', include('spike_eval.urls')),

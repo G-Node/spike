@@ -15,6 +15,7 @@
     <li id="tab_home">
       <a href="{% url home %}">{% trans "Home" %}</a>
     </li>
+    <li class="divider-vertical"></li>
     <li id="tab_benchmark">
       <a href="{% url b_list %}">{% trans "Benchmarks" %}</a>
     </li>
@@ -23,6 +24,10 @@
     </li>
     <li id="tab_algorithm">
       <a href="{% url a_list %}">{% trans "Algorithms" %}</a>
+    </li>
+    <li class="divider-vertical"></li>
+    <li id="tab_team">
+      <a href="{% url team %}">{% trans "Team" %}</a>
     </li>
     {# profile and notices #}
     {% if user.is_authenticated %}
