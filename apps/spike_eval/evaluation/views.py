@@ -191,7 +191,20 @@ def dl_zip(request, ebid):
         arc = zipfile.ZipFile(arc_buf, mode='w')
 
         # write introduction | TODO: add a proper README file
-        arc.writestr('README', "RESULTS FOR %s\n\nsome explanation should go here!\n" % (str(eb)))
+        arc.writestr(
+            'README',
+            '\n'.join([
+                'RESULTS FOR: %s\n' % str(eb),
+                'This zip archive was downloaded from http://spike.g-node.org.',
+                'It contains the results from a spike sorting evaluation made on the benchmark',
+                '\n  %s\n' % str(eb.benchmark),
+                'with the algorithm',
+                '\n  %s\n' % str(eb.algorithm),
+                'on',
+                '\n  %s\n' % str(eb.date_created),
+                'by',
+                '\n  %s\n' % str(eb.added_by),
+                '']))
 
         # write evaluations
         for e in e_list:

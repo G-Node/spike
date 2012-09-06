@@ -132,3 +132,7 @@ def icn_time(obj):
   <i class="icon-time"></i>
   <span>%s</span>
 </nobr>""" % date_str
+
+@register.simple_tag
+def result_plot_desc(obj):
+    """returns a string describing the result plots"""
