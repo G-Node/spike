@@ -160,7 +160,7 @@
       {% if e.eval_res_img %}
         <div>
           <h3>Evaluation Plots</h3>
-          {% for img_obj in e.evaluationresultsimg_set.all %}
+          {% for img_obj in e.evaluationresultsimg_set.all|sorted_plots %}
             <div class="row-fluid" style="margin-bottom: 10px">
               <div class="span5"><img src="{{ img_obj.img_data.url }}"/></div>
               <div class="span5">{% result_plot_desc img_obj %}</div>

@@ -10,6 +10,7 @@ register = template.Library()
 ##---CONSTANTS
 
 User = models.get_model('auth', 'user')
+EvaluationResultsImg = models.get_model('evaluation', 'evaluationresultsimg')
 
 ##---FILTERS
 
@@ -63,6 +64,15 @@ def populate(form, instance):
         pass
     finally:
         return form
+
+
+@register.filter
+def sorted_plots(res_qset):
+    """return the sorted queryset"""
+
+    return sorted(
+        res_qset,
+        cmp=lambda a, b: cmp(a.order, b.order))
 
 ##---TAGS
 

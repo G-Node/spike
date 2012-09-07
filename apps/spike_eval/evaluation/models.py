@@ -1,5 +1,7 @@
 ##---IMPORTS
 
+from collections import defaultdict
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.aggregates import Sum
@@ -297,9 +299,25 @@ class EvaluationResults(DateCreated):
 class EvaluationResultsImg(DateCreated):
     """evaluation results picture entity"""
 
+    order_dict = {
+        'wf_single': 0,
+        'wf_all': 1,
+        'clus12': 2,
+        'clus34': 3,
+        'clus_proj': 4,
+        'spiketrain': 5,
+    }
+
     evaluation = models.ForeignKey('Evaluation')
     img_data = models.ImageField(upload_to="results/%Y/%m/%d/")
     img_type = models.CharField(max_length=20) # or mapping
+
+    @property
+    def order(self):
+        try:
+            return self.order_dict[self.img_type]
+        except:
+            return 999
 
 ##---MAIN
 
