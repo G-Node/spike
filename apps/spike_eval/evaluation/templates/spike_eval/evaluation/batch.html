@@ -15,7 +15,7 @@
       <span class="label">Actions:</span>
       {% if eb|is_editable:user %}
         <input type="submit" class="btn btn-mini" name="eb_switch"
-                {% if e.is_public %}
+                {% if eb.is_public %}
                value="{% trans "Unpublish Evaluation Batch" %}"
                 {% else %}
                value="{% trans "Publish Evalulation Batch" %}"
