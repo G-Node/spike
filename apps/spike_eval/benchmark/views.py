@@ -128,8 +128,9 @@ def detail(request, bid):
             e_form = EvaluationSubmitForm(
                 request.POST, request.FILES, benchmark=b)
             if e_form.is_valid():
-                e_form.save(user=request.user)
+                eb = e_form.save(user=request.user)
                 messages.success(request, 'submission successful')
+                return redirect(eb)
             else:
                 messages.warning(request, 'submission failed')
 
@@ -320,7 +321,7 @@ def summary_plot(request, bid=None, mode=None, legend=False):
             'FP': 'False Positive (NO)',
             'FPAEo': 'Classification Error (O)',
             'FNo': 'False Negative (O)',
-            }.get(mode, 'TOTAL ERROR')
+        }.get(mode, 'TOTAL ERROR')
         fig.suptitle(figtitle)
         if legend:
             ax.legend(
