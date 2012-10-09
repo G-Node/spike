@@ -19,11 +19,11 @@ handler500 = 'pinax.views.server_error'
 
 urlpatterns = patterns("",
 
-    # landing page and admin
+    # static pages and admin
     url(r'^$', direct_to_template, {'template': 'homepage.html'}, name='home'),
     url(r'^team$', direct_to_template, {'template': 'team.html'}, name='team'),
-    url(r'^imprint', direct_to_template, {'template': 'imprint.html'}, name='imprint'),
-    url(r"^admin/invite_user/$",
+    url(r'^imprint$', direct_to_template, {'template': 'imprint.html'}, name='imprint'),
+    url(r'^admin/invite_user/$',
         'pinax.apps.signup_codes.views.admin_invite_user',
         name='admin_invite_user'),
     url(r'^admin/', include(admin.site.urls)),
@@ -42,10 +42,11 @@ urlpatterns = patterns("",
 
     # spike-eval
     url(r'^spike_eval/', include('spike_eval.urls')),
-
-    # debug
-    url('^dowser/', include('django_dowser.urls')),
 )
+
+# debug
+if getattr(settings, 'DEBUG', False) is True:
+    urlpatterns.append(url('^dowser/', include('django_dowser.urls')))
 
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
