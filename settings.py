@@ -21,7 +21,7 @@ COMPRESS = False
 
 INTERNAL_IPS = [
     "127.0.0.1",
-    ]
+]
 
 SITE_ID = 1
 
@@ -39,14 +39,14 @@ DATABASES = {
         "PASSWORD": "db-user-pass",
         "HOST": "",
         "PORT": "",
-        }
+    }
 }
 
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
-        }
+    }
 }
 
 # Local time zone for this installation. Choices can be found here:
@@ -84,14 +84,14 @@ STATIC_URL = "/static/"
 # Additional directories which hold static files
 STATICFILES_DIRS = [
     os.path.join(PROJECT_ROOT, "static"),
-    ]
+]
 
 STATICFILES_FINDERS = [
     "staticfiles.finders.FileSystemFinder",
     "staticfiles.finders.AppDirectoriesFinder",
     "staticfiles.finders.LegacyAppDirectoriesFinder",
     "compressor.finders.CompressorFinder",
-    ]
+]
 
 # Asserts permissions for uploaded files
 FILE_UPLOAD_PERMISSIONS = 0644
@@ -111,7 +111,7 @@ SECRET_KEY = "yh@yy^c#yqdeh(0ukoz-f@ft)=c%&0!uz7)mi0=48#v=laq6x7"
 TEMPLATE_LOADERS = [
     "django.template.loaders.filesystem.Loader",
     "django.template.loaders.app_directories.Loader",
-    ]
+]
 
 MIDDLEWARE_CLASSES = [
     "django.middleware.common.CommonMiddleware",
@@ -124,13 +124,13 @@ MIDDLEWARE_CLASSES = [
     "pagination.middleware.PaginationMiddleware",
     "pinax.middleware.security.HideSensistiveFieldsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
-    ]
+]
 
 ROOT_URLCONF = "urls"
 
 TEMPLATE_DIRS = [
     os.path.join(PROJECT_ROOT, "templates"),
-    ]
+]
 
 TEMPLATE_CONTEXT_PROCESSORS = [
     "django.contrib.auth.context_processors.auth",
@@ -148,7 +148,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 
     "notification.context_processors.notification",
     "announcements.context_processors.site_wide_announcements",
-    ]
+]
 
 INSTALLED_APPS = [
     # Django
@@ -180,7 +180,6 @@ INSTALLED_APPS = [
 
     # debug
     "debug_toolbar",
-    "django_dowser",
 
     # Pinax
     "pinax.apps.account",
@@ -190,11 +189,12 @@ INSTALLED_APPS = [
     # project
     "about",
     "profiles",
-    ]
+]
+if DEBUG is True: INSTALLED_APPS += "django_dowser"
 
 FIXTURE_DIRS = [
     os.path.join(PROJECT_ROOT, "fixtures"),
-    ]
+]
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 
@@ -202,7 +202,7 @@ EMAIL_BACKEND = "mailer.backend.DbBackend"
 
 ABSOLUTE_URL_OVERRIDES = {
     "auth.user": lambda o: "/profiles/profile/%s/" % o.username,
-    }
+}
 
 AUTH_PROFILE_MODULE = "profiles.Profile"
 NOTIFICATION_LANGUAGE_MODULE = "account.Account"
@@ -216,7 +216,7 @@ ACCOUNT_UNIQUE_EMAIL = EMAIL_CONFIRMATION_UNIQUE_EMAIL = True
 
 AUTHENTICATION_BACKENDS = [
     "pinax.apps.account.auth_backends.AuthenticationBackend",
-    ]
+]
 
 LOGIN_URL = "/account/login/" # @@@ any way this can be a url name?
 LOGIN_REDIRECT_URLNAME = "home"
@@ -236,7 +236,7 @@ DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': dbt_visible,
     'HIDE_DJANGO_SQL': False,
     'ENABLE_STACKTRACES': True,
-    }
+}
 
 # settings_local
 
