@@ -159,7 +159,7 @@ def result_plot_desc(obj):
 
     desc_text = 'Could not produce description!'
     if hasattr(obj, 'file_type'):
-        if obj.img_type in ['wf_single', 'wf_all', 'clus12', 'clus34', 'clus_proj', 'spiketrain']:
+        if obj.file_type in ['wf_single', 'wf_all', 'clus12', 'clus34', 'clus_proj', 'spiketrain']:
             desc_text = {'wf_single': 'For every neuron in the sorting a piece of data '
                                       'is cut around every of its spikes. This is done for every channel (for '
                                       'multielectrode data) individually. The plot shows all cut spike '
