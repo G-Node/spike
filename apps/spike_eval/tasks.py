@@ -70,7 +70,7 @@ def _validate_rawdata_file(did):
     state = 10
     try:
         d = Datafile.objects.get(id=did)
-        assert d.filetype == 10
+        assert d.file_type == 10
         logger = Logger.get_logger(StringIO())
     except:
         return state
@@ -121,7 +121,7 @@ def _validate_groundtruth_file(did):
     state = 10
     try:
         d = Datafile.objects.get(id=did)
-        assert d.filetype == 20
+        assert d.file_type == 20
         logger = Logger.get_logger(StringIO())
     except:
         return state

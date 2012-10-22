@@ -6,11 +6,13 @@ from django.template import RequestContext
 ##---CHOICES
 
 ACCESS_CHOICES = [
+    (00, 'undefined'),
     (10, 'PRIVATE'),
     (20, 'PUBLIC'),
 ]
 
 FILETYPE_CHOICES = [
+    (00, 'undefined'),
     (10, 'Rawdata File'),
     (20, 'Groundtruth File'),
     (30, 'Evaluation File'),

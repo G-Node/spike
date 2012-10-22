@@ -86,7 +86,7 @@ class TrialForm(forms.ModelForm):
             rd_file = Datafile(
                 name=self.cleaned_data['rd_upload'].name,
                 file=self.cleaned_data['rd_upload'],
-                filetype=10,
+                file_type=10,
                 added_by=user,
                 content_object=t)
             rd_file.save()
@@ -99,7 +99,7 @@ class TrialForm(forms.ModelForm):
             gt_file = Datafile(
                 name=self.cleaned_data['gt_upload'].name,
                 file=self.cleaned_data['gt_upload'],
-                filetype=20,
+                file_type=20,
                 added_by=user,
                 content_object=t)
             gt_file.save()
@@ -164,7 +164,7 @@ class EvaluationSubmitForm(forms.ModelForm):
             ev_file = Datafile(
                 name=self.cleaned_data[sub_id].name,
                 file=self.cleaned_data[sub_id],
-                filetype=30,
+                file_type=30,
                 added_by=user,
                 content_object=e)
             ev_file.save()
@@ -224,7 +224,7 @@ class EvaluationSubmitForm(forms.ModelForm):
 #        ev_file = Datafile(
 #            name=self.cleaned_data['ev_file'].name,
 #            file=self.cleaned_data['ev_file'],
-#            filetype=30,
+#            file_type=30,
 #            added_by=user,
 #            content_object=e)
 #        ev_file.save()
@@ -266,7 +266,7 @@ class SupplementaryForm(forms.ModelForm):
         user = kwargs.pop('user', obj.added_by)
 
         # build instance
-        self.instance.filetype = 40
+        self.instance.file_type = 40
         self.instance.added_by = user
         self.instance.content_object = obj
         return super(SupplementaryForm, self).save(*args, **kwargs)
