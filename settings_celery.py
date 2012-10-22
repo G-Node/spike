@@ -21,6 +21,8 @@ def default_celery_db_uri():
 try:
     import djcelery
 
+    djcelery.setup_loader()
+
     INSTALLED_APPS += ["djcelery"]
     BROKER_URL = "amqp://guest@localhost:5672//"
     CELERY_RESULT_BACKEND = "database"
