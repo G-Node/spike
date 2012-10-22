@@ -3,8 +3,8 @@
 {% load sorting_tags %}
 {% load spike_eval_tags %}
 
-<div class="row">
-  <div class="span6">
+<div class="row clearfix">
+  <div class="span7 pull-left">
     <img src="{% url b_summary_plot bid=b.id mode=detail_mode %}"
          alt="Summary Plot ({{ detail_mode }})"
          border="1px"
@@ -12,7 +12,7 @@
 
     <div class="well"> BUTTONS HERE</div>
   </div>
-  <div class="span6">
+  <div class="span4 pull-left" style="max-height: inherit;">
     {% if not eb_list %}
       <p>There are no evaluations available to summarise.</p>
     {% else %}
@@ -23,7 +23,6 @@
         <tr>
           <th>{% trans "Colour" %}</th>
           <th>{% trans "ID, Algorithm" %}</th>
-          <th>{% trans "Summary" %}</th>
         </tr>
         </thead>
         <tbody>
@@ -36,19 +35,8 @@
             </td>
             <td>
               <a href="{{ eb.get_absolute_url }}">
-                <strong style="{% zero_red eb.access %}">
-                  #{{ eb.id }}, {{ eb.algorithm }}</strong>
+                <strong style="{% zero_red eb.access %}"> #{{ eb.id }}, {{ eb.algorithm }}</strong>
               </a>
-            </td>
-            <td>
-              <ul>
-                {% for e_sum in eb.summary_table %}
-                  <li>
-                    <strong>{{ e_sum.trial }}</strong>
-                    {{ e_sum.error_sum }}
-                  </li>
-                {% endfor %}
-              </ul>
             </td>
           </tr>
         {% endfor %}

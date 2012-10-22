@@ -277,7 +277,7 @@ def summary_plot(request, bid=None, mode=None, legend=False):
 
         # build figure
         fig = Figure(
-            figsize=(6, 6),
+            figsize=(5, 5),
             facecolor='white',
             edgecolor='white',
             frameon=False)
