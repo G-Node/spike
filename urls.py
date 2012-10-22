@@ -44,10 +44,6 @@ urlpatterns = patterns("",
     url(r'^spike_eval/', include('spike_eval.urls')),
 )
 
-# debug
-if getattr(settings, 'DEBUG', False) is True:
-    urlpatterns.append(url('^dowser/', include('django_dowser.urls')))
-
 urlpatterns += staticfiles_urlpatterns()
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
