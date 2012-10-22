@@ -187,7 +187,7 @@ class Evaluation(CommonInfo):
     @property
     def ev_file(self):
         try:
-            return self.datafile_set.filter(filetype=30)[0]
+            return self.datafile_set.filter(file_type=30)[0]
         except IndexError:
             return None
 
