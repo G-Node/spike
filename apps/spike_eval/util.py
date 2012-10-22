@@ -26,7 +26,6 @@ TASK_STATE_CHOICES = [
 ##---COLOR-PALETTE
 
 PLOT_COLORS = [
-
     '#FF0000', # 01 red
     '#00FF00', # 02 green
     '#0000FF', # 03 blue
