@@ -27,18 +27,20 @@
         </thead>
         <tbody>
         {% for eb in eb_list %}
-          <tr>
-            <td>
+          {% if eb.evaluation_set.all %}
+            <tr>
+              <td>
               <span class="badge" style="color: #ffffff; background-color: {% plot_color forloop.counter0 %};">
                 {% plot_color forloop.counter0 %}
               </span>
-            </td>
-            <td>
-              <a href="{{ eb.get_absolute_url }}">
-                <strong style="{% zero_red eb.access %}"> #{{ eb.id }}, {{ eb.algorithm }}</strong>
-              </a>
-            </td>
-          </tr>
+              </td>
+              <td>
+                <a href="{{ eb.get_absolute_url }}">
+                  <strong style="{% zero_red eb.access %}"> #{{ eb.id }}, {{ eb.algorithm }}</strong>
+                </a>
+              </td>
+            </tr>
+          {% endif %}
         {% endfor %}
         </tbody>
       </table>
