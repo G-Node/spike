@@ -13,9 +13,7 @@ from ..util import FILETYPE_CHOICES, TASK_STATE_CHOICES
 class DatafileManager(models.Manager):
     def for_obj(self, obj):
         object_type = ContentType.objects.get_for_model(obj)
-        return self.filter(
-            content_type__pk=object_type.id,
-            object_id=obj.id)
+        return self.filter(content_type__pk=object_type.id, object_id=obj.id)
 
 ##---MODELS
 
@@ -36,28 +34,17 @@ class Datafile(CommonInfo):
 
     ## fields
 
-    name = models.CharField(
-        max_length=255)
-    file = models.FileField(
-        upload_to='datafile/')
-    filetype = models.IntegerField(
-        choices=FILETYPE_CHOICES)
+    name = models.CharField(max_length=255)
+    file = models.FileField(upload_to='results/%Y/%m/%d/')
+    file_type = models.IntegerField(choices=FILETYPE_CHOICES)
 
-    task_state = models.IntegerField(
-        choices=TASK_STATE_CHOICES,
-        default=10)
-    task_id = models.CharField(
-        max_length=255,
-        blank=True)
-    task_log = models.TextField(
-        blank=True)
+    task_state = models.IntegerField(choices=TASK_STATE_CHOICES, default=10)
+    task_id = models.CharField(max_length=255, blank=True)
+    task_log = models.TextField(blank=True)
 
-    content_type = models.ForeignKey(
-        ContentType)
+    content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey(
-        'content_type',
-        'object_id')
+    content_object = generic.GenericForeignKey('content_type', 'object_id')
 
     ## special methods
 
@@ -71,10 +58,19 @@ class Datafile(CommonInfo):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'd_download', (), {'did':self.pk}
+        return 'd_download', (), {'did': self.pk}
+
+    ## save and delete
+
+    def save(self, *args, **kwargs):
+        if self.pk is not None:
+            orig = Datafile.objects.get(pk=self.pk)
+            if orig.file != self.file:
+                orig.file.delete()
+        super(Datafile, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        # TODO: delete files from filesystem?!
+        self.file.delete()
         super(Datafile, self).delete(*args, **kwargs)
 
     ## interface

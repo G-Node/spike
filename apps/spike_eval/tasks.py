@@ -254,7 +254,7 @@ def _start_evaluation(eid, **kwargs):
                 img_file = InMemoryUploadedFile(img_io, None, filename,
                                                 'image/jpeg',
                                                 img_io.len, None)
-                rval.img_data = img_file
+                rval.file = img_file
                 rval.img_type = t
                 rval.save()
         else:

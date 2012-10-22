@@ -1,9 +1,8 @@
 ##---IMPORTS
 
-from collections import defaultdict
+import os
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from django.db.models.aggregates import Sum
 
 from taggit.managers import TaggableManager
@@ -65,23 +64,16 @@ class EvaluationBatch(CommonInfo):
     """set of evaluations from a submission"""
 
     ## fields
-    description = models.TextField(
-        blank=True,
-        null=True)
-    access = models.IntegerField(
-        choices=ACCESS_CHOICES,
-        default=10)
+    description = models.TextField(blank=True, null=True)
+    access = models.IntegerField(choices=ACCESS_CHOICES, default=10)
 
-    algorithm = models.ForeignKey(
-        'Algorithm',
-        default=1)
-    benchmark = models.ForeignKey(
-        'benchmark.Benchmark')
+    algorithm = models.ForeignKey('Algorithm', default=1)
+    benchmark = models.ForeignKey('benchmark.Benchmark')
 
     ## special methods
 
     def __str__(self):
-        return 'EB #%s (%s)' % (self.pk, self.algorithm)
+        return 'Batch #%s (%s)' % (self.pk, self.algorithm)
 
     def __unicode__(self):
         return unicode(self.__str__())
@@ -124,6 +116,21 @@ class EvaluationBatch(CommonInfo):
             rval.append(e_sum)
         return rval
 
+    ## save and delete
+
+    def save(self, *args, **kwargs):
+        if self.pk is not None:
+            orig = EvaluationBatch.objects.get(pk=self.pk)
+            if orig.datafile_set:
+                for df in orig.datafile_set:
+                    if df not in self.datafile_set:
+                        df.delete()
+        super(EvaluationBatch, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.datafile_set.delete()
+        super(EvaluationBatch, self).delete(*args, **kwargs)
+
 
 class Evaluation(CommonInfo):
     """single trial evaluation object
@@ -146,15 +153,13 @@ class Evaluation(CommonInfo):
         blank=True,
         null=True)
 
-    evaluation_batch = models.ForeignKey(
-        'EvaluationBatch')
-    trial = models.ForeignKey(
-        'benchmark.Trial')
+    evaluation_batch = models.ForeignKey('EvaluationBatch')
+    trial = models.ForeignKey('benchmark.Trial')
 
     ## special methods
 
     def __str__(self):
-        return 'Evaluation #%s' % self.pk
+        return 'Evaluation #%s @%s' % (self.pk, self.evaluation_batch_id)
 
     def __unicode__(self):
         return unicode(self.__str__())
@@ -204,18 +209,18 @@ class Evaluation(CommonInfo):
         er = self.evaluationresults_set.all()
         if not er:
             return None
-        sKS = er.aggregate(Sum("KS")).values()[0]
-        sKSO = er.aggregate(Sum("KSO")).values()[0]
-        sFS = er.aggregate(Sum("FS")).values()[0]
-        sTP = er.aggregate(Sum("TP")).values()[0]
-        sTPO = er.aggregate(Sum("TPO")).values()[0]
-        sFPA = er.aggregate(Sum("FPA")).values()[0]
-        sFPAE = er.aggregate(Sum("FPAE")).values()[0]
-        sFPAO = er.aggregate(Sum("FPAO")).values()[0]
-        sFPAOE = er.aggregate(Sum("FPAOE")).values()[0]
-        sFN = er.aggregate(Sum("FN")).values()[0]
-        sFNO = er.aggregate(Sum("FNO")).values()[0]
-        sFP = er.aggregate(Sum("FP")).values()[0]
+        sKS = er.aggregate(Sum('KS')).values()[0]
+        sKSO = er.aggregate(Sum('KSO')).values()[0]
+        sFS = er.aggregate(Sum('FS')).values()[0]
+        sTP = er.aggregate(Sum('TP')).values()[0]
+        sTPO = er.aggregate(Sum('TPO')).values()[0]
+        sFPA = er.aggregate(Sum('FPA')).values()[0]
+        sFPAE = er.aggregate(Sum('FPAE')).values()[0]
+        sFPAO = er.aggregate(Sum('FPAO')).values()[0]
+        sFPAOE = er.aggregate(Sum('FPAOE')).values()[0]
+        sFN = er.aggregate(Sum('FN')).values()[0]
+        sFNO = er.aggregate(Sum('FNO')).values()[0]
+        sFP = er.aggregate(Sum('FP')).values()[0]
 
         return {
             'KS': sKS,
@@ -257,6 +262,20 @@ class Evaluation(CommonInfo):
             'TP': (er['TP'] + er['TPO']) / float(er['KS']) * 100,
             'FP': (er['FS'] - er['TP'] - er['TPO']) / float(er['KS']) * 100, }
 
+    ## save and delete
+
+    def save(self, *args, **kwargs):
+        if self.pk is not None:
+            orig = Evaluation.objects.get(pk=self.pk)
+            if orig.ev_file.file != self.ev_file.file:
+                orig.ev_file.delete()
+        super(Evaluation, self).save(*args, **kwargs)
+
+
+    def delete(self, *args, **kwargs):
+        self.ev_file.delete()
+        super(Evaluation, self).delete(*args, **kwargs)
+
 
 class EvaluationResults(DateCreated):
     """evaluation result entity"""
@@ -276,6 +295,16 @@ class EvaluationResults(DateCreated):
     FN = models.IntegerField(default=0)
     FNO = models.IntegerField(default=0)
     FP = models.IntegerField(default=0)
+
+    ## special methods
+
+    def __str__(self):
+        return 'EvaluationResults #%s @%s' % (self.pk, self.evaluation_id)
+
+    def __unicode__(self):
+        return unicode(self.__str__())
+
+    ## interface
 
     def display(self):
         """display list of numerical results"""
@@ -309,8 +338,18 @@ class EvaluationResultsImg(DateCreated):
     }
 
     evaluation = models.ForeignKey('Evaluation')
-    img_data = models.ImageField(upload_to="results/%Y/%m/%d/")
+    file = models.ImageField(upload_to='results/%Y/%m/%d/')
     img_type = models.CharField(max_length=20) # or mapping
+
+    ## special methods
+
+    def __str__(self):
+        return 'EvaluationResultsImg #%s @%s' % (self.pk, self.evaluation_id)
+
+    def __unicode__(self):
+        return unicode(self.__str__())
+
+    ## interface
 
     @property
     def order(self):
@@ -318,6 +357,19 @@ class EvaluationResultsImg(DateCreated):
             return self.order_dict[self.img_type]
         except:
             return 999
+
+    ## save and delete
+
+    def save(self, *args, **kwargs):
+        if self.pk is not None:
+            orig = EvaluationResultsImg.objects.get(pk=self.pk)
+            if orig.file != self.file:
+                orig.file.delete()
+        super(EvaluationResultsImg, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.file.delete()
+        super(EvaluationResultsImg, self).delete(*args, **kwargs)
 
 ##---MAIN
 
