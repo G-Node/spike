@@ -27,19 +27,18 @@ TASK_STATE_CHOICES = [
 
 PLOT_COLORS = [
 
-    #'#FF0000', # 01 red
-    #'#00FF00', # 02 green
-    #'#0000FF', # 03 blue
-    #'#FF00FF', # 04 magenta
-    #'#FFFF00', # 05 yellow
-    #'#00FFFF', # 06 cyan
-    #'#9900FF', # 07 aubergine
-    #'#FF9900', # 08 orange
-    #'#00FF99', # 09 mint
-    #'#FF0099', # 10 pink
-    #'#99FF00', # 11 neon
-    #'#0099FF', # 12 ocean
-
+    '#FF0000', # 01 red
+    '#00FF00', # 02 green
+    '#0000FF', # 03 blue
+    '#FF00FF', # 04 magenta
+    '#FFFF00', # 05 yellow
+    '#00FFFF', # 06 cyan
+    '#9900FF', # 07 aubergine
+    '#FF9900', # 08 orange
+    '#00FF99', # 09 mint
+    '#FF0099', # 10 pink
+    '#99FF00', # 11 neon
+    '#0099FF', # 12 ocean
     '#990F0F', #153      15      15
     '#6B990F', #107     153      15
     '#0F6B99', #15     107     153
