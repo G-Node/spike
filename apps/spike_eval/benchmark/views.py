@@ -277,13 +277,12 @@ def summary_plot(request, bid=None, mode=None, legend=False):
 
         # build figure
         fig = Figure(
-            figsize=(4, 4),
-            dpi=200,
+            figsize=(6, 6),
             facecolor='white',
             edgecolor='white',
             frameon=False)
         #ax = fig.add_subplot(111)
-        ax = fig.add_axes([.25, .15, .7, .7])
+        ax = fig.add_axes([.15, .1, .8, .8])
         ax.set_color_cycle(PLOT_COLORS)
 
         # plot data

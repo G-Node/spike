@@ -9,13 +9,16 @@
          alt="Summary Plot ({{ detail_mode }})"
          border="1px"
          width="100%"/>
+
+    <div class="well"> BUTTONS HERE</div>
   </div>
-  <div class="span6" style="overflow: scroll;">
+  <div class="span6">
     {% if not eb_list %}
       <p>There are no evaluations available to summarise.</p>
     {% else %}
+      <div class="well">FILTER OPTIONS HERE</div>
       {% autosort eb_list %}
-      <table class="table">
+      <table class="table" style="overflow-y: auto;">
         <thead>
         <tr>
           <th>{% trans "Colour" %}</th>
