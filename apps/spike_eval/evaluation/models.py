@@ -338,7 +338,7 @@ class EvaluationResultsImg(DateCreated):
     }
 
     evaluation = models.ForeignKey('Evaluation')
-    file = models.ImageField(upload_to='results/%Y/%m/%d/')
+    img_data = models.ImageField(upload_to='results/%Y/%m/%d/')
     img_type = models.CharField(max_length=20) # or mapping
 
     ## special methods
