@@ -158,7 +158,7 @@ def result_plot_desc(obj):
     """returns a string describing the result plots"""
 
     desc_text = 'Could not produce description!'
-    if hasattr(obj, 'img_type'):
+    if hasattr(obj, 'file_type'):
         if obj.img_type in ['wf_single', 'wf_all', 'clus12', 'clus34', 'clus_proj', 'spiketrain']:
             desc_text = {'wf_single': 'For every neuron in the sorting a piece of data '
                                       'is cut around every of its spikes. This is done for every channel (for '
@@ -190,5 +190,5 @@ def result_plot_desc(obj):
                                        'the uploaded spike train file correctly. Also, if the spike sorter '
                                        'splitted one cluster incorrectly into two (e.g. due to waveform change '
                                        'over time) this is clearly visible in this plot.',
-                        }[obj.img_type]
+                        }[obj.file_type]
     return '<p>%s</p>' % desc_text
