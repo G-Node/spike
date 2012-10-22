@@ -7,16 +7,10 @@ from django.db import models
 
 class Migration(SchemaMigration):
     def forwards(self, orm):
-        if not db.dry_run:
-            for dt in orm.Datafile.objects.all():
-                dt.file_type = dt.filetype
-                dt.save()
+        db.rename_column('datafile_datafile', 'filetype', 'file_type')
 
     def backwards(self, orm):
-        if not db.dry_run:
-            for dt in orm.Datafile.objects.all():
-                dt.filetype = dt.file_type
-                dt.save()
+        db.rename_column('datafile_datafile', 'file_type', 'filetype')
 
     models = {
         'auth.group': {

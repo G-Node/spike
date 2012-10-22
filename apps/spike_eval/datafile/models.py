@@ -36,8 +36,7 @@ class Datafile(CommonInfo):
 
     name = models.CharField(max_length=255)
     file = models.FileField(upload_to='results/%Y/%m/%d/')
-    file_type = models.IntegerField(choices=FILETYPE_CHOICES, default=00)
-    filetype = models.IntegerField(choices=FILETYPE_CHOICES, default=00)
+    file_type = models.IntegerField(choices=FILETYPE_CHOICES, default=0)
 
     task_state = models.IntegerField(choices=TASK_STATE_CHOICES, default=10)
     task_id = models.CharField(max_length=255, blank=True)
