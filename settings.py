@@ -160,6 +160,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.humanize",
 
+    # south
+    'south',
+
     # theme
     "pinax_theme_bootstrap",
     "django_forms_bootstrap",
@@ -190,8 +193,6 @@ INSTALLED_APPS = [
     "about",
     "profiles",
 ]
-if DEBUG is True:
-    INSTALLED_APPS.append("django_dowser")
 
 FIXTURE_DIRS = [
     os.path.join(PROJECT_ROOT, "fixtures"),

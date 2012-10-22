@@ -97,7 +97,7 @@ class Benchmark(CommonInfo):
     @property
     def sp_files(self):
         try:
-            return self.datafile_set.filter(file_type=40)
+            return self.datafile_set.filter(filetype=40)
         except IndexError:
             return []
 
@@ -182,14 +182,14 @@ class Trial(CommonInfo):
     @property
     def rd_file(self):
         try:
-            return self.datafile_set.filter(file_type=10)[0]
+            return self.datafile_set.filter(filetype=10)[0]
         except IndexError:
             return None
 
     @property
     def gt_file(self):
         try:
-            return self.datafile_set.filter(file_type=20)[0]
+            return self.datafile_set.filter(filetype=20)[0]
         except IndexError:
             return None
 
