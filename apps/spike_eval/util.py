@@ -23,17 +23,24 @@ TASK_STATE_CHOICES = [
     (30, 'Failure'),
 ]
 
+##---COLOR-PALETTE
+
 PLOT_COLORS = [
-    '#FF0000', # red
-    '#00FF00', # green
-    '#0000FF', # blue
-    '#', #
-    '#', #
-    '#', #
-    '#', #
-    '#', #
-    '#', #
+    '#FF0000', # 01 red
+    '#00FF00', # 02 green
+    '#0000FF', # 03 blue
+    '#FF00FF', # 04 magenta
+    '#FFFF00', # 05 yellow
+    '#00FFFF', # 06 cyan
+    '#9900FF', # 07 aubergine
+    '#FF9900', # 08 orange
+    '#00FF99', # 09 mint
+    '#FF0099', # 10 pink
+    '#99FF00', # 11 neon
+    '#0099FF', # 12 ocean
 ]
+N_PLOT_COLORS = len(PLOT_COLORS)
+get_pc = lambda n: PLOT_COLORS[n % N_PLOT_COLORS]
 
 ##---DECORATORS
 

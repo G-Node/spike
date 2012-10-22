@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template.defaultfilters import slugify
 from .models import Algorithm, Evaluation, EvaluationBatch
 from ..forms import AlgorithmForm, SupplementaryForm, EvalBatchEditForm
-from ..tasks import start_eval
+from ..tasks import start_evaluation
 from ..util import render_to
 
 ##---HELPERS
@@ -81,7 +81,7 @@ def batch(request, ebid):
         elif 'restart' in request.POST:
             eid = request.POST.get('restart_eid', None)
             if eid:
-                start_eval(eid)
+                start_evaluation(eid)
                 Evaluation.objects.get(id=eid).clear_results()
                 messages.info(request, 'Evalulation is been restarted!')
             else:

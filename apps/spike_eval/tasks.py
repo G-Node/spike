@@ -67,8 +67,8 @@ def _validate_rawdata_file(did):
     """
 
     # init and checks
+    state = 10
     try:
-        state = 10
         d = Datafile.objects.get(id=did)
         assert d.filetype == 10
         logger = Logger.get_logger(StringIO())
@@ -118,8 +118,8 @@ def _validate_groundtruth_file(did):
     """
 
     # init and checks
+    state = 10
     try:
-        state = 10
         d = Datafile.objects.get(id=did)
         assert d.filetype == 20
         logger = Logger.get_logger(StringIO())
@@ -181,7 +181,7 @@ def validate_groundtruth_file(did):
 #...
 
 @task
-def _start_eval(eid, **kwargs):
+def _start_evaluation(eid, **kwargs):
     """core function to produce one evaluation result based on one set of
     data, ground truth spike train and estimated spike train.
     :type eid: int
@@ -195,8 +195,8 @@ def _start_eval(eid, **kwargs):
     """
 
     # init and checks
+    state = 30
     try:
-        state = 30
         e = Evaluation.objects.get(id=eid)
         logger = Logger.get_logger(StringIO())
     except:
@@ -298,12 +298,12 @@ def _start_eval(eid, **kwargs):
         return state
 
 
-def start_eval(eid):
+def start_evaluation(eid):
     rval = 0
     if USE_CELERY:
-        rval = _start_eval.delay(eid)
+        rval = _start_evaluation.delay(eid)
     else:
-        _start_eval(eid)
+        _start_evaluation(eid)
     return str(rval)
 
 ##---MAIN

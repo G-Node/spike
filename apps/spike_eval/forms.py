@@ -7,7 +7,7 @@ from .benchmark.models import Benchmark, Trial
 from .datafile.models import Datafile
 from .evaluation.models import Algorithm, Evaluation, EvaluationBatch
 from .tasks import (
-    start_eval, validate_groundtruth_file, validate_rawdata_file)
+    start_evaluation, validate_groundtruth_file, validate_rawdata_file)
 
 ##---FORMS
 
@@ -170,7 +170,7 @@ class EvaluationSubmitForm(forms.ModelForm):
             ev_file.save()
 
             # trigger evaluation
-            e.task_id = start_eval(e.id)
+            e.task_id = start_evaluation(e.id)
             e.save()
         return eb
 
