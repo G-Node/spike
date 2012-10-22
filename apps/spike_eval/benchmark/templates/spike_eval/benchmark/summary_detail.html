@@ -1,0 +1,56 @@
+{% load i18n %}
+{% load pagination_tags %}
+{% load sorting_tags %}
+{% load spike_eval_tags %}
+
+<div class="row">
+  <div class="span6">
+    <img src="{% url b_summary_plot bid=b.id mode=detail_mode %}"
+         alt="Summary Plot ({{ detail_mode }})"
+         border="1px"
+         width="100%"/>
+  </div>
+  <div class="span6" style="overflow: scroll;">
+    {% if not eb_list %}
+      <p>There are no evaluations available to summarise.</p>
+    {% else %}
+      {% autosort eb_list %}
+      <table class="table">
+        <thead>
+        <tr>
+          <th>{% trans "Colour" %}</th>
+          <th>{% trans "ID, Algorithm" %}</th>
+          <th>{% trans "Summary" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for eb in eb_list %}
+          <tr>
+            <td>
+              <span class="badge" style="color: #ffffff; background-color: {% plot_color forloop.counter0 %};">
+                {% plot_color forloop.counter0 %}
+              </span>
+            </td>
+            <td>
+              <a href="{{ eb.get_absolute_url }}">
+                <strong style="{% zero_red eb.access %}">
+                  #{{ eb.id }}, {{ eb.algorithm }}</strong>
+              </a>
+            </td>
+            <td>
+              <ul>
+                {% for e_sum in eb.summary_table %}
+                  <li>
+                    <strong>{{ e_sum.trial }}</strong>
+                    {{ e_sum.error_sum }}
+                  </li>
+                {% endfor %}
+              </ul>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+</div>

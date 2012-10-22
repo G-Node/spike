@@ -10,12 +10,12 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template.defaultfilters import slugify
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
-from numpy import nan, nansum#, nanmax
+from numpy import nan, nansum, nanmax
 
 from ..forms import (
     BenchmarkForm, TrialForm, EvaluationSubmitForm, SupplementaryForm)
 from ..tasks import validate_groundtruth_file, validate_rawdata_file
-from ..util import render_to
+from ..util import render_to, PLOT_COLORS
 
 ##---MODEL-REFS
 
@@ -270,24 +270,30 @@ def summary_plot(request, bid=None, mode=None, legend=False):
             if not request.user.is_superuser:
                 eb_list_self = eb_list_self.filter(added_by=request.user)
             eb_list |= eb_list_self
+        eb_list.order_by('id')
         param_labels = [t.parameter for t in t_list]
         np = len(param_labels)
+        y_max = 1.
 
         # build figure
-        factor = int(2 + (mode is None))
         fig = Figure(
-            figsize=(2 * factor, 2 * factor),
-            #dpi=80,
+            figsize=(4, 4),
+            dpi=200,
             facecolor='white',
             edgecolor='white',
             frameon=False)
-        ax = fig.add_subplot(111)
-        #ax.set_autoscale_on(False)
+        #ax = fig.add_subplot(111)
+        ax = fig.add_axes([.25, .15, .7, .7])
+        ax.set_color_cycle(PLOT_COLORS)
 
         # plot data
-        if mode is None or (mode is not None and mode not in ['FPAEno', 'FNno', 'FP', 'FPAEo', 'FNo']):
+        if mode is None or (mode is not None and mode not in ['error_sum',
+                                                              'FPAEno',
+                                                              'FNno',
+                                                              'FP',
+                                                              'FPAEo',
+                                                              'FNo']):
             mode = 'error_sum'
-            #y_max = -1
         for eb in eb_list:
             y_curve = [nan] * np
             for e in eb.evaluation_set.all():
@@ -295,35 +301,34 @@ def summary_plot(request, bid=None, mode=None, legend=False):
                     y_curve[t_list.index(e.trial)] = e.summary_table()[mode]
                 except:
                     pass
-
-            #y_max = max(y_max, nanmax(y_curve))
-            #ax.plot(y_curve, 'o-', label=str(eb))
-            y_curve = map(lambda x: x + 1.0, y_curve)
-            if nansum(y_curve) > 0:
+            if nansum(y_curve) >= 0:
                 # TODO: fix "empty" evaluation batches!!
-                ax.semilogy(y_curve, 'o-', label='EB #%s' % eb.id)
+                y_max = nanmax(y_curve + [y_max])
+                #y_curve = map(lambda x: x + 1.0, y_curve)
+                #ax.semilogy(y_curve, 'o-', label='EB #%s' % eb.id)
+                ax.plot(y_curve, 'o-', label='EB #%s' % eb.id)
 
-        # beautify
-        if mode == 'error_sum':
-            ax.set_ylabel('Error Count')
-
-        #y_margin = y_max * 0.05
-        #ax.set_ylim(-y_margin, y_max + y_margin)
+        # beautify Y-axis
+        ax.set_ylabel('Error Count')
+        y_margin = y_max * 0.05
+        ax.set_ylim(-y_margin, y_max + y_margin)
+        # beautify X-axis
         ax.set_xlabel(b.parameter)
         x_margin = np * 0.05
         ax.set_xlim(-x_margin, (1 + .5 * (legend is True)) * np + x_margin - 1)
         ax.set_xticks(range(np))
         ax.set_xticklabels(param_labels)
-        figtitle = {
+        # figure title
+        title = {
             'error_sum': 'Total Error',
             'FPAEno': 'Classification Error (NO)',
             'FNno': 'False Negative (NO)',
             'FP': 'False Positive (NO)',
             'FPAEo': 'Classification Error (O)',
             'FNo': 'False Negative (O)',
-        }.get(mode, 'TOTAL ERROR')
-        fig.suptitle(figtitle)
-        if legend:
+        }.get(mode, 'Total Error')
+        ax.set_title(title)
+        if legend is True:
             ax.legend(
                 loc='upper center',
                 ncol=2,
@@ -333,18 +338,22 @@ def summary_plot(request, bid=None, mode=None, legend=False):
                 prop={'size': 8},
             )
         ax.grid()
+
+        ## DEBUG
+        #print 'DPI:', fig.get_dpi(), 'y_max', y_max
+        ## GUBED
     except:
         import sys, traceback
 
         traceback.print_exception(*sys.exc_info())
         sys.exc_clear()
     finally:
-        response = HttpResponse(content_type='image/png')
-        #response = HttpResponse(content_type='image/svg+xml')
+        #response = HttpResponse(content_type='image/png')
+        response = HttpResponse(content_type='image/svg+xml')
         try:
             canvas = FigureCanvas(fig)
-            canvas.print_png(response)
-            #canvas.print_svg(response)
+            #canvas.print_png(response)
+            canvas.print_svg(response)
         except:
             pass
         return response

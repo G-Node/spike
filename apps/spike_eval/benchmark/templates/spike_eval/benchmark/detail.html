@@ -113,20 +113,10 @@
         <strong>Summary</strong>
       </dt>
       <dd>
-        <a href="{% url b_summary b.id %}">details</a><br>
+        <a href="{% url b_summary b.id %}">CLICK HERE TO VIEW SUMMARY DETAILS</a><br>
         {% if b.eval_batches %}
-          <img src="{% url b_summary_plot bid=b.id %}" alt="Summary Plot"
-               border="1px" height="15%" width="15%"/>
-          <img src="{% url b_summary_plot_sub bid=b.id mode="FPAEno" %}" alt="Summary Plot"
-               border="1px" height="15%" width="15%"/>
-          <img src="{% url b_summary_plot_sub bid=b.id mode="FNno" %}" alt="Summary Plot"
-               border="1px" height="15%" width="15%"/>
-          <img src="{% url b_summary_plot_sub bid=b.id mode="FP" %}" alt="Summary Plot"
-               border="1px" height="15%" width="15%"/>
-          <img src="{% url b_summary_plot_sub bid=b.id mode="FPAEo" %}" alt="Summary Plot"
-               border="1px" height="15%" width="15%"/>
-          <img src="{% url b_summary_plot_sub bid=b.id mode="FNno" %}" alt="Summary Plot"
-               border="1px" height="15%" width="15%"/>
+          <img src="{% url b_summary_plot bid=b.id mode="error_sum" %}" alt="Summary Plot"
+               border="1px" height="25%" width="25%"/>
         {% endif %}
       </dd>
     </dl>

@@ -11,10 +11,9 @@ urlpatterns = patterns(
     url(r'^archive/(?P<bid>\d+)/', 'archive', name='b_archive'),
     url(r'^resurrect/(?P<bid>\d+)/', 'resurrect', name='b_resurrect'),
     url(r'^summary/(?P<bid>\d+)/', 'summary', name='b_summary'),
-    url(r'^summary_plot/(?P<bid>\d+)/', 'summary_plot', {'legend': True},
+    #url(r'^summary_plot/(?P<bid>\d+)/', 'summary_plot', {'legend': False}, name='b_summary_plot'),
+    url(r'^summary_plot/(?P<bid>\d+)/(?P<mode>\w+)/', 'summary_plot', {'legend': False},
         name='b_summary_plot'),
-    url(r'^summary_plot_sub/(?P<bid>\d+)/(?P<mode>\w+)/', 'summary_plot', {'legend': False},
-        name='b_summary_plot_sub'),
     url(r'^trial/(?P<tid>\d+)/', 'trial', name='b_trial'),
     url(r'^dl_zip/(?P<bid>\d+)/', 'dl_zip', name='b_dl_zip'),
 )

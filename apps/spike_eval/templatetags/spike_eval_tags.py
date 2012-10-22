@@ -3,7 +3,7 @@
 from django import template
 from django.template.defaultfilters import date
 from django.db import models
-from django.core.urlresolvers import reverse
+from ..util import get_pc
 
 register = template.Library()
 
@@ -91,6 +91,15 @@ def state_color(value):
             return 'color: green'
     except:
         return value
+
+
+@register.simple_tag
+def plot_color(value):
+    try:
+        ival = int(value)
+        return get_pc(ival)
+    except:
+        return '#000000'
 
 
 @register.simple_tag

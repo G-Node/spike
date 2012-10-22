@@ -13,106 +13,47 @@
     <h2>Summary: <a href="{{ b.get_absolute_url }}">{{ b }}</a>
       <small>visualisation and listing of evaluation results</small>
     </h2>
-  </section>
-
-  <section>
-    <h2>Visual Summary
-      <small>plots visualising the performance for this Benchmark</small>
-    </h2>
-    <div class="row">
-      <div class="span5">
-        <img src="{% url b_summary_plot bid=b.id %}" alt="Summary Plot" border="1px"/>
-      </div>
-      <div class="span5 well well-small">
-        FILTER CONTROLS HERE
+    <div>
+      <ul class="nav nav-tabs" id="tab-summary">
+        <li class="active"><a href="#tab-summary-total" data-toggle="tab">Total Error</a></li>
+        <li><a href="#tab-summary-FPAEno" data-toggle="tab">Classification Error (NO)</a></li>
+        <li><a href="#tab-summary-FNno" data-toggle="tab">False Negative (NO)</a></li>
+        <li><a href="#tab-summary-FP" data-toggle="tab">False Positive (NO)</a></li>
+        <li><a href="#tab-summary-FPAEo" data-toggle="tab">Classification Error (O)</a></li>
+        <li><a href="#tab-summary-FNo" data-toggle="tab">False Negative (O)</a></li>
+      </ul>
+      <div class="tab-content" id="tab-summary-content">
+        <div class="tab-pane active" id="tab-summary-total">
+          {% with 'error_sum' as detail_mode %}
+            {% include "spike_eval/benchmark/summary_detail.html" %}
+          {% endwith %}
+        </div>
+        <div class="tab-pane" id="tab-summary-FPAEno">
+          {% with 'FPAEno' as detail_mode %}
+            {% include "spike_eval/benchmark/summary_detail.html" %}
+          {% endwith %}
+        </div>
+        <div class="tab-pane" id="tab-summary-FNno">
+          {% with 'FNno' as detail_mode %}
+            {% include "spike_eval/benchmark/summary_detail.html" %}
+          {% endwith %}
+        </div>
+        <div class="tab-pane" id="tab-summary-FP">
+          {% with 'FP' as detail_mode %}
+            {% include "spike_eval/benchmark/summary_detail.html" %}
+          {% endwith %}
+        </div>
+        <div class="tab-pane" id="tab-summary-FPAEo">
+          {% with 'FPAEo' as detail_mode %}
+            {% include "spike_eval/benchmark/summary_detail.html" %}
+          {% endwith %}
+        </div>
+        <div class="tab-pane" id="tab-summary-FNo">
+          {% with 'FNo' as detail_mode %}
+            {% include "spike_eval/benchmark/summary_detail.html" %}
+          {% endwith %}
+        </div>
       </div>
     </div>
-    <div class="row">
-      <div class="span4">
-        <img src="{% url b_summary_plot_sub bid=b.id mode='FPAEno' %}" alt="Summary Plot" border="1px"/>
-      </div>
-      <div class="span4">
-        <img src="{% url b_summary_plot_sub bid=b.id mode='FNno' %}" alt="Summary Plot" border="1px"/>
-      </div>
-      <div class="span4">
-        <img src="{% url b_summary_plot_sub bid=b.id mode='FP' %}" alt="Summary Plot" border="1px"/>
-      </div>
-    </div>
-    <div class="row">
-      <div class="span4">
-        <img src="{% url b_summary_plot_sub bid=b.id mode='FPAEo' %}" alt="Summary Plot" border="1px"/>
-      </div>
-      <div class="span4">
-        <img src="{% url b_summary_plot_sub bid=b.id mode='FNo' %}" alt="Summary Plot" border="1px"/>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <h2>Table Summary
-      <small>tabular summary of performance for this Benchmark</small>
-    </h2>
-    {% if not eb_list %}
-      <p>There are no evaluations available yet to summarise.</p>
-    {% else %}
-      {% autosort eb_list %}
-      <table class="table">
-        <thead>
-        <tr>
-          <th>{% trans "Benchmark" %}</th>
-          <th>{% trans "ID, Algorithm" %}</th>
-          <th>{% trans "Total Error" %}</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for eb in eb_list %}
-          <tr>
-            <td>
-              <a href="{{ eb.benchmark.get_absolute_url }}">
-                {% if eb.benchmark.is_active %}
-                  <i class="icon-ok"></i>
-                  <span style="color: green">{{ b.name }}</span>
-                {% else %}
-                  <span style="color: red">
-                  <nobr>
-                    <i class="icon-lock"></i>
-                    {% if eb.benchmark.state == 30 %}<strike>{% endif %}
-                    <strong>{{ eb.benchmark.name }}</strong>
-                    {% if eb.benchmark.state == 30 %}</strike>{% endif %}
-                  </nobr>
-                  </span>
-                {% endif %}
-              </a>
-            </td>
-            <td>
-              <a href="{{ eb.get_absolute_url }}">
-                <strong style="{% zero_red eb.access %}">
-                  #{{ eb.id }}, {{ eb.algorithm }}</strong>
-              </a>
-            </td>
-            <td>
-              <ul>
-                {% for e_sum in eb.summary_table %}
-                  <li>
-                    <strong>{{ e_sum.trial }}</strong>
-                    {{ e_sum.error_sum }}
-                    {% comment %}
-                    FN: {{ e_sum.FN }}
-                    &nbsp;-&nbsp;
-                    FP: {{ e_sum.FP }}
-                    &nbsp;-&nbsp;
-                    FPA: {{ e_sum.FPAE }}
-                    &nbsp;-&nbsp;
-                    Sum: {{ e_sum.error_sum }}
-                    {% endcomment %}
-                  </li>
-                {% endfor %}
-              </ul>
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-    {% endif %}
   </section>
 {% endblock %}
