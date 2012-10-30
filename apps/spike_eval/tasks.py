@@ -1,6 +1,5 @@
 ##---IMPORTS
 
-import sys
 from django.conf import settings
 from celery.task import task
 from StringIO import StringIO
@@ -13,9 +12,8 @@ import scipy as sp
 
 # g-node imports
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from .datafile.models import Datafile
-from .evaluation.models import (
-    Evaluation, EvaluationResults, EvaluationResultsImg)
+from .models.datafile import Datafile
+from .models import Evaluation, EvaluationResult, EvaluationResultImg
 
 ##---CONSTANTS
 
@@ -242,7 +240,7 @@ def _start_evaluation(eid, **kwargs):
         if modules[0].status == 'finalised':
             for i, t in enumerate(['wf_single', 'wf_all', 'clus12', 'clus34',
                                    'clus_proj', 'spiketrain']):
-                rval = EvaluationResultsImg()
+                rval = EvaluationResultImg()
                 rval.evaluation = e
                 # Create a file-like object to write image data created by PIL
                 img_io = StringIO()
@@ -252,8 +250,8 @@ def _start_evaluation(eid, **kwargs):
                 # Create a new Django file-like object to be used in models as
                 # ImageField using InMemoryUploadedFile.
                 img_file = InMemoryUploadedFile(img_io, None, filename,
-                                                'image/jpeg',
-                                                img_io.len, None)
+                    'image/jpeg',
+                    img_io.len, None)
                 rval.file = img_file
                 rval.img_type = t
                 rval.save()
@@ -265,7 +263,7 @@ def _start_evaluation(eid, **kwargs):
         # we will send a MRTable instance here
         if modules[1].status == 'finalised':
             for row in modules[1].result[0].value:
-                rval = EvaluationResults()
+                rval = EvaluationResult()
                 rval.evaluation = e
                 rval.gt_unit = row[0]
                 rval.found_unit = row[1]

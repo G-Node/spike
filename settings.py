@@ -118,7 +118,7 @@ MIDDLEWARE_CLASSES = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django_openid.consumer.SessionConsumer",
+    #"django_openid.consumer.SessionConsumer",
     "django.contrib.messages.middleware.MessageMiddleware",
     "pinax.apps.account.middleware.LocaleMiddleware",
     "pagination.middleware.PaginationMiddleware",
@@ -172,7 +172,7 @@ INSTALLED_APPS = [
     "staticfiles",
     "compressor",
     "mailer",
-    "django_openid",
+    #"django_openid",
     "timezones",
     "emailconfirmation",
     "announcements",
@@ -210,7 +210,7 @@ AUTH_PROFILE_MODULE = "profiles.Profile"
 NOTIFICATION_LANGUAGE_MODULE = "account.Account"
 
 ACCOUNT_OPEN_SIGNUP = True
-ACCOUNT_USE_OPENID = True
+ACCOUNT_USE_OPENID = False
 ACCOUNT_REQUIRED_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = True
 ACCOUNT_EMAIL_AUTHENTICATION = True

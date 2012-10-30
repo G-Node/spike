@@ -5,8 +5,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-from ..models import CommonInfo
+from .common import CommonInfo
 from ..util import FILETYPE_CHOICES, TASK_STATE_CHOICES
+
+__all__ = ['Datafile', 'DatafileManager']
 
 ##---MANAGER
 
@@ -27,6 +29,11 @@ class Datafile(CommonInfo):
     Datafiles are only for use with the spike_eval application and should
     only be linked to Benchmark, Trial, Evaluation objects!
     """
+
+    ## meta
+
+    class Meta:
+        app_label = 'spike_eval'
 
     ## managers
 

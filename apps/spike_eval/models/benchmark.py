@@ -5,13 +5,15 @@ from django.utils.translation import ugettext_lazy as _
 
 from taggit.managers import TaggableManager
 
-from ..models import CommonInfo
+from .common import CommonInfo
 from ..util import ACCESS_CHOICES
+
+__all__ = ['Benchmark', 'Trial']
 
 ##---MODEL-REFS
 
-Datafile = models.get_model('datafile', 'datafile')
-Evaluation = models.get_model('evaluation', 'evaluation')
+Datafile = models.get_model('spike_eval', 'datafile')
+Evaluation = models.get_model('spike_eval', 'evaluation')
 
 ##---MODELS
 
@@ -21,6 +23,9 @@ class Benchmark(CommonInfo):
     A Benchmark represents a set of Trials that belong together, and usually
     originate from the same source.
     """
+
+    class Meta:
+        app_label = 'spike_eval'
 
     ## choices
 
@@ -79,7 +84,7 @@ class Benchmark(CommonInfo):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'b_detail', (), {'bid':self.pk}
+        return 'b_detail', (), {'bid': self.pk}
 
     def delete(self, *args, **kwargs):
         for t in self.trial_set:
@@ -136,6 +141,11 @@ class Trial(CommonInfo):
     Raw data is stored in hdf5 format, ground truth is stored in gdf format.
     """
 
+    ## meta
+
+    class Meta:
+        app_label = 'spike_eval'
+
     ## fields
 
     name = models.CharField(
@@ -167,7 +177,7 @@ class Trial(CommonInfo):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'b_trial', (), {'tid':self.pk}
+        return 'b_trial', (), {'tid': self.pk}
 
     def delete(self, *args, **kwargs):
         self.datafile_set.delete(*args, **kwargs)

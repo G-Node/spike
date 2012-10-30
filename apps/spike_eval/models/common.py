@@ -5,10 +5,18 @@ from django.utils.translation import ugettext_lazy as _
 
 from datetime import datetime
 
+__all__ = ['DateCreated', 'AddedBy', 'CommonInfo']
+
 ##---MODELS
 
 class DateCreated(models.Model):
     """abstract model class for data_created field"""
+
+    ## meta
+
+    class Meta:
+        abstract = True
+        app_label = 'spike_eval'
 
     ## fields
 
@@ -17,14 +25,15 @@ class DateCreated(models.Model):
         default=datetime.now,
         editable=False)
 
+
+class AddedBy(models.Model):
+    """abstract model class for added_by field"""
+
     ## meta
 
     class Meta:
         abstract = True
-
-
-class AddedBy(models.Model):
-    """abstract model class for added_by field"""
+        app_label = 'spike_eval'
 
     ## fields
 
@@ -34,11 +43,6 @@ class AddedBy(models.Model):
         null=True,
         editable=False)
 
-    ## meta
-
-    class Meta:
-        abstract = True
-
 
 class CommonInfo(AddedBy, DateCreated):
     """abstract base class for date_created and added_by field"""
@@ -47,6 +51,7 @@ class CommonInfo(AddedBy, DateCreated):
 
     class Meta:
         abstract = True
+        app_label = 'spike_eval'
 
 ##---MAIN
 

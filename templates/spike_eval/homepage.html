@@ -1,7 +1,7 @@
 {% load staticfiles %}
 
 <h2>Welcome to the Spike Sorting Evaluation Project</h2>
-<p>Extracellular recordings are a standard procedure to analyzing the activity of neurons. A problem with this kind of recording is the simultaneous recording of not a single neuron but a small local population of neurons. It is not straight-forward to reconstruct the single neuronal activities. To estimate the single neuron activity (the so called spike train) from this multi neuron activity, spike sorting is applied. Many different algorithms for spike sorting were proposed. However, despite many efforts to tackle this problem, it is still difficult to tell under which circumstances which spike sorting algorithm is the best. 
+<p>Extracellular recordings are a standard procedure to analyzing the activity of neurons. A problem with this kind of recording is the simultaneous recording of not a single neuron but a small local population of neurons. It is not straight-forward to reconstruct the single neuronal activities. To estimate the single neuron activity (the so called spike train) from this multi neuron activity, spike sorting is applied. Many different algorithms for spike sorting were proposed. However, despite many efforts to tackle this problem, it is still difficult to tell under which circumstances which spike sorting algorithm is the best.
 
 If you are interested in some basic reading about spike sorting please consult the following references.</p>
 <blockquote>
@@ -46,23 +46,23 @@ In May 2011, a workshop on <a href="http://spike.ni.tu-berlin.de/workshop/">Vali
   Common to this data is, that we know the ground truth i.e. we know how many
   neurons are present in the data and when which neuron fired an action
   potential. The datasets vary in their underlying questions.</p>
-<img src="{% static "img/home_page_1.png" %}" alt="Download Benchmark Data"/>
+<img src="{% static "img/spike_eval/home_page_1.png" %}" alt="Download Benchmark Data"/>
 <p>If you have decided which dataset you are interested in, go to the download
   page and download the datafiles in the format which is most convinient to
   you.</p>
-<img src="{% static "img/home_page_2.png" %}" alt="Sort Benchmark Data"/>
+<img src="{% static "img/spike_eval/home_page_2.png" %}" alt="Sort Benchmark Data"/>
 <p>You can now apply the spike sorter of your choice to the dataset. Keep in
   mind, that we do not publish the ground-truth for the datafiles.</p>
-<img src="{% static "img/home_page_3.png" %}" alt="Upload Sorted Data"/>
+<img src="{% static "img/spike_eval/home_page_3.png" %}" alt="Upload Sorted Data"/>
 <p>The result of your sorting can then be uploaded via the website. This data
   will be treated confidential, we will not publish it, unless you say so. You
   will retrieve a unique key for your upload.</p>
-<img src="{% static "img/home_page_4.png" %}" alt="View Your Evaluations"/>
+<img src="{% static "img/spike_eval/home_page_4.png" %}" alt="View Your Evaluations"/>
 <p>The website now automatically calculates an evaluation of your sorting using
   the hidden ground truth information. However, this may take a while. Once
   finished you can access the results under the MyResults page using the key
   provided under 3.</p>
-<img src="{% static "img/home_page_5.png" %}" alt="Publish Your Results"/>
+<img src="{% static "img/spike_eval/home_page_5.png" %}" alt="Publish Your Results"/>
 <p>If you are comfortable with the results you can help us by allowing us to
   publish your results on the Summary Page for this dataset. You will have to
   provide some additional information about the algorithm you used.

@@ -2,15 +2,18 @@
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.db import models
 from django.shortcuts import get_object_or_404
 import mimetypes
 
-from .models import Datafile
+##---MODEL-REFS
+
+Datafile = models.get_model('spike_eval', 'datafile')
 
 ##---VIEWS
 
 @login_required
-def download(request, did):
+def datafile(request, did):
     """serve a datafile"""
 
     d = get_object_or_404(Datafile.objects.all(), id=did)

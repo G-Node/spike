@@ -49,7 +49,7 @@
 
   {
     "pk"    :1,
-    "model" :"evaluation.algorithm",
+    "model" :"spike_eval.algorithm",
     "fields":{
       "name"       :"Undefined",
       "version"    :"",

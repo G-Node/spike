@@ -7,7 +7,7 @@ from settings import *
 
 ##---DEBUG
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 SERVE_MEDIA = DEBUG
 COMPRESS = False
@@ -15,19 +15,20 @@ COMPRESS = False
 ##---ADMIN-EMAILS
 
 ADMINS = [
+    ("Philipp Meier", "pmeier82+sew@googlemail.com"),
     # ("Your Name", "your_email@domain.com"),
 ]
 MANAGERS = ADMINS
-CONTACT_EMAIL = 'support@example.com'
+CONTACT_EMAIL = 'pmeier82+support@googlemail.com'
 
 ##---DATABASE
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "db-name",
-        "USER": "db-user",
-        "PASSWORD": "db-user-pass",
+        "NAME": "spike",
+        "USER": "spike",
+        "PASSWORD": "spike",
         "HOST": "",
         "PORT": "",
     }
@@ -57,7 +58,7 @@ FILE_UPLOAD_PERMISSIONS = 0644
 
 ##---CSRF-TOKEN
 
-SECRET_KEY = "yh@yy^c#yqdeh(0ukoz-f@ft)=c%&0!uz7)mi0=48#v=laq6x7"
+SECRET_KEY = "yh@yy^c#yqdeh(0ukoz-f@ft)=c%&0!uz7)mi0=48#v=laq6x7-peter-pan"
 
 ##---APPS
 
@@ -69,12 +70,9 @@ INSTALLED_APPS += [
     "django_sorting",
 
     # spike_eval
-    "spike_eval",
-    "spike_eval.website",
-    "spike_eval.benchmark",
-    "spike_eval.datafile",
-    "spike_eval.evaluation",
+    "spike_eval"
 ]
+
 MIDDLEWARE_CLASSES += [
     "django_sorting.middleware.SortingMiddleware",
 ]
@@ -82,7 +80,7 @@ MIDDLEWARE_CLASSES += [
 ##---ACCOUNT
 
 ACCOUNT_OPEN_SIGNUP = True
-ACCOUNT_USE_OPENID = False
+ACCOUNT_USE_OPENID = True
 ACCOUNT_REQUIRED_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = True
 ACCOUNT_EMAIL_AUTHENTICATION = False
@@ -98,7 +96,7 @@ EMAIL_PORT = 25
 EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""
 EMAIL_USE_TSL = True
-DEFAULT_FROM_EMAIL = "nopeply@spike.g-node.org"
+DEFAULT_FROM_EMAIL = "pmeier82+nopeply@gogolemail.com"
 
 ##---MATPLOTLIB-BACKEND
 

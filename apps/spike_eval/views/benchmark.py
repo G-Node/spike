@@ -12,21 +12,20 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from numpy import nan, nansum, nanmax
 
-from ..forms import (
-    BenchmarkForm, TrialForm, EvaluationSubmitForm, SupplementaryForm)
+from ..forms import BenchmarkForm, TrialForm, EvaluationSubmitForm, SupplementaryForm
 from ..tasks import validate_groundtruth_file, validate_rawdata_file
 from ..util import render_to, PLOT_COLORS
 
 ##---MODEL-REFS
 
-Benchmark = models.get_model('benchmark', 'benchmark')
-Trial = models.get_model('benchmark', 'trial')
-Datafile = models.get_model('datafile', 'datafile')
+Benchmark = models.get_model('spike_eval', 'benchmark')
+Trial = models.get_model('spike_eval', 'trial')
+Datafile = models.get_model('spike_eval', 'datafile')
 
 ##---VIEWS
 
 @render_to('spike_eval/benchmark/list.html')
-def blist(request):
+def b_list(request):
     """renders a list of available benchmarks"""
 
     # post request -> create benchmark
@@ -67,9 +66,9 @@ def blist(request):
             'b_list_self': b_list_self,
             'search_terms': search_terms}
 
-#@login_required
+
 @render_to('spike_eval/benchmark/detail.html')
-def detail(request, bid):
+def b_detail(request, bid):
     """renders details of a particular benchmark"""
 
     # init and checks
@@ -154,9 +153,8 @@ def detail(request, bid):
             't_form': t_form}
 
 
-@login_required
 @render_to('spike_eval/benchmark/trial.html')
-def trial(request, tid):
+def b_trial(request, tid):
     """renders details of a trial"""
 
     # init and checks
@@ -206,7 +204,7 @@ def trial(request, tid):
 
 
 @login_required
-def archive(request, bid):
+def b_archive(request, bid):
     """archives a benchmark"""
 
     # inits and checks
@@ -222,7 +220,7 @@ def archive(request, bid):
 
 
 @login_required
-def resurrect(request, bid):
+def b_resurrect(request, bid):
     """resurrects a benchmark"""
 
     # inits and checks
@@ -238,7 +236,7 @@ def resurrect(request, bid):
 
 
 @render_to('spike_eval/benchmark/summary.html')
-def summary(request, bid):
+def b_summary(request, bid):
     """summary page for benchmark"""
 
     b = get_object_or_404(Benchmark.objects.all(), id=bid)
@@ -252,7 +250,7 @@ def summary(request, bid):
             'eb_list': eb_list.order_by('id')}
 
 
-def summary_plot(request, bid=None, mode=None, legend=False):
+def b_summary_plot(request, bid=None, mode=None, legend=False):
     """generate a plot of the benchmark summary"""
 
     ## DEBUG
@@ -358,7 +356,7 @@ def summary_plot(request, bid=None, mode=None, legend=False):
         return response
 
 
-def dl_zip(request, bid):
+def b_zip(request, bid):
     # init and checks
     b = get_object_or_404(Benchmark.objects.all(), id=bid)
     t_list = [t for t in b.trial_set.order_by('parameter') if t.is_validated()]

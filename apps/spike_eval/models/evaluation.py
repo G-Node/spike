@@ -3,72 +3,37 @@
 import os
 
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 from django.db.models.aggregates import Sum
 
 from taggit.managers import TaggableManager
 
-from ..models import CommonInfo, DateCreated
+from .common import CommonInfo, DateCreated
 from ..util import ACCESS_CHOICES, TASK_STATE_CHOICES
+
+__all__ = ['EvaluationBatch', 'Evaluation', 'EvaluationResult', 'EvaluationResultImg']
 
 ##---MODEL-REFS
 
-Datafile = models.get_model('datafile', 'datafile')
+Datafile = models.get_model('spike_eval', 'datafile')
 
 ##---MODELS
-
-class Algorithm(CommonInfo):
-    """algorithm model"""
-
-    ## fields
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        blank=False)
-    version = models.CharField(
-        max_length=32,
-        blank=True)
-    description = description = models.TextField(
-        blank=True)
-
-    parent = models.ForeignKey(
-        'Algorithm',
-        blank=True,
-        null=True)
-
-    kind = TaggableManager('Kind')
-
-    ## special methods
-
-    def __str__(self):
-        return '%s%s' % (self.name,
-                         ' (%s)' % self.version if self.version else '')
-
-    def __unicode__(self):
-        return unicode(self.__str__())
-
-    ## django special methods
-
-    @models.permalink
-    def get_absolute_url(self):
-        return 'a_detail', (), {'aid': self.pk}
-
-    ## interface
-
-    @property
-    def datafile_set(self):
-        return Datafile.objects.for_obj(self)
-
 
 class EvaluationBatch(CommonInfo):
     """set of evaluations from a submission"""
 
+    ## meta
+
+    class Meta:
+        app_label = 'spike_eval'
+
     ## fields
+
     description = models.TextField(blank=True, null=True)
     access = models.IntegerField(choices=ACCESS_CHOICES, default=10)
 
     algorithm = models.ForeignKey('Algorithm', default=1)
-    benchmark = models.ForeignKey('benchmark.Benchmark')
+    benchmark = models.ForeignKey('Benchmark')
 
     ## special methods
 
@@ -141,6 +106,11 @@ class Evaluation(CommonInfo):
     file and the evaluation results.
     """
 
+    ## meta
+
+    class Meta:
+        app_label = 'spike_eval'
+
     ## fields
 
     task_state = models.IntegerField(
@@ -154,7 +124,7 @@ class Evaluation(CommonInfo):
         null=True)
 
     evaluation_batch = models.ForeignKey('EvaluationBatch')
-    trial = models.ForeignKey('benchmark.Trial')
+    trial = models.ForeignKey('Trial')
 
     ## special methods
 
@@ -277,8 +247,15 @@ class Evaluation(CommonInfo):
         super(Evaluation, self).delete(*args, **kwargs)
 
 
-class EvaluationResults(DateCreated):
+class EvaluationResult(DateCreated):
     """evaluation result entity"""
+
+    ## meta
+
+    class Meta:
+        app_label = 'spike_eval'
+
+    ## fields
 
     evaluation = models.ForeignKey('Evaluation')
     gt_unit = models.CharField(max_length=10)
@@ -299,7 +276,7 @@ class EvaluationResults(DateCreated):
     ## special methods
 
     def __str__(self):
-        return 'EvaluationResults #%s @%s' % (self.pk, self.evaluation_id)
+        return 'EvaluationResult #%s @%s' % (self.pk, self.evaluation_id)
 
     def __unicode__(self):
         return unicode(self.__str__())
@@ -325,8 +302,15 @@ class EvaluationResults(DateCreated):
                 self.FNO]
 
 
-class EvaluationResultsImg(DateCreated):
+class EvaluationResultImg(DateCreated):
     """evaluation results picture entity"""
+
+    ## meta
+
+    class Meta:
+        app_label = 'spike_eval'
+
+    ## order
 
     order_dict = {
         'wf_single': 0,
@@ -337,6 +321,8 @@ class EvaluationResultsImg(DateCreated):
         'spiketrain': 5,
     }
 
+    ## fields
+
     evaluation = models.ForeignKey('Evaluation')
     file = models.ImageField(upload_to='results/%Y/%m/%d/')
     file_type = models.CharField(max_length=20) # or mapping
@@ -344,7 +330,7 @@ class EvaluationResultsImg(DateCreated):
     ## special methods
 
     def __str__(self):
-        return 'EvaluationResultsImg #%s @%s' % (self.pk, self.evaluation_id)
+        return 'EvaluationResultImg #%s @%s' % (self.pk, self.evaluation_id)
 
     def __unicode__(self):
         return unicode(self.__str__())
@@ -354,7 +340,7 @@ class EvaluationResultsImg(DateCreated):
     @property
     def order(self):
         try:
-            return self.order_dict[self.img_type]
+            return self.order_dict[self.file_type]
         except:
             return 999
 
@@ -362,14 +348,14 @@ class EvaluationResultsImg(DateCreated):
 
     def save(self, *args, **kwargs):
         if self.pk is not None:
-            orig = EvaluationResultsImg.objects.get(pk=self.pk)
+            orig = EvaluationResultImg.objects.get(pk=self.pk)
             if orig.file != self.file:
                 orig.file.delete()
-        super(EvaluationResultsImg, self).save(*args, **kwargs)
+        super(EvaluationResultImg, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         self.file.delete()
-        super(EvaluationResultsImg, self).delete(*args, **kwargs)
+        super(EvaluationResultImg, self).delete(*args, **kwargs)
 
 ##---MAIN
 

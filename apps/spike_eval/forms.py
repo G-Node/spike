@@ -3,11 +3,10 @@
 from captcha.fields import CaptchaField
 from datetime import datetime
 from django import forms
-from .benchmark.models import Benchmark, Trial
-from .datafile.models import Datafile
-from .evaluation.models import Algorithm, Evaluation, EvaluationBatch
-from .tasks import (
-    start_evaluation, validate_groundtruth_file, validate_rawdata_file)
+from .models import Benchmark, Trial
+from .models import Datafile
+from .models import Algorithm, Evaluation, EvaluationBatch
+from .tasks import start_evaluation, validate_groundtruth_file, validate_rawdata_file
 
 ##---FORMS
 
