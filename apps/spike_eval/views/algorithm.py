@@ -3,6 +3,7 @@
 from django.contrib import messages
 from django.db import models
 from django.shortcuts import get_object_or_404, redirect
+from django.views.generic import ListView
 from ..forms import AlgorithmForm, SupplementaryForm
 from ..util import render_to
 
@@ -12,7 +13,7 @@ Algorithm = models.get_model('spike_eval', 'algorithm')
 
 ##---VIEWS
 
-@render_to('spike_eval/evaluation/algo_detail.html')
+@render_to('spike_eval/algorithm/detail.html')
 def a_detail(request, aid):
     """renders details of an algorithm"""
 
@@ -56,7 +57,7 @@ def a_detail(request, aid):
             's_form': s_form or SupplementaryForm()}
 
 
-@render_to('spike_eval/evaluation/algo_list.html')
+@render_to('spike_eval/algorithm/list.html')
 def a_list(request):
     """renders a list of available algorithms"""
 

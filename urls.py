@@ -17,15 +17,15 @@ handler500 = 'pinax.views.server_error'
 
 ##---URLS
 
-urlpatterns = patterns("",
-
-    # static pages and admin
+urlpatterns = patterns('',
     url(r'^$', direct_to_template, {'template': 'homepage.html'}, name='home'),
     url(r'^team$', direct_to_template, {'template': 'team.html'}, name='team'),
     url(r'^imprint$', direct_to_template, {'template': 'imprint.html'}, name='imprint'),
     url(r'^admin/invite_user/$', 'pinax.apps.signup_codes.views.admin_invite_user', name='admin_invite_user'),
     url(r'^admin/', include(admin.site.urls)),
+)
 
+urlpatterns += patterns('',
     # pinax base urls
     url(r'^about/', include('about.urls')),
     url(r'^account/', include('pinax.apps.account.urls')),
@@ -33,12 +33,14 @@ urlpatterns = patterns("",
     url(r'^profiles/', include('idios.urls')),
     url(r'^notices/', include('notification.urls')),
     url(r'^announcements/', include('announcements.urls')),
+)
 
-    # captcha
+urlpatterns += patterns('',
     url(r'^captcha/', include('captcha.urls')),
     url(r'^signup/$', signup_view, {'form_class': CaptchaSignupForm}, name='acct_signup'),
+)
 
-    # spike-eval
+urlpatterns += patterns('',
     url(r'^spike_eval/', include('spike_eval.urls')),
 )
 
