@@ -1,10 +1,17 @@
 ##---IMPORTS
 
 from django.conf.urls.defaults import *
+from django.views.generic import TemplateView
+
+##---INIT
+
+class HomepageView(TemplateView):
+    template_name = 'homepage.html'
 
 ##---URLS
 
 urlpatterns = patterns('',
+    url(r'^$', HomepageView.as_view()),
     url(r'^dev/', include('spike_eval.dev.urls')),
 )
 

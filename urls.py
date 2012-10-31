@@ -4,23 +4,24 @@ from django.conf import settings
 from django.conf.urls.defaults import *
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.views.generic.simple import direct_to_template
+from django.views.generic import TemplateView
 from pinax.apps.account.openid_consumer import PinaxConsumer
 from pinax.apps.account.urls import signup_view
 from staticfiles.urls import staticfiles_urlpatterns
 from forms import CaptchaSignupForm
 
-##---INITS
+##---INIT
 
 admin.autodiscover()
 handler500 = 'pinax.views.server_error'
 
+class HomepageView(TemplateView):
+    template_name = 'homepage.html'
+
 ##---URLS
 
 urlpatterns = patterns('',
-    url(r'^$', direct_to_template, {'template': 'homepage.html'}, name='home'),
-    url(r'^team$', direct_to_template, {'template': 'team.html'}, name='team'),
-    url(r'^imprint$', direct_to_template, {'template': 'imprint.html'}, name='imprint'),
+    url(r'^$', HomepageView.as_view(), name='home'),
     url(r'^admin/invite_user/$', 'pinax.apps.signup_codes.views.admin_invite_user', name='admin_invite_user'),
     url(r'^admin/', include(admin.site.urls)),
 )

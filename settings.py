@@ -172,7 +172,6 @@ INSTALLED_APPS = [
     "staticfiles",
     "compressor",
     "mailer",
-    #"django_openid",
     "timezones",
     "emailconfirmation",
     "announcements",

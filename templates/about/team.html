@@ -1,0 +1,105 @@
+{% extends 'site_base.html' %}
+
+{% load i18n %}
+{% load staticfiles %}
+
+{% block head_title %}{% trans 'Team' %}{% endblock %}
+
+{% block body_class %}team{% endblock %}
+
+{% block content %}
+  <section>
+    <h2>Motivation of the Spike Sorting Evaluation Project</h2>
+
+    <p>The spike sorting evaluation website is an international collaboration
+      to foster the availability and acceptance of spike sorting benchmark
+      sets. The project started in Prof. Klaus Obermayers lab at the
+      Technische Universität, Berlin, Germany with an initiative to make
+      benchmarks easily available and offer an automatic spike sorting evaluation.
+      Around the same time the group of Prof. Gaute T. Einevoll at
+      University for Life Sciences Aas, Norway started to work on
+      biophysically realistic simulations of extracellular recordings and
+      thought about how to make those available. The groups decided to team
+      up and the website was moved to the German Neuroscience Node (G-Node).</p>
+  </section>
+
+  <section>
+    <h2>Team Members
+      <small>website team and its sections</small>
+    </h2>
+
+    <div class="well well-small">
+      <h4>Neural Informationprocessing Group,
+        <a href="http://www.ni.tu-berlin.de/">Technische Universit&auml;t Berlin</a></h4>
+      <ul>
+        <li>Felix Franke, Idea/Concept, Development/Implementation, now at
+          <a href="http://www.bsse.ethz.ch/bel/people/index">ETH Z&uuml;rich</a></li>
+        <li>Philipp Meier, Idea/Concept, Main Developer, Server Administration</li>
+        <li>Klaus H. Obermayer, Head</li>
+        <li>Former Members:
+          <ul>
+            <li>Stefan Schmidt, Frontend development of the prototype</li>
+            <li>Michal Natora, Idea/Concept</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="well well-small">
+      <h4>German Neuroinformatics Node,
+        <a href="http://www.g-node.org/">G-Node</a></h4>
+      <ul>
+        <li>Thomas Wachtler, Head</li>
+        <li>Andrey Sobolev, Development, Server Administration</li>
+        <li>Tiziano Zito, Server Administration</li>
+      </ul>
+    </div>
+
+    <div class="well well-small">
+      <h4>Computational Neuroscience Group,
+        <a href="http://arken.umb.no/~gautei/index_english.html">
+          Norwegian University of Life Sciences (UMB), Aas</a></h4>
+      <ul>
+        <li>Gaute T. Einevoll, Head</li>
+        <li>Espen Hagen, Simulation of biophysically realistic extracellular signals</li>
+        <li>Torbj&oslash;rn B&aelig;k&oslash; Ness,
+          Simulation of biophysically realistic extracellular signals
+        </li>
+        <li>Amir Khosrowshahi, Simulation of biophysically realistic extracellular signals</li>
+      </ul>
+    </div>
+
+    <div class="well well-small">
+      <h4>Contributors
+        <small>Testing, Reference Spike Sortings, Benchmarks, Metrics</small>
+      </h4>
+      <ul>
+        <li>Bartosz Tele&#324;czuk - Charit&eacute;, Universit&auml;tsmedizin Berlin,
+          Germany and Unit&eacute; de Neurosciences, Information et
+          Complexit&eacute;, Centre National de la Recherche Scientifique, Gif-sur-Yvette, France
+          <ul>
+            <li>
+              <small>reference spike sorting</small>
+            </li>
+          </ul>
+        </li>
+        <li>Dmytro Bielievtsov - Charit&eacute;, Universit&auml;tsmedizin Berlin,
+          Germany and Bernstein Centre for Computational Neuroscience,Berlin, Germany
+          <ul>
+            <li>
+              <small>reference spike sorting</small>
+            </li>
+          </ul>
+        </li>
+        <li>Shabnam Kadir - Department of Bioengineering, Imperial College London
+          <ul>
+            <li>
+              <small>pointing out and providing the code for the clustering quality metric of Marina Meila</small>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+{% endblock %}

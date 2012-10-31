@@ -2,6 +2,12 @@
 
 from django.conf.urls.defaults import *
 from views import AlgorithmListView
+from django.views.generic import TemplateView
+
+##---CLASSES
+
+class HomepageView(TemplateView):
+    template_name = 'homepage.html'
 
 ##---URLS
 
@@ -12,6 +18,7 @@ urlpatterns += patterns('spike_eval.dev.views',
         AlgorithmListView.as_view()),
     url(r'^display_meta/$',
         'display_meta'),
+    url(r'^home/$', HomepageView.as_view()),
 )
 
 ##---MAIN
