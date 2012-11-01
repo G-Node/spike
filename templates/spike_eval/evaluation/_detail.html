@@ -1,0 +1,167 @@
+{% load i18n %}
+{% load spike_eval_tags %}
+
+<div class="accordion-group">
+  <div class="accordion-heading clearfix">
+    <div class="well pull-right">
+      {% if ev.processed %}
+        {% with ev.summary_short as ev_sum %}
+          <p>True positive: {{ ev_sum.TP|floatformat:2 }}%</p>
+          <p>False positive: {{ ev_sum.FP|floatformat:2 }}%</p>
+        {% endwith %}
+      {% else %}
+        <p>No results available yet.</p>
+      {% endif %}
+    </div>
+    <dl class="dl-horizontal pull-left">
+      <dt>
+        <strong>Trial:</strong>
+      </dt>
+      <dd>
+        {{ ev.trial }} ({{ ev }})
+      </dd>
+      <dt>
+        <strong>Task State:</strong>
+      </dt>
+      <dd>
+        <strong style="{% state_color ev.task_state %}">
+          {{ ev.get_task_state_display }}</strong>
+      </dd>
+      <dt></dt>
+      <dd><a class="accordion-toogle" href="#eval-{{ ev.id }}"
+             data-toggle="collapse" data-parent="#trial-container">TOGGLE DETAILS</a>
+      </dd>
+    </dl>
+  </div>
+
+  <div id="eval-{{ ev.id }}" class="accordion-body collapse" style="margin: 5px;">
+    {% if user.is_authenticated %}
+      {% if bt|is_editable:user %}
+        <form class="form well" method="POST">
+          {% csrf_token %}
+          <span class="label">Actions:</span>
+          <input type="hidden" name="ev_restart_id" value="{{ ev.id }}">
+          <input type="submit" class="btn btn-mini" name="ev_restart"
+                 value="{% trans "Restart Evaluation" %}"/>
+          <a href="#" class="btn btn-mini"
+             onclick="$('#show_log-{{ ev.id }}').toggle();return false;">
+            {% trans "Show Log" %}
+          </a>
+        </form>
+        <pre id="show_log-{{ ev.id }}" class="well"
+             {% if ev.processed %}style="display:none"{% endif %}
+                >{{ ev.task_log }}</pre>
+      {% endif %}
+    {% endif %}
+
+    {% if ev.processed %}
+      <div>
+        <h3>Evaluation Summary:</h3>
+
+        <table class="table table-striped table-condensed table-bordered">
+          <thead>
+          <tr>
+            <th colspan=4>{% trans "Detection Errors" %}</th>
+            <th colspan=3>{% trans "Classification Errors" %}</th>
+          </tr>
+          <tr>
+            <th colspan=1>{% trans "False Positives" %}</th>
+            <th colspan=3>{% trans "False Negatives" %}</th>
+            <th colspan=3></th>
+          </tr>
+          <tr>
+            <th>{% trans "Total" %}</th>
+            <th>{% trans "Total" %}</th>
+            <th>{% trans "Non-Overlaps" %}</th>
+            <th>{% trans "Overlaps" %}</th>
+            <th>{% trans "Total" %}</th>
+            <th>{% trans "Non-Overlaps" %}</th>
+            <th>{% trans "Overlaps" %}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            {% with ev.summary_table as ev_sum %}
+              <td>{{ e_sum.FP }}</td>
+              <td>{{ e_sum.FN }}</td>
+              <td>{{ e_sum.FNno }}</td>
+              <td>{{ e_sum.FNo }}</td>
+              <td>{{ e_sum.FPAE }}</td>
+              <td>{{ e_sum.FPAEno }}</td>
+              <td>{{ e_sum.FPAEo }}</td>
+            {% endwith %}
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div>
+        <h3>Evaluation Results:</h3>
+
+        <table class="table table-striped table-condensed table-bordered">
+          <thead>
+          <tr>
+            <th rowspan=3>{% trans "GT Unit" %}</th>
+            <th rowspan=3>{% trans "Found Unit" %}</th>
+            <th colspan=3>{% trans "Ground Truth" %}</th>
+            <th colspan=3>{% trans "Found Spikes of Unit" %}</th>
+            <th colspan=3>{% trans "False Positives" %}</th>
+            <th colspan=4>{% trans "False Negatives" %}</th>
+          </tr>
+          <tr>
+            <th colspan=3>{% trans "(True Spikes)" %}</th>
+            <th colspan=3>{% trans "(True Positives)" %}</th>
+            <th colspan=2>{% trans "Other Spikes" %}</th>
+            <th colspan=1>{% trans "Noise" %}</th>
+            <th colspan=2>{% trans "Found by other Unit" %}</th>
+            <th colspan=2>{% trans "Not detected" %}</th>
+          </tr>
+          <tr>
+            <th>{% trans "Total" %}</th>
+            <th>{% trans "N-O" %}</th>
+            <th>{% trans "O" %}</th>
+            <th>{% trans "Total" %}</th>
+            <th>{% trans "N-O" %}</th>
+            <th>{% trans "O" %}</th>
+            <th>{% trans "N-O" %}</th>
+            <th>{% trans "O" %}</th>
+            <th>{% trans "FP" %}</th>
+            <th>{% trans "N-O" %}</th>
+            <th>{% trans "O" %}</th>
+            <th>{% trans "N-O" %}</th>
+            <th>{% trans "O" %}</th>
+          </tr>
+          </thead>
+          <tfoot>
+          <tr>
+            <td colspan="15">
+              GT = Ground Truth, O = Overlaps, N-O = Non-Overlaps
+            </td>
+          </tr>
+          </tfoot>
+          <tbody>
+          {% for rs in ev.eval_res %}
+            <tr>
+              {% for row in rs.display %}
+                <td>{{ row }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {% if ev.eval_res_img %}
+        <div>
+          <h3>Evaluation Plots</h3>
+          {% for img_obj in ev.evaluationresultsimg_set.all|sorted_plots %}
+            <div class="row-fluid" style="margin-bottom: 10px">
+              <div class="span5"><img src="{{ img_obj.file.url }}"/></div>
+              <div class="span5">{% result_plot_desc img_obj %}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
