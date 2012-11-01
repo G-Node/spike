@@ -48,12 +48,6 @@ class Metric(TimeStampedModel):
     def __unicode__(self):
         return unicode('%s (%s)' % (self.name, self.version))
 
-    ## django special methods
-
-    @models.permalink
-    def get_absolute_url(self):
-        return 'm_detail', (), {'mid': self.pk}
-
 ##---MAIN
 
 if __name__ == '__main__':

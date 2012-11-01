@@ -54,11 +54,11 @@ def toint(val):
 #return
 
 @task
-def _validate_rawdata_file(did):
+def _validate_rawdata_file(dfid):
     """checks consistency of rawdata file
 
-    :type did: int
-    :param did: pk for Datafile entity
+    :type dfid: int
+    :param dfid: pk for Datafile entity
 
     :returns: bool -- True if Datafile validates, False else. Processing
     log, including errors, will be written to the Datafile entity.
@@ -67,16 +67,16 @@ def _validate_rawdata_file(did):
     # init and checks
     state = 10
     try:
-        d = Datafile.objects.get(id=did)
-        assert d.file_type == 10
+        df = Datafile.objects.get(id=dfid)
+        assert df.file_type == 10
         logger = Logger.get_logger(StringIO())
     except:
         return state
 
     try:
-        logger.log('looking at raw data file with id: %s' % d.id)
-        rd, sr = read_hdf5_arc(d.file.path)
-        logger.log('found rd_file: %s' % d.name)
+        logger.log('looking at raw data file with id: %s' % df.id)
+        rd, sr = read_hdf5_arc(df.file.path)
+        logger.log('found rd_file: %s' % df.name)
         len_rd_sec = rd.shape[0] / sr
         logger.log('found data in %d channels, for %d sec' % (
             rd.shape[1], len_rd_sec))
@@ -89,27 +89,27 @@ def _validate_rawdata_file(did):
         state = 10 # failure
         logger.log('error during trial check: %s' % str(ex))
     finally:
-        d.task_state = state
-        d.task_log = logger.get_content()
-        d.save()
+        df.task_state = state
+        df.task_log = logger.get_content()
+        df.save()
         return state
 
 
-def validate_rawdata_file(did):
+def validate_rawdata_file(dfid):
     rval = 0
     if USE_CELERY:
-        rval = _validate_rawdata_file.delay(did)
+        rval = _validate_rawdata_file.delay(dfid)
     else:
-        _validate_rawdata_file(did)
+        _validate_rawdata_file(dfid)
     return str(rval)
 
 
 @task
-def _validate_groundtruth_file(did):
+def _validate_groundtruth_file(dfid):
     """checks consistency of ground truth file
 
-    :type did: int
-    :param did: pk for Datafile entity
+    :type dfid: int
+    :param dfid: pk for Datafile entity
 
     :returns: bool -- True if Datafile validates, False else. Processing
     log, including errors, will be written to the Datafile entity.
@@ -118,16 +118,16 @@ def _validate_groundtruth_file(did):
     # init and checks
     state = 10
     try:
-        d = Datafile.objects.get(id=did)
-        assert d.file_type == 20
+        df = Datafile.objects.get(id=dfid)
+        assert df.file_type == 20
         logger = Logger.get_logger(StringIO())
     except:
         return state
 
     try:
-        logger.log('looking at ground truth file version with uid: %s' % d.id)
-        gt = read_gdf_sts(d.file.path)
-        logger.log('found gt_file: %s' % d.name)
+        logger.log('looking at ground truth file version with uid: %s' % df.id)
+        gt = read_gdf_sts(df.file.path)
+        logger.log('found gt_file: %s' % df.name)
         for st in gt:
             if not isinstance(gt[st], sp.ndarray):
                 raise TypeError('spike train %s not ndarray' % st)
@@ -142,18 +142,18 @@ def _validate_groundtruth_file(did):
         state = 10 # failure
         logger.log('error during trial check: %s' % str(ex))
     finally:
-        d.task_state = state
-        d.task_log = logger.get_content()
-        d.save()
+        df.task_state = state
+        df.task_log = logger.get_content()
+        df.save()
         return state
 
 
-def validate_groundtruth_file(did):
+def validate_groundtruth_file(dfid):
     rval = 0
     if USE_CELERY:
-        rval = _validate_groundtruth_file.delay(did)
+        rval = _validate_groundtruth_file.delay(dfid)
     else:
-        _validate_groundtruth_file(did)
+        _validate_groundtruth_file(dfid)
     return str(rval)
 
 #+Interface 2: The user uploads a sorting result. The frontend calls a
@@ -179,11 +179,11 @@ def validate_groundtruth_file(did):
 #...
 
 @task
-def _start_evaluation(eid, **kwargs):
+def _start_evaluation(evid, **kwargs):
     """core function to produce one evaluation result based on one set of
     data, ground truth spike train and estimated spike train.
-    :type eid: int
-    :param eid: pk for Evaluation entity
+    :type evid: int
+    :param evid: pk for Evaluation entity
     :type log: file_like
     :param log: logging stream
         Default=sys.stdout
@@ -195,24 +195,24 @@ def _start_evaluation(eid, **kwargs):
     # init and checks
     state = 30
     try:
-        e = Evaluation.objects.get(id=eid)
+        ev = Evaluation.objects.get(id=evid)
         logger = Logger.get_logger(StringIO())
     except:
         return state
 
     try:
-        rd_file = e.trial.rd_file
-        gt_file = e.trial.gt_file
-        ev_file = e.ev_file
-        logger.log('processing evaluation ID: %s' % eid)
+        rd_file = ev.trial.rd_file
+        gt_file = ev.trial.gt_file
+        ev_file = ev.ev_file
+        logger.log('processing evaluation ID: %s' % evid)
 
         # read in evaluation file
         logger.log('reading input files')
         rd, sampling_rate = read_hdf5_arc(rd_file.file.path)
         if sampling_rate is not None:
             kwargs.update(sampling_rate=sampling_rate)
-        ev = read_gdf_sts(ev_file.file.path)
-        gt = read_gdf_sts(gt_file.file.path)
+        ev_sts = read_gdf_sts(ev_file.file.path)
+        gt_sts = read_gdf_sts(gt_file.file.path)
         logger.log('done reading input files')
 
         # apply modules
@@ -222,7 +222,7 @@ def _start_evaluation(eid, **kwargs):
             try:
                 logger.log('starting module: %s' % mod_cls.__name__)
                 tick = datetime.now()
-                this_mod = eval_core(rd, gt, ev, mod_cls, logger, **kwargs)
+                this_mod = eval_core(rd, gt_sts, ev_sts, mod_cls, logger, **kwargs)
                 tock = datetime.now()
                 logger.log('finished: %s' % str(tock - tick))
             except Exception, ex:
@@ -241,12 +241,12 @@ def _start_evaluation(eid, **kwargs):
             for i, t in enumerate(['wf_single', 'wf_all', 'clus12', 'clus34',
                                    'clus_proj', 'spiketrain']):
                 rval = EvaluationResultImg()
-                rval.evaluation = e
+                rval.evaluation = ev
                 # Create a file-like object to write image data created by PIL
                 img_io = StringIO()
                 modules[0].result[i].value.save(img_io, format='JPEG')
                 # create a unique file name as: evaluation ID + picture prefix
-                filename = "eval%d_%s.jpg" % (e.id, t)
+                filename = "eval%d_%s.jpg" % (ev.id, t)
                 # Create a new Django file-like object to be used in models as
                 # ImageField using InMemoryUploadedFile.
                 img_file = InMemoryUploadedFile(img_io, None, filename,
@@ -264,7 +264,7 @@ def _start_evaluation(eid, **kwargs):
         if modules[1].status == 'finalised':
             for row in modules[1].result[0].value:
                 rval = EvaluationResult()
-                rval.evaluation = e
+                rval.evaluation = ev
                 rval.gt_unit = row[0]
                 rval.found_unit = row[1]
                 rval.KS = toint(row[2])
@@ -289,19 +289,19 @@ def _start_evaluation(eid, **kwargs):
         logger.log('Exception: %s' % str(ex))
         state = 30 # Failure
     finally:
-        e.task_state = state
-        e.task_log = logger.get_content()
-        e.save()
-        print e.task_log
+        ev.task_state = state
+        ev.task_log = logger.get_content()
+        ev.save()
+        print ev.task_log
         return state
 
 
-def start_evaluation(eid):
+def start_evaluation(evid):
     rval = 0
     if USE_CELERY:
-        rval = _start_evaluation.delay(eid)
+        rval = _start_evaluation.delay(evid)
     else:
-        _start_evaluation(eid)
+        _start_evaluation(evid)
     return str(rval)
 
 ##---MAIN

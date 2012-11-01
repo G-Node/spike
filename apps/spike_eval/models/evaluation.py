@@ -154,8 +154,7 @@ class Evaluation(TimeStampedModel):
         return self.batch.is_accessible(user)
 
     def clear_results(self):
-        self.evaluationresults_set.all().delete()
-        self.evaluationresultsimg_set.all().delete()
+        self.result_set.all().delete()
 
     def summary(self):
         er = self.evaluationresults_set.all()
