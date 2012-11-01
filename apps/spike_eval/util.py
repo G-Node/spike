@@ -3,13 +3,13 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
+from model_utils.fields import Choices
+
 ##---CHOICES
 
-ACCESS_CHOICES = [
-    (00, 'undefined'),
-    (10, 'PRIVATE'),
-    (20, 'PUBLIC'),
-]
+ACCESS_CHOICES = Choices('private', 'public')
+ONLINE_CHOICES = Choices('offline', 'online')
+TASK_STATE_CHOICES = Choices('running', 'success', 'failure')
 
 FILETYPE_CHOICES = [
     (00, 'undefined'),
@@ -17,12 +17,6 @@ FILETYPE_CHOICES = [
     (20, 'Groundtruth File'),
     (30, 'Evaluation File'),
     (40, 'Supplementary File'),
-]
-
-TASK_STATE_CHOICES = [
-    (10, 'Running'),
-    (20, 'Success'),
-    (30, 'Failure'),
 ]
 
 ##---COLOR-PALETTE

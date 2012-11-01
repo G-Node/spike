@@ -1,7 +1,7 @@
 ##---IMPORTS
 
 from django.conf.urls.defaults import *
-from views import AlgorithmListView
+from apps.spike_dev.views import AlgorithmListView
 from django.views.generic import TemplateView
 
 ##---CLASSES
@@ -13,7 +13,7 @@ class HomepageView(TemplateView):
 
 urlpatterns = patterns('')
 
-urlpatterns += patterns('spike_eval.dev.views',
+urlpatterns += patterns('spike_dev.views',
     url(r'^a_list/$',
         AlgorithmListView.as_view()),
     url(r'^display_meta/$',

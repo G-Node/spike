@@ -4,11 +4,11 @@
 {% load spike_eval_tags %}
 {% load bootstrap_tags %}
 
-{% block head_title %}{B:{{ b.id }}}&nbsp;{{ b.name }}{% endblock %}
+{% block head_title %}{B:{{ bm.id }}}&nbsp;{{ bm.name }}{% endblock %}
 
 {% block content %}
 
-  {% if b|is_editable:user %}
+  {% if bm|is_editable:user %}
     <section class="well">
       <form class="actions">
         <span class="label">Actions:</span>
@@ -20,14 +20,13 @@
           {% trans "Create Supplementary File" %}</a>
       </form>
 
-      <form id="edit-benchmark" class="form form-horizontal" method="POST"
-            style="display:none">
+      <form id="edit-benchmark" class="form form-horizontal" method="POST" style="display:none">
         <fieldset>
           <legend>Edit Benchmark</legend>
           {% csrf_token %}
-          {{ b_form|as_bootstrap }}
+          {{ bm_form|as_bootstrap }}
           <div class="form-actions">
-            <input type="submit" class="btn btn-primary" name="b_edit"
+            <input type="submit" class="btn btn-primary" name="bm_edit"
                    value="{% trans 'Edit Benchmark' %}"/>
           </div>
         </fieldset>
@@ -38,9 +37,9 @@
         <fieldset>
           <legend>Create Trial</legend>
           {% csrf_token %}
-          {{ t_form|as_bootstrap }}
+          {{ tr_form|as_bootstrap }}
           <div class="form-actions">
-            <input type="submit" class="btn btn-primary" name="t_create"
+            <input type="submit" class="btn btn-primary" name="tr_create"
                    value="{% trans 'Create Trial' %}"/>
           </div>
         </fieldset>
@@ -51,9 +50,9 @@
         <fieldset>
           <legend>Create Supplementary</legend>
           {% csrf_token %}
-          {{ s_form|as_bootstrap }}
+          {{ sf_form|as_bootstrap }}
           <div class="form-actions">
-            <input type="submit" class="btn btn-primary" name="s_create"
+            <input type="submit" class="btn btn-primary" name="sf_create"
                    value="{% trans 'Create Supplementary' %}"/>
           </div>
         </fieldset>
@@ -63,36 +62,42 @@
 
   <section>
     <h1>
-      &quot;{{ b }}&quot;
-      <small>({{ b.get_state_display }})</small>
+      &quot;{{ bm }}&quot;
+      <small>({{ bm.status }})</small>
     </h1>
     <dl class="dl-horizontal">
       <dt>
         <strong>Description:</strong>
       </dt>
       <dd>
-        {{ b.description|default:"no description" }}
+        {{ bm.description|default:"no description" }}
       </dd>
       <dt>
         <strong>Owner:</strong>
       </dt>
       <dd>
-        {% icn_profile b %}
-        {% ifequal b.owner request.user %}(you){% endifequal %}
+        {% icn_profile bm %}
+        {% ifequal bm.owner request.user %}(you){% endifequal %}
         </nobr>
       </dd>
       <dt>
-        <strong>Date Created:</strong>
+        <strong>Created:</strong>
       </dt>
       <dd>
-        {% icn_time b %}
+        {% icn_time bm.created %}
       </dd>
-      {% if b|is_editable:user %}
+      <dt>
+        <strong>Modified:</strong>
+      </dt>
+      <dd>
+        {% icn_time bm.modified %}
+      </dd>
+      {% if bm|is_editable:user %}
         <dt>
           <strong>Status:</strong>
         </dt>
         <dd>
-          {% if b.is_active %}
+          {% if bm.is_public %}
             <i class="icon-ok"></i>
             <b style="color: green">ACTIVE</b> - available for user download
           {% else %}
@@ -105,15 +110,15 @@
         <strong>Tags:</strong>
       </dt>
       <dd>
-        {% for tag in b.tags.all %}
-          <i class="icon-tag"></i>{{ tag }}&nbsp;
+        {% for tag in bm.tags.all %}
+          <i class="icon-tag"></i>&nbsp;{{ tag }}&nbsp;
         {% endfor %}
       </dd>
       <dt>
         <strong>Summary</strong>
       </dt>
       <dd>
-        <a href="{% url b_summary b.id %}">CLICK HERE TO VIEW COMPARISON OF DIFFERENT EVALUATIONS</a><br>
+        <a href="{% url bm_summary bm.id %}">CLICK HERE TO VIEW COMPARISON OF DIFFERENT EVALUATIONS</a><br>
       </dd>
     </dl>
   </section>
@@ -122,41 +127,40 @@
     <h2>Trial Set
       <small>touples of rawdata file and groundtruth file</small>
     </h2>
-    <p>Benchmarks consist of one or more Trials. You may download Trials
-      and apply your spike sorting algorithm. After the spike sorting on your
-      end, you can may upload the resulting spike train set here and start an
-      Evaluation.</p>
+    <p>Benchmarks consist of one or more Trials. You may download Trials and apply your spike sorting
+      algorithm. After the spike sorting on your end, you upload the resulting spike train set here and
+      start an Evaluation.</p>
 
-    {% if t_list %}
+    {% if tr_list %}
       <table class="table table-striped table-condensed">
         <thead>
         <tr>
           <th>{% trans "Name" %}</th>
           <th>{% trans "Created" %}</th>
-          <th>{{ b.parameter }}</th>
+          <th>{{ bm.parameter }}</th>
           <th>{% trans "Description" %}</th>
           <th>{% trans "Download" %}</th>
-          {% ifequal b.owner user %}
+          {% ifequal bm.owner user %}
             <th>{% trans "Status" %}</th>
           {% endifequal %}
         </tr>
         </thead>
         <tbody>
-        {% for t in t_list %}
+        {% for t in tr_list %}
           <tr>
             <td>
-              {% if b|is_editable:user %}
+              {% if bm|is_editable:user %}
                 <a href="{{ t.get_absolute_url }}">
               {% endif %}
               <nobr><strong>{{ t }}</strong></nobr>
-              {% if b|is_editable:user %}
+              {% if bm|is_editable:user %}
                 </a>
               {% endif %}
             </td>
             <td>
               <nobr>
                 <i class="icon-time"></i>
-                {{ t.date_created|date }}
+                {{ t.created|date }}
               </nobr>
             </td>
             <td>
@@ -172,7 +176,7 @@
                     {{ f.name }} - {{ f.size|filesizeformat }}
                   </a>
                 </nobr>
-                {% if b.gt_access == 20 or b|is_editable:user %}
+                {% if bm.gt_access == 20 or bm|is_editable:user %}
                   {% with t.gt_file as f %}
                     </br>
                     <nobr>
@@ -184,7 +188,7 @@
                 {% endif %}
               </td>
             {% endwith %}
-            {% if b|is_editable:user %}
+            {% if bm|is_editable:user %}
               <td>
                 {% if t.is_validated %}
                   <i class="icon-ok"></i>
@@ -202,18 +206,19 @@
           <td></td>
           <td></td>
           <td></td>
-          <td><a href="{% url b_dl_zip b.id %}">ZIP ARCHIVE</a></td>
-          {% ifequal b.owner user %}
-            <td></td>{% endifequal %}
+          <td><a href="{% url bm_zip bm.id %}">ZIP ARCHIVE</a></td>
+          {% ifequal bm.owner user %}
+            <td></td>
+          {% endifequal %}
         </tr>
         </tbody>
       </table>
     {% else %}
-      <p>This benchmark has no trials yet.</p>
-      {% ifequal b.owner request.user %}
-        <p>You can add new trials by clicking on the "Create Trial" button
-          above.</p>
-      {% endifequal %}
+      <p>This benchmark has no trials yet.
+        {% ifequal bm.owner request.user %}
+          You can add new trials by clicking on the "Create Trial" button above.
+        {% endifequal %}
+      </p>
     {% endif %}
   </section>
 
@@ -222,7 +227,7 @@
       <small>additional files describing the Benchmark</small>
     </h2>
 
-    {% if b.datafile_set %}
+    {% if sf_list %}
       <table class="table table-striped table-condensed">
         <thead>
         <tr>
@@ -231,36 +236,36 @@
           <th>{% trans "Size" %}</th>
           <th>{% trans "Created" %}</th>
           {% if user.is_authenticated %}
-            {% if b.added_by == user or user.is_superuser %}
+            {% if bm.owner == user or user.is_superuser %}
               <th>{% trans "Actions" %}</th>
             {% endif %}
           {% endif %}
         </tr>
         </thead>
         <tbody>
-        {% for d in b.datafile_set %}
+        {% for sf in sf_list %}
           <tr>
             <td>
-              <nobr>{{ d.name }}</nobr>
+              <nobr>{{ sf.name }}</nobr>
             </td>
             <td>
               <nobr>
-                <a href="{{ d.get_absolute_url }}">{{ d.file.name }}</a>
+                <a href="{{ sf.get_absolute_url }}">{{ sf.file.name }}</a>
               </nobr>
             </td>
             <td>
-              {{ d.size|filesizeformat }}
+              {{ sf.size|filesizeformat }}
             </td>
             <td>
-              {% icn_time d %}
+              {% icn_time sf %}
             </td>
             {% if user.is_authenticated %}
-              {% if b.added_by == user or user.is_superuser %}
+              {% if bm.owner == user or user.is_superuser %}
                 <td>
                   <form method="POST">
                     {% csrf_token %}
-                    <input type="hidden" name="s_id" value="{{ d.id }}">
-                    <input type="submit" name="s_delete" value="delete">
+                    <input type="hidden" name="sf_id" value="{{ sf.id }}">
+                    <input type="submit" name="sf_delete" value="delete">
                   </form>
                 </td>
               {% endif %}
@@ -271,7 +276,7 @@
       </table>
     {% else %}
       <p>This Benchmark has no Supplementaries yet.
-        {% if b|is_editable:user %}
+        {% if bm|is_editable:user %}
           You can add new Supplementary Files by clicking on the "Create
           Supplementary" button under "Actions:" above.
         {% endif %}
@@ -284,17 +289,17 @@
       <small>upload your spike sorting to start an Evaluation</small>
     </h2>
     {% if not user.is_authenticated %}
-      <p>Please log in to submit for this Benchmark!</p>
+      <p>Please log in to submit your own Evaluations!</p>
     {% else %}
-      {% if b.trial_set.all %}
+      {% if bm.trial_set.all %}
         <form method="POST" enctype="multipart/form-data"
               class="form form-horizontal well">
           <fieldset>
             <legend>Submit Evaluation</legend>
             {% csrf_token %}
-            {{ e_form|as_bootstrap }}
+            {{ ev_form|as_bootstrap }}
             <div class="form-actions" style="clear: both;">
-              <input type="submit" class="btn btn-primary" name="e_submit"
+              <input type="submit" class="btn btn-primary" name="ev_submit"
                      value="{% trans 'Submit Evaluations' %}"/>
             </div>
           </fieldset>

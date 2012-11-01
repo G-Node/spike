@@ -2,19 +2,20 @@
 
 import zipfile
 from StringIO import StringIO
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import models
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import redirect
 from django.template.defaultfilters import slugify
-from ..forms import EvalBatchEditForm
+from ..forms import BatchEditForm
 from ..tasks import start_evaluation
-from ..util import render_to
+from ..util import render_to, ACCESS_CHOICES
 
-##---MODELREFS
+##---MODEL-REFS
 
+Batch = models.get_model('spike_eval', 'batch')
 Evaluation = models.get_model('spike_eval', 'evaluation')
-EvaluationBatch = models.get_model('spike_eval', 'evaluationbatch')
 
 ##---HELPERS
 
@@ -32,84 +33,122 @@ def sort_er(a, b):
 ##---VIEWS
 
 @render_to('spike_eval/evaluation/list.html')
-def e_list(request, bid=None):
-    """renders a list of available evaluations"""
+def list(request, bmid=None):
+    """renders a list of available batches"""
 
     # evaluation batch list
-    e_list = EvaluationBatch.objects.filter(access=20)
-    e_list_self = None
+    bt_list = Batch.objects.filter(status=ACCESS_CHOICES.public)
+    #print [bt.status for bt in bt_list]
+    bt_list_self = None
     if request.user.is_authenticated():
         if request.user.is_superuser:
-            e_list = EvaluationBatch.objects.all()
-        e_list_self = EvaluationBatch.objects.filter(added_by=request.user)
+            bt_list = Batch.objects.all()
+        bt_list_self = Batch.objects.filter(owner=request.user)
 
     # filters
-    if bid is not None:
-        e_list = e_list.filter(benchmark=bid)
+    if bmid is not None:
+        bt_list = bt_list.filter(benchmark=bmid)
         if request.user.is_authenticated():
-            e_list_self = e_list_self.filter(benchmark=bid)
+            bt_list_self = bt_list_self.filter(benchmark=bmid)
 
     # search terms
     search_terms = request.GET.get('search', '')
     if search_terms:
-        e_list = (
-            e_list.filter(algorithm__icontains=search_terms) |
-            e_list.filter(description__icontains=search_terms) |
-            e_list.filter(added_by__icontains=search_terms) |
-            e_list.filter(benchmark__icontains=search_terms))
+        bt_list = (
+            bt_list.filter(algorithm__icontains=search_terms) |
+            bt_list.filter(description__icontains=search_terms) |
+            bt_list.filter(owner__icontains=search_terms) |
+            bt_list.filter(benchmark__icontains=search_terms))
 
     # response
-    return {'e_list': e_list,
-            'e_list_self': e_list_self,
+    return {'bt_list': bt_list,
+            'bt_list_self': bt_list_self,
             'search_terms': search_terms}
 
 
-@render_to('spike_eval/evaluation/batch.html')
-def e_batch(request, ebid):
-    """renders an evaluation batch"""
+@render_to('spike_eval/evaluation/detail.html')
+def detail(request, btid):
+    """renders details of a particular batch"""
 
     # init and checks
-    eb = get_object_or_404(EvaluationBatch.objects.all(), id=ebid)
-    eb_form = None
-    if not eb.is_accessible(request.user):
-        messages.error(
-            request, 'You are not allowed to view this Evaluation Batch.')
-        redirect('e_list')
+    try:
+        bt = Batch.objects.get(pk=btid)
+        assert bt.is_accessible(request.user), 'insufficient permissions'
+    except Exception, ex:
+        messages.error(request, 'You are not allowed to view or modify this Batch: %s' % ex)
+        return redirect('ev_list')
+    bt_form = None
 
     # post request
     if request.method == 'POST':
-        if 'eb_switch' in request.POST:
-            if eb.added_by == request.user:
-                eb.switch()
-                messages.success(request, 'switch successful!')
-        elif 'restart' in request.POST:
-            eid = request.POST.get('restart_eid', None)
-            if eid:
-                start_evaluation(eid)
-                Evaluation.objects.get(id=eid).clear_results()
-                messages.info(request, 'Evalulation is been restarted!')
+        if 'bt_toggle' in request.POST:
+            if bt.is_editable(request.user):
+                bt.toggle()
+                messages.success(request, 'Batch toggle successful')
             else:
-                messages.error(request, 'Evalulation restart failed!')
-        elif 'eb_edit' in request.POST:
-            eb_form = EvalBatchEditForm(request.POST, instance=eb)
-            if eb_form.is_valid():
-                eb_form.save()
-                messages.success(request, 'edit successfull')
+                messages.error(request, 'Batch toggle failed')
+        elif 'ev_restart' in request.POST:
+            evid = request.POST.get('ev_restart_id', None)
+            if evid:
+                Evaluation.objects.get(id=evid).clear_results()
+                start_evaluation(evid)
+                messages.info(request, 'Evalulation is been restarted')
             else:
-                messages.error(request, 'edit failed')
+                messages.error(request, 'Evalulation restart failed')
+        elif 'bt_edit' in request.POST:
+            bt_form = BatchEditForm(request.POST, instance=bt)
+            if bt_form.is_valid():
+                bt_form.save()
+                messages.success(request, 'Batch edit successfull')
+            else:
+                messages.error(request, 'Batch edit failed')
 
     # response
-    return {'eb': eb,
-            'eb_form': eb_form or EvalBatchEditForm(instance=eb)}
+    return {'bt': bt,
+            'bt_form': bt_form or BatchEditForm(instance=bt)}
 
 
-def e_zip(request, ebid):
+@login_required
+def toggle(request, btid):
+    """toggle status for benchmark"""
+
+    try:
+        bt = Batch.objects.get(pk=btid)
+        assert bt.is_editable(request.user), 'insufficient permissions'
+        bt.toggle()
+        messages.info(request, 'Batch "%s" toggled to %s' % (bt, bt.status))
+    except Exception, ex:
+        messages.error(request, 'Benchmark not toggled: %s' % ex)
+    finally:
+        return redirect(bt)
+
+
+@login_required
+def delete(request, btid):
+    """delete batch"""
+
+    try:
+        bt = Batch.objects.get(pk=btid)
+        assert bt.is_editable(request.user), 'insufficient permissions'
+        Batch.objects.get(pk=btid).delete()
+        messages.success(request, 'Batch "%s" deleted' % bt)
+    except Exception, ex:
+        messages.error(request, 'Benchmark not deleted: %s' % ex)
+    finally:
+        return redirect('ev_list')
+
+
+def zip(request, btid):
     # init and checks
-    eb = get_object_or_404(EvaluationBatch.objects.all(), id=ebid)
-    e_list = [e for e in eb.evaluation_set.order_by('trial__parameter')]
+    try:
+        bt = Batch.objects.get(pk=btid)
+        assert bt.is_accessible(request.user), 'insufficient permissions'
+    except Exception, ex:
+        messages.error(request, 'You are not allowed to view or modify this Batch: %s' % ex)
+        return redirect('ev_list')
+    ev_list = [ev for ev in bt.evaluation_set.order_by('trial__parameter')]
     arc, arc_buf, buf = None, None, None
 
-    # build archive
     try:
         # build buffer and archive
         arc_buf = StringIO()
@@ -119,23 +158,23 @@ def e_zip(request, ebid):
         arc.writestr(
             'README',
             '\n'.join([
-                'RESULTS FOR: %s\n' % str(eb),
+                'RESULTS FOR: %s\n' % str(bt),
                 'This zip archive was downloaded from http://spike.g-node.org.',
                 'It contains the results from a spike sorting evaluation made on the benchmark',
-                '\n  %s\n' % str(eb.benchmark),
+                '\n  %s\n' % str(bt.benchmark),
                 'with the algorithm',
-                '\n  %s\n' % str(eb.algorithm),
+                '\n  %s\n' % str(bt.algorithm),
                 'on',
-                '\n  %s\n' % str(eb.date_created),
+                '\n  %s\n' % str(bt.created),
                 'by',
-                '\n  %s\n' % str(eb.added_by),
+                '\n  %s\n' % str(bt.owner),
                 '']))
 
         # write evaluations
-        for e in e_list:
-            if not e.processed():
+        for ev in ev_list:
+            if not ev.processed():
                 continue
-            e_name = slugify(e.trial.name)
+            ev_name = slugify(ev.trial.name)
             buf = StringIO()
             buf.write(','.join([
                 'GT Unit Name',
@@ -153,26 +192,25 @@ def e_zip(request, ebid):
                 'FN(O det by other unit)',
                 'FN(NO not detected)',
                 'FN(O not detected)']) + '\n')
-            for r in e.eval_res:
-                buf.write('%s\n' % ','.join(map(str, r.display())))
+            for rs in ev.eval_res:
+                buf.write('%s\n' % ','.join(map(str, rs.display())))
             buf.seek(0)
-            arc.writestr('%s/tbl.csv' % e_name, buf.read())
+            arc.writestr('%s/tbl.csv' % ev_name, buf.read())
             buf.close()
-            for ri in e.eval_res_img:
+            for ri in ev.eval_res_img:
                 arc.writestr(
-                    '%s/img_%s.%s' % (e_name, ri.img_type, ri.img_data.path.split('.')[-1]),
+                    '%s/img_%s.%s' % (ev_name, ri.img_type, ri.img_data.path.split('.')[-1]),
                     ri.img_data.read())
         arc.close()
         arc_buf.seek(0)
 
         # send response
         response = HttpResponse(arc_buf.read())
-        response['Content-Disposition'] = 'attachment; filename=%s.zip' % slugify(str(eb))
+        response['Content-Disposition'] = 'attachment; filename=%s.zip' % slugify(str(bt))
         response['Content-Type'] = 'application/x-zip'
         return response
-    except Exception, ex:
-        print ex
-        return redirect(eb)
+    except:
+        return redirect(bt)
     finally:
         try:
             arc.close()

@@ -5,8 +5,8 @@ from django.db import models
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import ListView, CreateView
-from ..forms import AlgorithmForm, SupplementaryForm
-from ..util import render_to
+from spike_eval.forms import AlgorithmForm, SupplementaryForm
+from spike_eval.util import render_to
 
 ##---MODEL-REFS
 

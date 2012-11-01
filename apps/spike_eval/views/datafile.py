@@ -1,9 +1,9 @@
 ##---IMPORTS
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
+from django.contrib import messages
 from django.db import models
-from django.shortcuts import get_object_or_404
 import mimetypes
 
 ##---MODEL-REFS
@@ -13,18 +13,24 @@ Datafile = models.get_model('spike_eval', 'datafile')
 ##---VIEWS
 
 @login_required
-def datafile(request, did):
+def datafile(request, dfid):
     """serve a datafile"""
 
-    d = get_object_or_404(Datafile.objects.all(), id=did)
-    mimetype, encoding = mimetypes.guess_type(d.file.path)
+    # init and checks
+    try:
+        df = Datafile.objects.get(pk=dfid)
+        assert bt.is_accessible(request.user), 'insufficient permissions'
+    except Exception, ex:
+        messages.error(request, 'You are not allowed to view or modify this Datafile: %s' % ex)
+        return Http404()
+    mimetype, encoding = mimetypes.guess_type(df.file.path)
     mimetype = mimetype or 'application/octet-stream'
-    response = HttpResponse(d.file.read(), mimetype=mimetype)
-    response['Content-Disposition'] = 'attachment; filename=%s' % d.name
-    response['Content-Length'] = d.file.size
+    response = HttpResponse(df.file.read(), mimetype=mimetype)
+    response['Content-Disposition'] = 'attachment; filename=%s' % df.name
+    response['Content-Length'] = df.file.size
     if encoding:
         response['Content-Encoding'] = encoding
-    response['X-Sendfile'] = str(d.file.path)
+    response['X-Sendfile'] = str(df.file.path)
     return response
 
 if __name__ == '__main__':

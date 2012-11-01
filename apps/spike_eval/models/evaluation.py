@@ -5,40 +5,46 @@ import os
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.aggregates import Sum
+from django.contrib.contenttypes import generic
 
-from taggit.managers import TaggableManager
+from model_utils.models import StatusModel, TimeStampedModel
 
-from .common import CommonInfo, DateCreated
 from ..util import ACCESS_CHOICES, TASK_STATE_CHOICES
 
-__all__ = ['EvaluationBatch', 'Evaluation', 'EvaluationResult', 'EvaluationResultImg']
-
-##---MODEL-REFS
-
-Datafile = models.get_model('spike_eval', 'datafile')
+__all__ = ['Batch', 'Evaluation']
 
 ##---MODELS
 
-class EvaluationBatch(CommonInfo):
-    """set of evaluations from a submission"""
+class Batch(StatusModel, TimeStampedModel):
+    """container for a set of evaluations submitted by a user"""
 
     ## meta
 
     class Meta:
         app_label = 'spike_eval'
 
+    ## choices
+
+    STATUS = ACCESS_CHOICES
+
     ## fields
 
     description = models.TextField(blank=True, null=True)
-    access = models.IntegerField(choices=ACCESS_CHOICES, default=10)
-
+    owner = models.ForeignKey(
+        'auth.User',
+        blank=True,
+        help_text='The user associated with this Batch.')
     algorithm = models.ForeignKey('Algorithm', default=1)
     benchmark = models.ForeignKey('Benchmark')
+
+    ## managers
+
+    datafile_set = generic.GenericRelation('Datafile')
 
     ## special methods
 
     def __str__(self):
-        return 'Batch #%s (%s)' % (self.pk, self.algorithm)
+        return '#%s %s' % (self.pk, self.algorithm)
 
     def __unicode__(self):
         return unicode(self.__str__())
@@ -47,29 +53,25 @@ class EvaluationBatch(CommonInfo):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'e_batch', (), {'ebid': self.pk}
+        return 'ev_detail', (), {'btid': self.pk}
 
     ## interface
 
-    @property
-    def datafile_set(self):
-        return Datafile.objects.for_obj(self)
-
-    def switch(self):
-        if self.access == 10:
-            self.access = 20
+    def toggle(self):
+        if self.status == ACCESS_CHOICES.public:
+            self.status = ACCESS_CHOICES.private
         else:
-            self.access = 10
+            self.status = ACCESS_CHOICES.public
         self.save()
 
     def is_public(self):
-        return self.access == 20
+        return self.status == ACCESS_CHOICES.public and self.benchmark.is_public()
+
+    def is_editable(self, user):
+        return self.owner == user or user.is_superuser
 
     def is_accessible(self, user):
         return self.is_public() or self.is_editable(user)
-
-    def is_editable(self, user):
-        return self.added_by == user or user.is_superuser
 
     def summary_table(self):
         rval = []
@@ -81,23 +83,8 @@ class EvaluationBatch(CommonInfo):
             rval.append(e_sum)
         return rval
 
-    ## save and delete
 
-    def save(self, *args, **kwargs):
-        if self.pk is not None:
-            orig = EvaluationBatch.objects.get(pk=self.pk)
-            if orig.datafile_set:
-                for df in orig.datafile_set:
-                    if df not in self.datafile_set:
-                        df.delete()
-        super(EvaluationBatch, self).save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        self.datafile_set.delete()
-        super(EvaluationBatch, self).delete(*args, **kwargs)
-
-
-class Evaluation(CommonInfo):
+class Evaluation(TimeStampedModel):
     """single trial evaluation object
 
     When user wants to evaluate the results of his spike sorting work, he
@@ -122,23 +109,26 @@ class Evaluation(CommonInfo):
     task_log = models.TextField(
         blank=True,
         null=True)
-
-    evaluation_batch = models.ForeignKey('EvaluationBatch')
+    batch = models.ForeignKey('Batch')
     trial = models.ForeignKey('Trial')
+
+    ## managers
+
+    datafile_set = generic.GenericRelation('Datafile')
 
     ## special methods
 
     def __str__(self):
-        return 'Evaluation #%s @%s' % (self.pk, self.evaluation_batch_id)
+        return '#%s $%s @%s' % (self.batch_id, self.pk, self.trial_id)
 
     def __unicode__(self):
         return unicode(self.__str__())
 
     ## django special methods
 
-    @models.permalink
-    def get_absolute_url(self):
-        return 'e_detail', (), {'eid': self.pk}
+    #@models.permalink
+    #def get_absolute_url(self):
+    #    return 'ev_detail', (), {'evid': self.pk}
 
     ## interface
 
@@ -151,25 +141,17 @@ class Evaluation(CommonInfo):
         return self.evaluationresultsimg_set.all()
 
     @property
-    def datafile_set(self):
-        return Datafile.objects.for_obj(self)
-
-    @property
     def ev_file(self):
         try:
             return self.datafile_set.filter(file_type=30)[0]
         except IndexError:
             return None
 
-    @property
-    def benchmark(self):
-        return self.trial.benchmark
-
     def processed(self):
         return self.task_state == 20
 
     def is_accessible(self, user):
-        return self.evaluation_batch.is_accessible(user)
+        return self.batch.is_accessible(user)
 
     def clear_results(self):
         self.evaluationresults_set.all().delete()
@@ -231,131 +213,6 @@ class Evaluation(CommonInfo):
         return {
             'TP': (er['TP'] + er['TPO']) / float(er['KS']) * 100,
             'FP': (er['FS'] - er['TP'] - er['TPO']) / float(er['KS']) * 100, }
-
-    ## save and delete
-
-    def save(self, *args, **kwargs):
-        if self.pk is not None:
-            orig = Evaluation.objects.get(pk=self.pk)
-            if orig.ev_file.file != self.ev_file.file:
-                orig.ev_file.delete()
-        super(Evaluation, self).save(*args, **kwargs)
-
-
-    def delete(self, *args, **kwargs):
-        self.ev_file.delete()
-        super(Evaluation, self).delete(*args, **kwargs)
-
-
-class EvaluationResult(DateCreated):
-    """evaluation result entity"""
-
-    ## meta
-
-    class Meta:
-        app_label = 'spike_eval'
-
-    ## fields
-
-    evaluation = models.ForeignKey('Evaluation')
-    gt_unit = models.CharField(max_length=10)
-    found_unit = models.CharField(max_length=255)
-    KS = models.IntegerField(default=0)
-    KSO = models.IntegerField(default=0)
-    FS = models.IntegerField(default=0)
-    TP = models.IntegerField(default=0)
-    TPO = models.IntegerField(default=0)
-    FPA = models.IntegerField(default=0)
-    FPAE = models.IntegerField(default=0)
-    FPAO = models.IntegerField(default=0)
-    FPAOE = models.IntegerField(default=0)
-    FN = models.IntegerField(default=0)
-    FNO = models.IntegerField(default=0)
-    FP = models.IntegerField(default=0)
-
-    ## special methods
-
-    def __str__(self):
-        return 'EvaluationResult #%s @%s' % (self.pk, self.evaluation_id)
-
-    def __unicode__(self):
-        return unicode(self.__str__())
-
-    ## interface
-
-    def display(self):
-        """display list of numerical results"""
-        return [self.gt_unit,
-                self.found_unit,
-                self.KS,
-                self.KS - self.KSO,
-                self.KSO,
-                self.TP + self.TPO,
-                self.TP,
-                self.TPO,
-                self.FPAE,
-                self.FPAOE,
-                self.FP,
-                self.FPA,
-                self.FPAO,
-                self.FN,
-                self.FNO]
-
-
-class EvaluationResultImg(DateCreated):
-    """evaluation results picture entity"""
-
-    ## meta
-
-    class Meta:
-        app_label = 'spike_eval'
-
-    ## order
-
-    order_dict = {
-        'wf_single': 0,
-        'wf_all': 1,
-        'clus12': 2,
-        'clus34': 3,
-        'clus_proj': 4,
-        'spiketrain': 5,
-    }
-
-    ## fields
-
-    evaluation = models.ForeignKey('Evaluation')
-    file = models.ImageField(upload_to='results/%Y/%m/%d/')
-    file_type = models.CharField(max_length=20) # or mapping
-
-    ## special methods
-
-    def __str__(self):
-        return 'EvaluationResultImg #%s @%s' % (self.pk, self.evaluation_id)
-
-    def __unicode__(self):
-        return unicode(self.__str__())
-
-    ## interface
-
-    @property
-    def order(self):
-        try:
-            return self.order_dict[self.file_type]
-        except:
-            return 999
-
-    ## save and delete
-
-    def save(self, *args, **kwargs):
-        if self.pk is not None:
-            orig = EvaluationResultImg.objects.get(pk=self.pk)
-            if orig.file != self.file:
-                orig.file.delete()
-        super(EvaluationResultImg, self).save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        self.file.delete()
-        super(EvaluationResultImg, self).delete(*args, **kwargs)
 
 ##---MAIN
 

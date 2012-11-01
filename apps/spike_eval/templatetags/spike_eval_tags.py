@@ -132,8 +132,6 @@ def icn_profile(obj):
     else:
         if hasattr(obj, 'owner'):
             user = obj.owner
-        elif hasattr(obj, 'added_by'):
-            user = obj.added_by
         else:
             user = User.objects.get(id=2)
     return """<nobr>
@@ -144,9 +142,18 @@ def icn_profile(obj):
 
 @register.simple_tag
 def icn_time(obj):
-    date_str = 'unknown'
-    if hasattr(obj, 'date_created'):
-        date_str = date(obj.date_created)
+    date_str = None
+    try:
+        date_str = date(obj)
+    except:
+        if hasattr(obj, 'created'):
+            date_str = date(obj.created)
+    finally:
+        if not date_str:
+            if hasattr(obj, 'created'):
+                date_str = date(obj.created)
+            else:
+                date_str = 'unknown'
     return """<nobr>
   <i class="icon-time"></i>
   <span>%s</span>

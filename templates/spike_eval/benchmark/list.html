@@ -18,16 +18,14 @@
         <span class="label">Actions:</span>
         <a class="btn btn-mini"
            onclick="$('#create-benchmark').toggle();">Create Benchmark</a>
-        <a class="btn btn-mini"
-           onclick="$('#tagcloud').toggle();">Show Tagcloud</a>
       </form>
       <form id="create-benchmark" class="form form-horizontal"
             method="POST"
-            {% if not b_form.errors %}style="display:none"{% endif %}>
+            {% if not bm_form.errors %}style="display:none"{% endif %}>
         <fieldset>
           <legend>Create Benchmark</legend>
           {% csrf_token %}
-          {{ b_form|as_bootstrap }}
+          {{ bm_form|as_bootstrap }}
           <div class="form-actions">
             <input type="submit" class="btn btn-primary"
                    value="{% trans 'Create Benchmark' %}"/>
@@ -37,75 +35,18 @@
     </section>
   {% endif %}
 
-  <section id="tagcloud" style="display: none;">
-    <h2>Benchmark Tagcloud
-      <small>visualisation of the Benchmark tag space</small>
-    </h2>
-    <div class="well">
-      {% include_tagcloud 'benchmark.Benchmark' %}
-    </div>
-  </section>
+  {% with 'benchmark.Benchmark' as tag_model %}
+    {% include "spike_eval/_tag_cloud.html" %}
+  {% endwith %}
 
-  {% if b_list_self %}
+  {% if bm_list_self %}
     <section>
       <h2>Benchmark List ({% icn_profile user %})
         <small>only your Benchmarks are listed here</small>
       </h2>
-      {% autosort b_list_self %}
-      {% autopaginate b_list_self 20 %}
-      <table class="table table-striped table-condensed">
-        <thead>
-        <tr>
-          <th>{% trans "Name" %}</th>
-          <th>{% trans "Author" %}</th>
-          <th>{% trans "Date" %}</th>
-          <th>{% trans "#" %}</th>
-          <th>{% trans "Description" %}</th>
-          <th>{% trans "Actions" %}</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for b in b_list_self %}
-          <tr>
-            <td>
-              <a href="{{ b.get_absolute_url }}">
-                {% if b.is_active %}
-                  <i class="icon-ok"></i>
-                  <span style="color: green">{{ b.name }}</span>
-                {% else %}
-                  <span style="color: red">
-                  <nobr>
-                    <i class="icon-lock"></i>
-                    {% if b.state == 30 %}<strike>{% endif %}
-                    <strong>{{ b.name }}</strong>
-                    {% if b.state == 30 %}</strike>{% endif %}
-                  </nobr>
-                  </span>
-                {% endif %}
-              </a>
-            </td>
-            <td>{% icn_profile b %}</td>
-            <td>{% icn_time b %}</td>
-            <td><a href="{% url e_list bid=b.id %}">{{ b.eval_batches|length }}</a></td>
-            <td>{{ b.description|truncatewords:11|escape }}</td>
-            <td>
-              <div class="btn-group">
-                <a href="{% url b_dl_zip b.id %}" class="btn btn-mini">{% trans "download" %}</a>
-                {% if b|is_editable:user %}
-                  {% if b.state != 30 %}
-                    <a href="{% url b_archive b.id %}" class="btn btn-mini">{% trans "archive" %}</a>
-                  {% else %}
-                    <a href="{% url b_resurrect b.id %}" class="btn btn-mini">{% trans "resurrect" %}</a>
-                  {% endif %}
-                {% endif %}
-                <a href="{% url b_summary b.id %}" class="btn btn-mini">{% trans "summary" %}</a>
-              </div>
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-      {% paginate %}
+      {% with bm_list_self as blist %}
+        {% include "spike_eval/benchmark/_list.html" %}
+      {% endwith %}
     </section>
   {% endif %}
 
@@ -113,7 +54,7 @@
     <h2>Benchmark List
       <small>public Benchmarks are listed here</small>
     </h2>
-    {% if not b_list %}
+    {% if not bm_list %}
       <p>{% if user.is_authenticated %}
         You don't have any private Benchmarks.
       {% endif %}
@@ -123,82 +64,9 @@
         details. From the details page you may learn more about the
         Benchmark, download uts associated files and upload your results to start an
         Evaluation.</p>
-
-      {% autosort b_list %}
-      {% autopaginate b_list 20 %}
-      <form class="form" method="GET">
-        <div class="control-group clearfix">
-          <div class="controls">
-            <div class="input-prepend input-append">
-              <span class="add-on"><i class="icon-search"></i></span>
-              <input type="text" name="search" value="{{ search_terms }}"
-                     class="input-medium search-query"/>
-              <input class="btn" type="submit" value="Search"/>
-              {% if search_terms %}
-                <a class="btn" href="{% clear_search_url request %}">Clear</a>
-              {% endif %}
-            </div>
-          </div>
-          <div class="controls">
-            <i class="icon-filter"></i>
-            {% anchor owner__username Author %}
-            {% anchor date_created Date %}
-            {% anchor name Name %}
-          </div>
-        </div>
-      </form>
-
-      <table class="table table-striped table-condensed">
-        <thead>
-        <tr>
-          <th>{% trans "Name" %}</th>
-          <th>{% trans "Author" %}</th>
-          <th>{% trans "Date" %}</th>
-          <th>{% trans "#" %}</th>
-          <th>{% trans "Description" %}</th>
-          <th>{% trans "Actions" %}</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for b in b_list %}
-          <tr>
-            <td>
-              <a href="{{ b.get_absolute_url }}">
-                {% if b.is_active %}
-                  <i class="icon-ok"></i>
-                  <span style="color: green">{{ b.name }}</span>
-                {% else %}
-                  <span style="color: red">
-                    <i class="icon-lock"></i>
-                    {% if b.state == 30 %}<strike>{% endif %}
-                    <nobr><strong>{{ b.name }}</strong></nobr>
-                    {% if b.state == 30 %}</strike>{% endif %}
-                  </span>
-                {% endif %}
-              </a>
-            </td>
-            <td>{% icn_profile b %}</td>
-            <td>{% icn_time b %}</td>
-            <td><a href="{% url e_list bid=b.id %}">{{ b.eval_batches|length }}</a></td>
-            <td>{{ b.description|truncatewords:11|escape }}</td>
-            <td>
-              <div class="btn-group">
-                <a href="{% url b_dl_zip b.id %}" class="btn btn-mini">{% trans "download" %}</a>
-                {% if b|is_editable:user %}
-                  {% if b.state != 30 %}
-                    <a href="{% url b_archive b.id %}" class="btn btn-mini">{% trans "archive" %}</a>
-                  {% else %}
-                    <a href="{% url b_resurrect b.id %}" class="btn btn-mini">{% trans "resurrect" %}</a>
-                  {% endif %}
-                {% endif %}
-                <a href="{% url b_summary b.id %}" class="btn btn-mini">{% trans "summary" %}</a>
-              </div>
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-      {% paginate %}
+      {% with bm_list as blist %}
+        {% include "spike_eval/benchmark/_list.html" %}
+      {% endwith %}
     {% endif %}
   </section>
 {% endblock %}

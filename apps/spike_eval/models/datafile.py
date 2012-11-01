@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-from .common import CommonInfo
+from model_utils.models import TimeStampedModel
 from ..util import FILETYPE_CHOICES, TASK_STATE_CHOICES
 
 __all__ = ['Datafile', 'DatafileManager']
@@ -19,7 +19,7 @@ class DatafileManager(models.Manager):
 
 ##---MODELS
 
-class Datafile(CommonInfo):
+class Datafile(TimeStampedModel):
     """represents a physical file in on the filesystem
 
     Datafiles can be either raw data files, ground truth files, evaluation
@@ -35,14 +35,10 @@ class Datafile(CommonInfo):
     class Meta:
         app_label = 'spike_eval'
 
-    ## managers
-
-    objects = DatafileManager()
-
     ## fields
 
     name = models.CharField(max_length=255)
-    file = models.FileField(upload_to='results/%Y/%m/%d/')
+    file = models.FileField(upload_to='datafile/%Y/%m/%d/')
     file_type = models.IntegerField(choices=FILETYPE_CHOICES, default=0)
 
     task_state = models.IntegerField(choices=TASK_STATE_CHOICES, default=10)
@@ -52,6 +48,10 @@ class Datafile(CommonInfo):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
+
+    ## managers
+
+    objects = DatafileManager()
 
     ## special methods
 
@@ -65,7 +65,7 @@ class Datafile(CommonInfo):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'd_download', (), {'did': self.pk}
+        return 'datafile', (), {'dfid': self.pk}
 
     ## save and delete
 
@@ -73,11 +73,11 @@ class Datafile(CommonInfo):
         if self.pk is not None:
             orig = Datafile.objects.get(pk=self.pk)
             if orig.file != self.file:
-                orig.file.delete()
+                orig.file.delete(save=False)
         super(Datafile, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        self.file.delete()
+        self.file.delete(save=False)
         super(Datafile, self).delete(*args, **kwargs)
 
     ## interface

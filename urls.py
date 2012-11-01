@@ -43,6 +43,7 @@ urlpatterns += patterns('',
 
 urlpatterns += patterns('',
     url(r'^spike_eval/', include('spike_eval.urls')),
+    url(r'^spike_dev/', include('spike_dev.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

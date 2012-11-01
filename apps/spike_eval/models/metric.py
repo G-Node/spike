@@ -1,20 +1,23 @@
 ##---IMPORTS
 
+import os
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes import generic
 
 from model_utils.models import TimeStampedModel
-from taggit.managers import TaggableManager
 
-from ..util import ACCESS_CHOICES, TASK_STATE_CHOICES
+__all__ = ['Metric']
 
-__all__ = ['Algorithm']
+##---MODEL-REFS
+
+Datafile = models.get_model('spike_eval', 'datafile')
 
 ##---MODELS
 
-class Algorithm(TimeStampedModel):
-    """algorithm model"""
+class Metric(TimeStampedModel):
+    """metric model"""
 
     ## meta
 
@@ -29,22 +32,12 @@ class Algorithm(TimeStampedModel):
         blank=False)
     version = models.CharField(
         max_length=32,
-        default='0.1')
+        blank=True)
     description = description = models.TextField(
         blank=True)
-    owner = models.ForeignKey(
-        'auth.User',
-        blank=True,
-        help_text='The user associated with this Algorithm.')
-    parent = models.ForeignKey(
-        'Algorithm',
-        related_name='childs',
-        blank=True,
-        null=True)
 
     ## managers
 
-    kind = TaggableManager('Kind')
     datafile_set = generic.GenericRelation('Datafile')
 
     ## special methods
@@ -59,7 +52,7 @@ class Algorithm(TimeStampedModel):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'al_detail', (), {'alid': self.pk}
+        return 'm_detail', (), {'mid': self.pk}
 
 ##---MAIN
 

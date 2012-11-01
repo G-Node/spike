@@ -28,5 +28,6 @@ try:
     CELERY_RESULT_BACKEND = "database"
     CELERY_RESULT_DBURI = default_celery_db_uri()
     USE_CELERY = True
+    raise ImportError
 except ImportError:
     USE_CELERY = False

@@ -2,38 +2,33 @@
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.contenttypes import generic
 
 from taggit.managers import TaggableManager
+from model_utils.models import StatusModel, TimeStampedModel
+from model_utils import Choices
 
-from .common import CommonInfo
 from ..util import ACCESS_CHOICES
 
 __all__ = ['Benchmark', 'Trial']
 
-##---MODEL-REFS
-
-Datafile = models.get_model('spike_eval', 'datafile')
-Evaluation = models.get_model('spike_eval', 'evaluation')
-
 ##---MODELS
 
-class Benchmark(CommonInfo):
+class Benchmark(StatusModel, TimeStampedModel):
     """container for trials
 
     A Benchmark represents a set of Trials that belong together, and usually
     originate from the same source.
     """
 
+    ## meta
+
     class Meta:
         app_label = 'spike_eval'
 
     ## choices
 
-    STATES_CHOICES = [
-        (10, 'New'),
-        (20, 'Active'),
-        (30, 'Closed'),
-    ]
+    STATUS = ACCESS_CHOICES
 
     ## fields
 
@@ -45,32 +40,36 @@ class Benchmark(CommonInfo):
         blank=True,
         null=True,
         help_text='Use this field to give a detailed summary of the '\
-                  'Benchmark. If you need to describe more than feasibly can'\
-                  ' go in this field, please use the Supplementary upload '\
+                  'Benchmark. If you need to describe more than feasibly can '\
+                  'go in this field, please use the Supplementary upload '\
                   'option. (character limit: none)')
-    state = models.IntegerField(
-        choices=STATES_CHOICES,
-        default=10,
-        help_text='The publication state of the Benchmark.')
     parameter = models.CharField(
         max_length=255,
         default='ID',
         help_text='Trials of the Benchmark will have a parameter attached '\
                   'that can be used to order and distinguish Trials. This is'\
-                  ' the caption for that parameter. (character limit: 255')
-    gt_access = models.IntegerField(
+                  ' the caption for that parameter. (character limit: 255)')
+    gt_access = models.CharField(
         choices=ACCESS_CHOICES,
-        default=10)
-
+        default=ACCESS_CHOICES.private,
+        max_length=20,
+        help_text='Access mode for the ground truth files if provided.')
     owner = models.ForeignKey(
         'auth.User',
-        related_name='benchmark owner',
         blank=True,
         help_text='The user associated with this Benchmark.')
+    metrics = models.ManyToManyField(
+        'Metric',
+        blank=True,
+        symmetrical=True)
+
+    ## managers
 
     tags = TaggableManager(
         _('Benchmark Tags'),
-        help_text='A comma-separated list of tags classifying the Benchmark.')
+        help_text='A comma-separated list of tags classifying the Benchmark.',
+        blank=True)
+    datafile_set = generic.GenericRelation('Datafile')
 
     ## special methods
 
@@ -78,26 +77,15 @@ class Benchmark(CommonInfo):
         return str(self.name)
 
     def __unicode__(self):
-        return unicode(self.__str__())
+        return unicode(self.name)
 
-    ## django special methods
+    ## django interface
 
     @models.permalink
     def get_absolute_url(self):
-        return 'b_detail', (), {'bid': self.pk}
-
-    def delete(self, *args, **kwargs):
-        for t in self.trial_set:
-            t.delete()
-        for d in self.datafile_set:
-            d.delete()
-        super(Benchmark, self).delete(*args, **kwargs)
+        return 'bm_detail', (), {'bmid': self.pk}
 
     ## interface
-
-    @property
-    def datafile_set(self):
-        return Datafile.objects.for_obj(self)
 
     @property
     def sp_files(self):
@@ -106,30 +94,29 @@ class Benchmark(CommonInfo):
         except IndexError:
             return []
 
-    def is_active(self):
-        return self.state == 20
-
-    def is_accessible(self, user):
-        return self.is_active() or self.is_editable(user)
+    def is_public(self):
+        return self.status == Benchmark.STATUS.public
 
     def is_editable(self, user):
         return self.owner == user or user.is_superuser
 
-    def archive(self):
-        self.state = 30
+    def is_accessible(self, user):
+        return self.is_public() or self.is_editable(user)
+
+    def toggle(self):
+        if self.status == Benchmark.STATUS.public:
+            self.status = Benchmark.STATUS.private
+        else:
+            self.status = Benchmark.STATUS.public
         self.save()
 
-    def resurrect(self):
-        self.state = 20
-        self.save()
-
-    def eval_batches(self, access=20):
-        if not isinstance(access, (list, tuple, set)):
-            access = (access,)
-        return self.evaluationbatch_set.filter(access__in=access)
+    def eval_batches(self, status=ACCESS_CHOICES.public):
+        if not isinstance(status, (list, tuple, set)):
+            status = (status,)
+        return self.batch_set.filter(status=status)
 
 
-class Trial(CommonInfo):
+class Trial(TimeStampedModel):
     """represents an experimental trial
 
     A Trial consists of raw data and, (if applicable) the corresponding ground
@@ -160,10 +147,13 @@ class Trial(CommonInfo):
     parameter = models.FloatField(
         default=0.0,
         help_text='The parameter value for this Trial. (type: float)')
-
     benchmark = models.ForeignKey(
         'Benchmark',
         help_text='The Benchmark associated with this Trial.')
+
+    ## managers
+
+    datafile_set = generic.GenericRelation('Datafile')
 
     ## special methods
 
@@ -177,17 +167,9 @@ class Trial(CommonInfo):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'b_trial', (), {'tid': self.pk}
-
-    def delete(self, *args, **kwargs):
-        self.datafile_set.delete(*args, **kwargs)
-        super(Trial, self).delete(*args, **kwargs)
+        return 'bm_trial', (), {'trid': self.pk}
 
     ## interface
-
-    @property
-    def datafile_set(self):
-        return Datafile.objects.for_obj(self)
 
     @property
     def rd_file(self):

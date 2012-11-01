@@ -1,10 +1,7 @@
 ##---IMPORTS
 
 from django.contrib import admin
-from .models.algorithm import Algorithm
-from .models.benchmark import Benchmark, Trial
-from .models.datafile import Datafile
-from .models.evaluation import EvaluationBatch, Evaluation, EvaluationResult, EvaluationResultImg
+from .models import *
 
 ##---BENCHMARK
 
@@ -25,22 +22,38 @@ class DatafileAdmin(admin.ModelAdmin):
 
 admin.site.register(Datafile, DatafileAdmin)
 
-##---EVALUATION
+##---ALGORITHM
 
 class AlgorithmAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Algorithm, AlgorithmAdmin)
 
-class EvaluationBatchAdmin(admin.ModelAdmin):
+##---EVALUATION
+
+class BatchAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(EvaluationBatch, EvaluationBatchAdmin)
+admin.site.register(Batch, BatchAdmin)
 
 class EvaluationAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Evaluation, EvaluationAdmin)
+
+##----METRIC
+
+class MetricAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Metric, MetricAdmin)
+
+##---RESULTS
+
+class ResultAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Result, ResultAdmin)
 
 class EvaluationResultsAdmin(admin.ModelAdmin):
     pass

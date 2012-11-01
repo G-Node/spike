@@ -5,7 +5,7 @@ from StringIO import StringIO
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import models
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.defaultfilters import slugify
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -14,235 +14,228 @@ from numpy import nan, nansum, nanmax
 
 from ..forms import BenchmarkForm, TrialForm, EvaluationSubmitForm, SupplementaryForm
 from ..tasks import validate_groundtruth_file, validate_rawdata_file
-from ..util import render_to, PLOT_COLORS
+from ..util import render_to, PLOT_COLORS, ACCESS_CHOICES
 
 ##---MODEL-REFS
 
 Benchmark = models.get_model('spike_eval', 'benchmark')
 Trial = models.get_model('spike_eval', 'trial')
-Datafile = models.get_model('spike_eval', 'datafile')
 
 ##---VIEWS
 
 @render_to('spike_eval/benchmark/list.html')
-def b_list(request):
+def list(request):
     """renders a list of available benchmarks"""
 
-    # post request -> create benchmark
+    # post request
     if request.method == 'POST':
-        b_form = BenchmarkForm(request.POST)
-        if b_form.is_valid():
-            b = b_form.save(user=request.user)
-            messages.success(
-                request, 'Benchmark successfully created: \'%s\'' % b.name)
-            return redirect(b)
+        bm_form = BenchmarkForm(request.POST)
+        if bm_form.is_valid():
+            bm = bm_form.save(user=request.user)
+            messages.success(request, 'Benchmark creation successful: "%s"' % bm.name)
+            return redirect(bm)
         else:
-            messages.warning(request, 'Benchmark creation failed!')
+            messages.error(request, 'Benchmark creation failed')
 
     # get request
     else:
-        b_form = BenchmarkForm()
+        bm_form = BenchmarkForm()
 
     # benchmark list
-    b_list = Benchmark.objects.exclude(state__in=[10, 30])
-    b_list_self = None
+    bm_list = Benchmark.objects.filter(status=ACCESS_CHOICES.public)
+    bm_list_self = None
     if request.user.is_authenticated():
         if request.user.is_superuser:
-            b_list = Benchmark.objects.all()
-        b_list_self = Benchmark.objects.filter(owner=request.user)
+            bm_list = Benchmark.objects.all()
+        bm_list_self = Benchmark.objects.filter(owner=request.user)
 
     # search terms
     search_terms = request.GET.get('search', '')
     if search_terms:
-        b_list = (
-            b_list.filter(name__icontains=search_terms)
-            | b_list.filter(description__icontains=search_terms)
-            #| b_list.filter(tags__icontains=search_terms)
-            )
+        bm_list = (
+            bm_list.filter(name__icontains=search_terms) |
+            bm_list.filter(description__icontains=search_terms) |
+            bm_list.filter(owner_name__icontains=search_terms))
 
     # response
-    return {'b_form': b_form,
-            'b_list': b_list,
-            'b_list_self': b_list_self,
+    return {'bm_form': bm_form,
+            'bm_list': bm_list,
+            'bm_list_self': bm_list_self,
             'search_terms': search_terms}
 
 
 @render_to('spike_eval/benchmark/detail.html')
-def b_detail(request, bid):
+def detail(request, bmid):
     """renders details of a particular benchmark"""
 
     # init and checks
-    b_form = t_form = e_form = s_form = None
-    b = get_object_or_404(Benchmark.objects.all(), id=bid)
-    if not b.is_accessible(request.user):
-        messages.error(
-            request,
-            'You are not allowed to view or modify this Benchmark.')
-        redirect('b_list')
-    t_list = b.trial_set.order_by('parameter')
-    if not b.is_editable(request.user):
-        t_list = filter(lambda x: x.is_validated(), t_list)
+    try:
+        bm = Benchmark.objects.get(pk=bmid)
+        assert bm.is_accessible(request.user), 'insufficient permissions'
+    except Exception, ex:
+        messages.error(request, 'You are not allowed to view or modify this Benchmark: %s' % ex)
+        return redirect('bm_list')
+    bm_form = tr_form = ev_form = sf_form = None
+    tr_list = bm.trial_set.order_by('parameter')
+    if not bm.is_editable(request.user):
+        tr_list = filter(lambda x: x.is_validated(), tr_list)
+    sf_list = bm.datafile_set.all()
 
     # post request
     if request.method == 'POST':
-        # edit & creation
-        if request.user == b.owner:
-            if 'b_edit' in request.POST:
-                b_form = BenchmarkForm(request.POST, instance=b)
-                if b_form.is_valid():
-                    b = b_form.save()
+        if bm.is_editable(request.user):
+            if 'bm_edit' in request.POST:
+                bm_form = BenchmarkForm(request.POST, instance=bm)
+                if bm_form.is_valid():
+                    bm = bm_form.save()
                     messages.success(request, 'Benchmark edit successful!')
-                    return redirect(b)
+                    return redirect(bm)
                 else:
-                    messages.warning(request, 'Benchmark edit failed!')
-            elif 't_create' in request.POST:
-                t_form = TrialForm(request.POST, request.FILES)
-                if t_form.is_valid():
-                    t = t_form.save(user=request.user, benchmark=b)
+                    messages.error(request, 'Benchmark edit failed!')
+            elif 'tr_create' in request.POST:
+                tr_form = TrialForm(request.POST, request.FILES)
+                if tr_form.is_valid():
+                    tr = tr_form.save(user=request.user, benchmark=bm)
                     messages.success(
-                        request, 'Trial creation successful: \'%s\'' % t)
-                    return redirect(t)
+                        request, 'Trial creation successful: "%s"' % tr)
+                    return redirect(tr)
                 else:
-                    messages.warning(request, 'Trial creation failed!')
-            elif 's_create' in request.POST:
-                s_form = SupplementaryForm(request.POST, request.FILES)
-                if s_form.is_valid():
-                    s = s_form.save(user=request.user, obj=b)
-                    messages.success(
-                        request,
-                        'Supplementary creation successful: \'%s\'' % s)
+                    messages.error(request, 'Trial creation failed')
+            elif 'sf_create' in request.POST:
+                sf_form = SupplementaryForm(request.POST, request.FILES)
+                if sf_form.is_valid():
+                    sf = sf_form.save(user=request.user, obj=bm)
+                    messages.success(request, 'Supplementary creation successful: "%s"' % sf)
                 else:
-                    messages.warning(request, 'Supplementary creation failed!')
-            elif 's_delete' in request.POST:
+                    messages.error(request, 'Supplementary creation failed!')
+            elif 'sf_delete' in request.POST:
                 try:
-                    sid = int(request.POST['s_id'])
-                    s = get_object_or_404(Datafile.objects, id=sid)
-                    s.delete()
-                    messages.success(request, 'Supplementary deleted!')
-                except:
-                    messages.error(request, 'Supplementary delete failed!')
+                    sid = int(request.POST['sf_id'])
+                    assert bm.is_editable(request.user), 'insufficient permissions'
+                    sf = bm.datafile_set.get(pk=sid)
+                    sf.delete()
+                    messages.success(request, 'Benchmark Supplementary "%s" deleted' % sf)
+                except Exception, ex:
+                    messages.error(request, 'Benchmark Supplementary not deleted: %s' % ex)
 
         # user submission
-        if 'e_submit' in request.POST:
-            e_form = EvaluationSubmitForm(
-                request.POST, request.FILES, benchmark=b)
-            if e_form.is_valid():
-                eb = e_form.save(user=request.user)
-                messages.success(request, 'submission successful')
-                return redirect(eb)
+        if 'ev_submit' in request.POST:
+            ev_form = EvaluationSubmitForm(
+                request.POST, request.FILES, benchmark=bm)
+            if ev_form.is_valid():
+                ev = ev_form.save(user=request.user)
+                messages.success(request, 'Evaluation submission successful')
+                return redirect(ev)
             else:
-                messages.warning(request, 'submission failed')
-
+                messages.error(request, 'Evaluation submission failed')
 
     # build forms
-    if not b_form:
-        b_form = BenchmarkForm(instance=b)
-    if not t_form:
-        t_form = TrialForm(pv_label=b.parameter)
-    if not s_form:
-        s_form = SupplementaryForm()
-    if not e_form:
-        e_form = EvaluationSubmitForm(benchmark=b)
+    if not bm_form:
+        bm_form = BenchmarkForm(instance=bm)
+    if not tr_form:
+        tr_form = TrialForm(pv_label=bm.parameter)
+    if not sf_form:
+        sf_form = SupplementaryForm()
+    if not ev_form:
+        ev_form = EvaluationSubmitForm(benchmark=bm)
 
     # response
-    return {'b': b,
-            't_list': t_list,
-            'b_form': b_form,
-            'e_form': e_form,
-            's_form': s_form,
-            't_form': t_form}
+    return {'bm': bm,
+            'sf_list': sf_list,
+            'tr_list': tr_list,
+            'bm_form': bm_form,
+            'ev_form': ev_form,
+            'sf_form': sf_form,
+            'tr_form': tr_form}
 
 
 @render_to('spike_eval/benchmark/trial.html')
-def b_trial(request, tid):
+def trial(request, trid):
     """renders details of a trial"""
 
     # init and checks
-    t = get_object_or_404(Trial.objects.all(), id=tid)
-    if not t.benchmark.is_editable(request.user):
-        messages.error(
-            request,
-            'You are not allowed to view or modify this Trial.')
-        redirect(t.benchmark)
-    t_form = None
+    try:
+        tr = Trial.objects.get(pk=trid)
+        assert tr.benchmark.is_editable(request.user), 'insufficient permissions!'
+    except Exception, ex:
+        messages.error(request, 'You are not allowed to view or modify this Trial: %s' % ex)
+        return redirect('bm_list')
+    tr_form = None
 
     # post request
     if request.method == 'POST':
-        if 't_edit' in request.POST:
-            t_form = TrialForm(request.POST, request.FILES, instance=t)
-            if t_form.is_valid():
-                if t_form.save():
+        if 'tr_edit' in request.POST:
+            tr_form = TrialForm(request.POST, request.FILES, instance=tr)
+            if tr_form.is_valid():
+                if tr_form.save():
                     messages.success(request, 'Trial edit successful')
                 else:
-                    messages.info(request, 'No changes detected!')
+                    messages.info(request, 'No changes detected')
             else:
-                messages.warning(request, 'Trial edit failed!')
-        elif 't_delete' in request.POST:
-            to = t.benchmark
-            t.delete()
-            messages.success(
-                request, 'Trial deleted: %s' % t.name)
-            return redirect(t.benchmark)
-        elif 't_validate' in request.POST:
+                messages.error(request, 'Trial edit failed')
+        elif 'tr_delete' in request.POST:
+            bm = tr.benchmark
+            tr.delete()
+            messages.success(request, 'Trial "%s" deleted' % tr)
+            return redirect(bm)
+        elif 'tr_validate' in request.POST:
             try:
-                if t.rd_file:
-                    validate_rawdata_file(t.rd_file.id)
-                if t.gt_file:
-                    validate_groundtruth_file(t.gt_file.id)
+                if tr.rd_file:
+                    validate_rawdata_file(tr.rd_file.id)
+                if tr.gt_file:
+                    validate_groundtruth_file(tr.gt_file.id)
             except:
-                messages.error(request, 'trial validation failed!')
+                messages.error(request, 'Trial validation failed')
             else:
-                messages.info(request, 'trial validation scheduled')
+                messages.info(request, 'Trial validation scheduled')
 
     # create forms
-    if not t_form:
-        t_form = TrialForm(instance=t, pv_label=t.benchmark.parameter)
+    if not tr_form:
+        tr_form = TrialForm(instance=tr, pv_label=tr.benchmark.parameter)
 
     # response
-    return {'t': t,
-            't_form': t_form}
+    return {'tr': tr,
+            'tr_form': tr_form}
 
 
 @login_required
-def b_archive(request, bid):
-    """archives a benchmark"""
+def toggle(request, bmid):
+    """toggle status for benchmark"""
 
-    # inits and checks
-    b = get_object_or_404(Benchmark.objects.all(), id=bid)
-    if b.owner != request.user:
-        return HttpResponseForbidden(
-            'You don\'t have rights to delete this Benchmark.')
-
-    # archive and redirect
-    b.archive()
-    messages.info(request, 'Benchmark archived: %s' % b.name)
-    return redirect('b_list')
+    try:
+        bm = Benchmark.objects.get(pk=bmid)
+        assert bm.is_editable(request.user), 'insufficient permissions'
+        bm.toggle()
+        messages.info(request, 'Benchmark "%s" toggled to %s' % (bm, bm.status))
+    except Exception, ex:
+        messages.error(request, 'Benchmark not toggled: %s' % ex)
+    finally:
+        return redirect(bm)
 
 
 @login_required
-def b_resurrect(request, bid):
-    """resurrects a benchmark"""
+def delete(request, bmid):
+    """delete benchmark"""
 
-    # inits and checks
-    b = get_object_or_404(Benchmark.objects.all(), id=bid)
-    if not b.owner == request.user:
-        return HttpResponseForbidden(
-            'You don\'t have rights to delete this Benchmark.')
-
-    # resurrect and redirect
-    b.resurrect()
-    messages.info(request, 'Benchmark resurrected: %s' % b.name)
-    return redirect('b_list')
+    try:
+        bm = Benchmark.objects.get(pk=bmid)
+        assert bm.is_editable(request.user), 'insufficient permissions'
+        Benchmark.objects.get(pk=bmid).delete()
+        messages.success(request, 'Benchmark "%s" deleted' % bm)
+    except Exception, ex:
+        messages.error(request, 'Benchmark not deleted: %s' % ex)
+    finally:
+        return redirect('bm_list')
 
 
 @render_to('spike_eval/benchmark/summary.html')
-def b_summary(request, bid):
+def summary(request, bmid):
     """summary page for benchmark"""
 
-    b = get_object_or_404(Benchmark.objects.all(), id=bid)
-    eb_list = b.eval_batches(access=20)
+    b = get_object_or_404(Benchmark.objects.all(), id=bmid)
+    eb_list = b.eval_batches(status=20)
     if request.user.is_authenticated():
-        eb_list_self = b.eval_batches(access=10)
+        eb_list_self = b.eval_batches(status=10)
         if not request.user.is_superuser:
             eb_list_self = eb_list_self.filter(added_by=request.user)
         eb_list |= eb_list_self
@@ -250,21 +243,21 @@ def b_summary(request, bid):
             'eb_list': eb_list.order_by('id')}
 
 
-def b_summary_plot(request, bid=None, mode=None, legend=False):
+def summary_plot(request, bmid=None, mode=None, legend=False):
     """generate a plot of the benchmark summary"""
 
     ## DEBUG
-    #print bid, mode, legend
+    #print bmid, mode, legend
     ## GUBED
 
     fig = None
     try:
         # init and checks
-        b = get_object_or_404(Benchmark.objects.all(), id=bid)
+        b = get_object_or_404(Benchmark.objects.all(), id=bmid)
         t_list = list(b.trial_set.order_by('parameter'))
-        eb_list = b.eval_batches(access=20)
+        eb_list = b.eval_batches(status=20)
         if request.user.is_authenticated():
-            eb_list_self = b.eval_batches(access=10)
+            eb_list_self = b.eval_batches(status=10)
             if not request.user.is_superuser:
                 eb_list_self = eb_list_self.filter(added_by=request.user)
             eb_list |= eb_list_self
@@ -356,10 +349,15 @@ def b_summary_plot(request, bid=None, mode=None, legend=False):
         return response
 
 
-def b_zip(request, bid):
+def zip(request, bmid):
     # init and checks
-    b = get_object_or_404(Benchmark.objects.all(), id=bid)
-    t_list = [t for t in b.trial_set.order_by('parameter') if t.is_validated()]
+    try:
+        bm = Benchmark.objects.get(pk=bmid)
+        assert mt.is_accessible(request.user), 'insufficient permissions'
+    except Exception, ex:
+        messages.error(request, 'You are not allowed to view or modify this Benchmark: %s' % ex)
+        return redirect('ev_list')
+    tr_list = [tr for tr in bm.trial_set.order_by('parameter') if tr.is_validated()]
     arc, buf = None, None
 
     # build archive
@@ -367,20 +365,19 @@ def b_zip(request, bid):
         # build buffer and archive
         buf = StringIO()
         arc = zipfile.ZipFile(buf, mode='w')
-        for t in t_list:
-            arc.writestr(t.rd_file.name, t.rd_file.file.read())
-            if b.gt_access == 20 and t.gt_file:
-                arc.writestr(t.gt_file.name, t.gt_file.file.read())
+        for tr in tr_list:
+            arc.writestr(tr.rd_file.name, tr.rd_file.file.read())
+            if bm.gt_access == 20 and tr.gt_file:
+                arc.writestr(tr.gt_file.name, tr.gt_file.file.read())
         arc.close()
         buf.seek(0)
 
         response = HttpResponse(buf.read())
-        response['Content-Disposition'] = 'attachment; filename=%s.zip' % slugify(b.name)
+        response['Content-Disposition'] = 'attachment; filename=%s.zip' % slugify(bm.name)
         response['Content-Type'] = 'application/x-zip'
         return response
-    except Exception, ex:
-        print ex
-        return redirect(b)
+    except:
+        return redirect(bm)
     finally:
         try:
             del arc

@@ -20,13 +20,12 @@
         <a class="btn btn-mini"
            onclick="$('#tagcloud').toggle();">Show Tagcloud</a>
       </form>
-      <form id="create-algorithm" class="form form-horizontal"
-            method="POST"
-            {% if not a_form.errors %}style="display:none"{% endif %}>
+      <form id="create-algorithm" class="form form-horizontal" method="POST"
+            {% if not al_form.errors %}style="display:none"{% endif %}>
         <fieldset>
           <legend>Create Algorithm</legend>
           {% csrf_token %}
-          {{ a_form|as_bootstrap }}
+          {{ al_form|as_bootstrap }}
           <div class="form-actions">
             <input type="submit" class="btn btn-primary"
                    value="{% trans 'Create Algorithm' %}"/>
@@ -45,32 +44,36 @@
     </div>
   </section>
 
-  {% if a_list_self %}
+  {% if al_list %}
     <section>
-      <h2>Algorithm List ({% icn_profile user %})
-        <small>only your Algorithms are listed here</small>
+      <h2>Algorithm List
+        <small>all Algorithms are listed here</small>
       </h2>
-      {% autosort a_list_self %}
-      {% autopaginate a_list_self 20 %}
+      {% autosort al_list %}
+      {% autopaginate al_list 20 %}
       <table class="table table-striped table-condensed">
         <thead>
         <tr>
           <th>{% trans "Algorithm" %}</th>
+          <th>{% trans "Version" %}</th>
           <th>{% trans "Owner" %}</th>
           <th>{% trans "Date" %}</th>
         </tr>
         </thead>
         <tbody>
-        {% for a in a_list_self %}
+        {% for al in al_list %}
           <tr>
             <td>
-              <a href="{{ a.get_absolute_url }}">{{ a.name }}</a>
+              <a href="{{ al.get_absolute_url }}">{{ al.name }}</a>
             </td>
             <td>
-              {% icn_profile a %}
+              {{ al.version }}
             </td>
             <td>
-              {% icn_time a %}
+              {% icn_profile al %}
+            </td>
+            <td>
+              {% icn_time al %}
             </td>
           </tr>
         {% endfor %}
@@ -79,62 +82,4 @@
       {% paginate %}
     </section>
   {% endif %}
-
-  <section>
-    <h2>Algorithm List
-      <small>public Algorithms are listed here</small>
-    </h2>
-    {% if not a_list %}
-      <p>There are no public Algorithms available.</p>
-    {% else %}
-      {% autosort a_list %}
-      {% autopaginate a_list 20 %}
-      <form class="form" method="GET">
-        <div class="control-group">
-          <div class="controls">
-            <div class="input-prepend input-append">
-              <span class="add-on"><i class="icon-search"></i></span>
-              <input type="text" name="search" value="{{ search_terms }}"
-                     class="input-medium search-query"/>
-              <input class="btn" type="submit" value="Search"/>
-              {% if search_terms %}
-                <a class="btn" href="{% clear_search_url request %}">Clear</a>
-              {% endif %}
-            </div>
-          </div>
-          <div class="controls">
-            <i class="icon-filter"></i>
-            {% anchor name Algorithm %}
-            {% anchor added_by__username Owner %}
-            {% anchor date_created Date %}
-          </div>
-        </div>
-      </form>
-      <table class="table table-striped table-condensed">
-        <thead>
-        <tr>
-          <th>{% trans "Algorithm" %}</th>
-          <th>{% trans "Owner" %}</th>
-          <th>{% trans "Date" %}</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for a in a_list %}
-          <tr>
-            <td>
-              <a href="{{ a.get_absolute_url }}">{{ a.name }}</a>
-            </td>
-            <td>
-              {% icn_profile a %}
-            </td>
-            <td>
-              {% icn_time a %}
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-      {% paginate %}
-    {% endif %}
-  </section>
 {% endblock %}

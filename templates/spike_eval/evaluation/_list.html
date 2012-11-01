@@ -1,0 +1,77 @@
+{% load i18n %}
+{% load pagination_tags %}
+{% load sorting_tags %}
+{% load spike_eval_tags %}
+
+
+{% autosort blist %}
+{% autopaginate blist 20 %}
+<form class="form" method="GET">
+  <div class="control-group">
+    <div class="controls">
+      <div class="input-prepend input-append">
+        <span class="add-on"><i class="icon-search"></i></span>
+        <input type="text" name="search" value="{{ search_terms }}"
+               class="input-medium search-query"/>
+        <input class="btn" type="submit" value="Search"/>
+        {% if search_terms %}
+          <a class="btn" href="{% clear_search_url request %}">Clear</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="controls">
+      <i class="icon-filter"></i>
+      {% anchor algorithm__name Algorithm %}
+      {% anchor owner__username Author %}
+      {% anchor benchmark__name Benchmark %}
+      {% anchor created Date %}
+    </div>
+  </div>
+</form>
+<table class="table table-striped table-condensed">
+  <thead>
+  <tr>
+    <th>{% trans "ID, Algorithm" %}</th>
+    <th>{% trans "Owner" %}</th>
+    <th>{% trans "Date" %}</th>
+    <th>{% trans "Benchmark" %}</th>
+    <th>{% trans "Description" %}</th>
+    <th>{% trans "Status" %}</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for bt in blist %}
+    <tr>
+      <td>
+        <a href="{{ bt.get_absolute_url }}">
+          <nobr>
+            {% if bt.is_public %}
+              <i class="icon-globe"></i>
+              <span style="color: green"><strong>#{{ bt.id }}, {{ bt.algorithm }}</strong></span>
+            {% else %}
+              <i class="icon-lock"></i>
+              <span style="color: red"><strong>#{{ bt.id }}, {{ bt.algorithm }}</strong></span>
+            {% endif %}
+          </nobr>
+        </a>
+      </td>
+      <td>
+        {% icn_profile bt %}
+      </td>
+      <td>
+        {% icn_time bt %}
+      </td>
+      <td>
+        <a href="{{ bt.benchmark.get_absolute_url }}">{{ bt.benchmark.name }}</a>
+      </td>
+      <td>
+        {{ bt.description|truncatewords:15|escape }}
+      </td>
+      <td>
+        <strong style="{% state_color bt.status %}">{{ bt.status }}</strong>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% paginate %}

@@ -5,18 +5,18 @@
 {% load spike_eval_tags %}
 {% load bootstrap_tags %}
 
-{% block head_title %}{A:{{ a.id }}}&nbsp;{{ a.name }}{% endblock %}
+{% block head_title %}{A:{{ al.id }}}&nbsp;{{ al.name }}{% endblock %}
 
 {% block content %}
 
   <header class="jumbotron">
-    <h2>{{ a }}</h2>
+    <h2>{{ al }}</h2>
     <dl class="dl-horizontal">
       <dt>
         <strong>Description:</strong>
       </dt>
       <dd>
-        {{ a.description|default:"no description" }}
+        {{ al.description|default:"no description" }}
       </dd>
       <dt>
         <strong>Owner:</strong>
@@ -24,10 +24,10 @@
       <dd>
         <nobr>
           <i class=" icon-user"></i>
-          <a href="{% url profile_detail a.added_by.username %}">
-            {{ a.added_by.username }}
+          <a href="{% url profile_detail al.owner.username %}">
+            {{ al.owner.username }}
           </a>
-          {% ifequal a.added_by user %}(you){% endifequal %}
+          {% ifequal al.owner user %}(you){% endifequal %}
         </nobr>
       </dd>
       <dt>
@@ -35,14 +35,14 @@
       </dt>
       <dd>
         <nobr><i class="icon-time"></i>
-          {{ a.date_created|date }}</nobr>
+          {{ al.created|date }}</nobr>
       </dd>
       <dt>
 
         <strong>Kind:</strong>
       </dt>
       <dd>
-        {% for kind in a.kind.all %}
+        {% for kind in al.kind.all %}
           <i class="icon-tag"></i>{{ kind }}&nbsp;
         {% empty %}
           &nbsp;
@@ -52,22 +52,19 @@
   </header>
 
   {% if user.is_authenticated %}
-    {% if a.added_by == user or user.is_superuser %}
+    {% if al.owner == user or user.is_superuser %}
       <form class="form well">
         <span class="label">Actions:</span>
-        <a id="edit-algorithm-toggle" class="btn btn-mini">
-          {% trans "Edit Algorithm" %}</a>
-        <a id="create-suppl-toggle" class="btn btn-mini">
-          {% trans "Create Supplementary" %}</a>
+        <a id="edit-algorithm-toggle" class="btn btn-mini"> {% trans "Edit Algorithm" %}</a>
+        <a id="create-suppl-toggle" class="btn btn-mini"> {% trans "Create Supplementary" %}</a>
       </form>
-      <form id="edit-algorithm" method="POST" style="display:none"
-            class="form form-horizontal well">
+      <form id="edit-algorithm" method="POST" style="display:none" class="form form-horizontal well">
         <fieldset>
           <legend>Edit Algorithm</legend>
           {% csrf_token %}
-          {{ a_form|as_bootstrap }}
+          {{ al_form|as_bootstrap }}
           <div class="form-actions">
-            <input type="submit" class="btn btn-primary" name="a_edit"
+            <input type="submit" class="btn btn-primary" name="al_edit"
                    value="{% trans 'Edit Algorithm' %}"/>
           </div>
         </fieldset>
@@ -77,9 +74,9 @@
         <fieldset>
           <legend>Create Supplementary</legend>
           {% csrf_token %}
-          {{ s_form|as_bootstrap }}
+          {{ sf_form|as_bootstrap }}
           <div class="form-actions">
-            <input type="submit" class="btn btn-primary" name="s_create"
+            <input type="submit" class="btn btn-primary" name="sf_create"
                    value="{% trans 'Create Supplementary' %}"/>
           </div>
         </fieldset>
@@ -87,12 +84,12 @@
     {% endif %}
   {% endif %}
 
-  <div>
-    <h2>Supplementary Files</h2>
+  <section>
+    <h2>Supplementary Files
+      <small>additional files describing the Algorithm</small>
+    </h2>
 
-    <p>List of Supplementaries describing the Algorithm.</p>
-
-    {% if a.datafile_set %}
+    {% if sf_list %}
       <table class="table table-striped table-condensed">
         <thead>
         <tr>
@@ -100,53 +97,50 @@
           <th>{% trans "Filename" %}</th>
           <th>{% trans "Size" %}</th>
           <th>{% trans "Created" %}</th>
-          {% if a|is_editable:user %}
-            <th>{% trans "Actions" %}</th>
+          {% if user.is_authenticated %}
+            {% if al.owner == user or user.is_superuser %}
+              <th>{% trans "Actions" %}</th>
+            {% endif %}
           {% endif %}
         </tr>
         </thead>
         <tbody>
-        {% for d in a.datafile_set %}
+        {% for sf in sf_list %}
           <tr>
             <td>
-              <nobr>{{ d.name }}</nobr>
+              <nobr>{{ sf.name }}</nobr>
             </td>
             <td>
               <nobr>
-                <a href="{{ d.get_absolute_url }}">{{ d.file.name }}</a>
+                <a href="{{ sf.get_absolute_url }}">{{ sf.file.name }}</a>
               </nobr>
             </td>
             <td>
-              {{ d.size|filesizeformat }}
+              {{ sf.size|filesizeformat }}
             </td>
             <td>
-              <nobr>
-                <i class="icon-time"></i>
-                {{ d.date_created|date }}
-              </nobr>
+              {% icn_time sf %}
             </td>
-            {% if b|is_editable:user %}
-              <td>
-                <form method="POST">
-                  {% csrf_token %}
-                  <input type="hidden" name="s_id" value="{{ d.id }}">
-                  <input type="submit" name="s_delete" value="delete">
-                </form>
-              </td>
+            {% if user.is_authenticated %}
+              {% if b.owner == user or user.is_superuser %}
+                <td>
+                  <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="sf_id" value="{{ sf.id }}">
+                    <input type="submit" name="sf_delete" value="delete">
+                  </form>
+                </td>
+              {% endif %}
             {% endif %}
           </tr>
         {% endfor %}
         </tbody>
       </table>
     {% else %}
-      <p>This Algorithm has no Supplementaries yet.
-        {% if a|is_editable:user %}
-          You can add new Supplementary Files by clicking on the "Create
-          Supplementary" button under "Actions:" above.
-        {% endif %}
-      </p>
+      <p>This Algorithm has no Supplementaries yet. You can add new Supplementary Files by clicking on
+        the "Create Supplementary" button under "Actions:" above.</p>
     {% endif %}
-  </div>
+  </section>
 {% endblock %}
 
 {% block extra_body %}
