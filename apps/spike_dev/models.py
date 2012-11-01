@@ -8,48 +8,48 @@ from model_utils.managers import InheritanceManager
 
 ##---MODEL-REFS
 
-from spike_eval.models import *
+from spike_core.models import *
 
 ##---PROXY-MODELS
 
-from spike_eval.models import Benchmark
+from spike_core.models import Benchmark
 
 class BM(Benchmark):
     class Meta:
         proxy = True
 
-from spike_eval.models import Trial
+from spike_core.models import Trial
 
 class TR(Trial):
     class Meta:
         proxy = True
 
-from spike_eval.models import Datafile
+from spike_datafile.models import Datafile
 
 class DF(Datafile):
     class Meta:
         proxy = True
 
-from spike_eval.models import Batch
+from spike_core.models import Batch
 
 class BT(Batch):
     class Meta:
         proxy = True
 
 
-from spike_eval.models import Evaluation
+from spike_core.models import Evaluation
 
 class EV(Evaluation):
     class Meta:
         proxy = True
 
-from spike_eval.models import Algorithm
+from spike_core.models import Algorithm
 
 class AL(Algorithm):
     class Meta:
         proxy = True
 
-from spike_eval.models import Metric
+from spike_metric.models import Metric
 
 class MT(Metric):
     class Meta:
@@ -57,7 +57,7 @@ class MT(Metric):
 
 ##---MODELS
 
-from spike_eval.models import Result
+from spike_metric.models import Result
 
 class ResultTest(Result):
     mini = models.IntegerField()

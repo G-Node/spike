@@ -5,8 +5,8 @@ from django.db import models
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import ListView, CreateView
-from spike_gnode.forms import AlgorithmForm, SupplementaryForm
-from spike_gnode.util import render_to
+from spike_eval.forms import AlgorithmForm
+from spike_eval.utils import render_to
 
 ##---MODEL-REFS
 
@@ -14,44 +14,9 @@ Algorithm = models.get_model('spike_eval', 'algorithm')
 
 ##---VIEWS
 
-@render_to('../spike_eval/templates/spike_eval/spike_eval/algorithm/list.html')
-def a_list(request):
-    """renders a list of available algorithms"""
-
-    # init and checks
-    a_list = Algorithm.objects.all()
-    a_form = None
-    a_list_self = None
-    if request.user.is_authenticated():
-        a_list_self = Algorithm.objects.filter(added_by=request.user)
-
-    # post request
-    if request.method == 'POST':
-        a_form = AlgorithmForm(request.POST)
-        if a_form.is_valid():
-            a = a_form.save(user=request.user)
-            messages.success(request, 'Algorithm creation successful!')
-            redirect(a)
-        else:
-            messages.error(request, 'Algorithm creation failed!')
-
-    # search terms
-    search_terms = request.GET.get('search', '')
-    if search_terms:
-        a_list = (
-            a_list.filter(name__icontains=search_terms) |
-            a_list.filter(added_by__username__icontains=search_terms))
-
-    # response
-    return {'a_list': a_list,
-            'a_list_self': a_list_self,
-            'a_form': a_form or AlgorithmForm(),
-            'search_terms': search_terms}
-
-
 class AlgorithmListView(ListView):
     context_object_name = 'a_list'
-    template_name = '../spike_eval/templates/spike_eval/spike_eval/algorithm/list.html'
+    template_name = 'spike_eval/algorithm/list.html'
     queryset = Algorithm.objects.all()
 
     ## methods

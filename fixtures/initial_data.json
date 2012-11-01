@@ -7,8 +7,6 @@
       "name":"Spikesorting Evaluation"
     }
   },
-
-
   {
     "pk":1,
     "model":"auth.group",
@@ -17,8 +15,6 @@
       "permissions":[]
     }
   },
-
-
   {
     "pk":1,
     "model":"auth.user",
@@ -43,18 +39,6 @@
       "is_active":false,
       "is_superuser":false,
       "is_staff":false
-    }
-  },
-
-
-  {
-    "pk":1,
-    "model":"spike_eval.algorithm",
-    "fields":{
-      "name":"Undefined",
-      "version":"n/a",
-      "owner":2,
-      "description":"No algorithm was defined!"
     }
   }
 ]
