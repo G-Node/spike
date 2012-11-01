@@ -35,6 +35,9 @@ class Metric(TimeStampedModel):
         blank=True)
     description = description = models.TextField(
         blank=True)
+    exec_name = models.TextField()
+    temp_name = models.TextField(blank=True)
+    rest_name = models.TextField(blank=True)
 
     ## managers
 
@@ -47,6 +50,8 @@ class Metric(TimeStampedModel):
 
     def __unicode__(self):
         return unicode('%s (%s)' % (self.name, self.version))
+
+        ## methods interface
 
 ##---MAIN
 

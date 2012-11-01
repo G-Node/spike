@@ -1,4 +1,4 @@
-{% extends "spike_eval/evaluation/base.html" %}
+{% extends "..//evaluation/base.html" %}
 
 {% load i18n %}
 {% load spike_eval_tags %}
@@ -15,7 +15,7 @@
         <a id="edit-batch-toggle" class="btn btn-mini">{% trans "Edit Batch" %}</a>
         <a href="{% url ev_toggle bt.id %}" class="btn btn-mini">{% trans "Toggle Status" %}</a>
         {% with bt as obj %}
-          {% include "spike_eval/evaluation/_delete.html" %}
+          {% include "..//evaluation/_delete.html" %}
         {% endwith %}
       {% endif %}
       <a href="{% url ev_zip bt.id %}" class="btn btn-mini">{% trans "Export Results" %}</a>
@@ -80,7 +80,7 @@
 
   <section id="#trial-container" class="accordion" data-collapse-type="manual">
     {% for ev in bt.evaluation_set.all %}
-      {% include "spike_eval/evaluation/_detail.html" %}
+      {% include "..//evaluation/_detail.html" %}
     {% endfor %}
   </section>
 

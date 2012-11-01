@@ -65,7 +65,7 @@
           {% if bm|is_editable:user %}
             <a href="{% url bm_toggle bm.id %}" class="btn btn-mini">{% trans "toggle" %}</a>
             {% with bm as obj %}
-              {% include "spike_eval/benchmark/_delete.html" %}
+              {% include "..//benchmark/_delete.html" %}
             {% endwith %}
           {% endif %}
           <a href="{% url bm_summary bm.id %}" class="btn btn-mini">{% trans "summary" %}</a>

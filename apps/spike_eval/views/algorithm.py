@@ -12,7 +12,7 @@ Algorithm = models.get_model('spike_eval', 'algorithm')
 
 ##---VIEWS
 
-@render_to('spike_eval/algorithm/list.html')
+@render_to('../templates/spike_eval/algorithm/list.html')
 def list(request):
     """renders a list of available algorithms"""
 
@@ -42,7 +42,7 @@ def list(request):
             'search_terms': search_terms}
 
 
-@render_to('spike_eval/algorithm/detail.html')
+@render_to('../templates/spike_eval/algorithm/detail.html')
 def detail(request, alid):
     """renders algorithm detail"""
 

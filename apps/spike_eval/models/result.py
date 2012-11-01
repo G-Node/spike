@@ -39,26 +39,6 @@ class Result(TimeStampedModel):
     def __unicode__(self):
         return unicode('=%s %s' % (self.pk, self.evaluation))
 
-    ## interface
-
-    def display(self):
-        """display list of numerical results"""
-        return [self.gt_unit,
-                self.found_unit,
-                self.KS,
-                self.KS - self.KSO,
-                self.KSO,
-                self.TP + self.TPO,
-                self.TP,
-                self.TPO,
-                self.FPAE,
-                self.FPAOE,
-                self.FP,
-                self.FPA,
-                self.FPAO,
-                self.FN,
-                self.FNO]
-
 
 class EvaluationResult(Result):
     """evaluation result entity"""

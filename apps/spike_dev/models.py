@@ -8,33 +8,61 @@ from model_utils.managers import InheritanceManager
 
 ##---MODEL-REFS
 
-Datafile = models.get_model('spike_eval', 'datafile')
+from spike_eval.models import *
+
+##---PROXY-MODELS
+
+from spike_eval.models import Benchmark
+
+class BM(Benchmark):
+    class Meta:
+        proxy = True
+
+from spike_eval.models import Trial
+
+class TR(Trial):
+    class Meta:
+        proxy = True
+
+from spike_eval.models import Datafile
+
+class DF(Datafile):
+    class Meta:
+        proxy = True
+
+from spike_eval.models import Batch
+
+class BT(Batch):
+    class Meta:
+        proxy = True
+
+
+from spike_eval.models import Evaluation
+
+class EV(Evaluation):
+    class Meta:
+        proxy = True
+
+from spike_eval.models import Algorithm
+
+class AL(Algorithm):
+    class Meta:
+        proxy = True
+
+from spike_eval.models import Metric
+
+class MT(Metric):
+    class Meta:
+        proxy = True
 
 ##---MODELS
 
-class Ref(models.Model):
-    class Meta:
-        app_label = 'spike_dev'
+from spike_eval.models import Result
 
-    name = models.TextField()
-
-
-class Parent(TimeStampedModel):
-    class Meta:
-        app_label = 'spike_dev'
-
-    objects = InheritanceManager()
-
-    name = models.TextField()
-    ref = models.ForeignKey('Ref')
-
-
-class Child1(Parent):
-    value = models.TextField()
-
-
-class Child2(Parent):
-    value = models.IntegerField()
+class ResultTest(Result):
+    mini = models.IntegerField()
+    maxi = models.IntegerField()
+    mean = models.IntegerField()
 
 ##---MAIN
 

@@ -23,7 +23,7 @@ Trial = models.get_model('spike_eval', 'trial')
 
 ##---VIEWS
 
-@render_to('spike_eval/benchmark/list.html')
+@render_to('../templates/spike_eval/benchmark/list.html')
 def list(request):
     """renders a list of available benchmarks"""
 
@@ -64,7 +64,7 @@ def list(request):
             'search_terms': search_terms}
 
 
-@render_to('spike_eval/benchmark/detail.html')
+@render_to('../templates/spike_eval/benchmark/detail.html')
 def detail(request, bmid):
     """renders details of a particular benchmark"""
 
@@ -149,7 +149,7 @@ def detail(request, bmid):
             'tr_form': tr_form}
 
 
-@render_to('spike_eval/benchmark/trial.html')
+@render_to('../templates/spike_eval/benchmark/trial.html')
 def trial(request, trid):
     """renders details of a trial"""
 
@@ -228,7 +228,7 @@ def delete(request, bmid):
         return redirect('bm_list')
 
 
-@render_to('spike_eval/benchmark/summary.html')
+@render_to('../templates/spike_eval/benchmark/summary.html')
 def summary(request, bmid):
     """summary page for benchmark"""
 

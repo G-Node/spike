@@ -14,7 +14,7 @@ Algorithm = models.get_model('spike_eval', 'algorithm')
 
 ##---VIEWS
 
-@render_to('spike_eval/algorithm/list.html')
+@render_to('../spike_eval/templates/spike_eval/spike_eval/algorithm/list.html')
 def a_list(request):
     """renders a list of available algorithms"""
 
@@ -51,7 +51,7 @@ def a_list(request):
 
 class AlgorithmListView(ListView):
     context_object_name = 'a_list'
-    template_name = 'spike_eval/algorithm/list.html'
+    template_name = '../spike_eval/templates/spike_eval/spike_eval/algorithm/list.html'
     queryset = Algorithm.objects.all()
 
     ## methods
@@ -89,6 +89,7 @@ class AlgorithmListView(ListView):
         print context
         return context
 
+
 class CreateTest(CreateView):
     pass
 
@@ -100,6 +101,25 @@ def display_meta(request):
     for k, v in values:
         html.append('<tr><td>%s</td><td>%s</td></tr>' % (k, v))
     return HttpResponse('<table>%s</table>' % '\n'.join(html))
+
+
+@render_to('spike_dev/something.html')
+def something(request):
+    # init
+    ctx_list = []
+
+    # build something
+    ctx_list.append(Context('PETER', '_unit0'))
+
+    # return
+    return {'ctx_list': ctx_list}
+
+##---CLASS
+
+class Context(object):
+    def __init__(self, name, temp):
+        self.name = name
+        self.temp = 'spike_dev/%s.html' % temp
 
 ##---MAIN
 

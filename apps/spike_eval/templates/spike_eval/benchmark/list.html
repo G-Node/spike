@@ -1,4 +1,4 @@
-{% extends "spike_eval/benchmark/base.html" %}
+{% extends "..//benchmark/base.html" %}
 
 {% load i18n %}
 {#{% load humanize %}#}
@@ -36,7 +36,7 @@
   {% endif %}
 
   {% with 'benchmark.Benchmark' as tag_model %}
-    {% include "spike_eval/_tag_cloud.html" %}
+    {% include "..//_tag_cloud.html" %}
   {% endwith %}
 
   {% if bm_list_self %}
@@ -45,7 +45,7 @@
         <small>only your Benchmarks are listed here</small>
       </h2>
       {% with bm_list_self as blist %}
-        {% include "spike_eval/benchmark/_list.html" %}
+        {% include "..//benchmark/_list.html" %}
       {% endwith %}
     </section>
   {% endif %}
@@ -65,7 +65,7 @@
         Benchmark, download uts associated files and upload your results to start an
         Evaluation.</p>
       {% with bm_list as blist %}
-        {% include "spike_eval/benchmark/_list.html" %}
+        {% include "..//benchmark/_list.html" %}
       {% endwith %}
     {% endif %}
   </section>

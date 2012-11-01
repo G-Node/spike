@@ -32,7 +32,7 @@ def sort_er(a, b):
 
 ##---VIEWS
 
-@render_to('spike_eval/evaluation/list.html')
+@render_to('../templates/spike_eval/evaluation/list.html')
 def list(request, bmid=None):
     """renders a list of available batches"""
 
@@ -66,7 +66,7 @@ def list(request, bmid=None):
             'search_terms': search_terms}
 
 
-@render_to('spike_eval/evaluation/detail.html')
+@render_to('../templates/spike_eval/evaluation/detail.html')
 def detail(request, btid):
     """renders details of a particular batch"""
 

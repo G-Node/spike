@@ -100,9 +100,10 @@ class Evaluation(TimeStampedModel):
 
     ## fields
 
-    task_state = models.IntegerField(
+    task_state = models.CharField(
         choices=TASK_STATE_CHOICES,
-        default=10)
+        default=TASK_STATE_CHOICES.running,
+        max_length=20)
     task_id = models.CharField(
         max_length=255,
         blank=True)

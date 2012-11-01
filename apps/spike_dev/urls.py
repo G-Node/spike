@@ -21,6 +21,9 @@ urlpatterns += patterns('spike_dev.views',
     url(r'^home/$', HomepageView.as_view()),
 )
 
+urlpatterns += patterns('spike_dev.views',
+    url(r'^something/$', 'something'),
+)
 ##---MAIN
 
 if __name__ == '__main__':
