@@ -42,9 +42,10 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
-    url(r'^core/', include('spike_gnode.urls')),
-    url(r'^dev/', include('spike_dev.urls')),
+    url(r'^core/', include('spike_core.urls')),
+    url(r'^datafile/', include('spike_datafile.urls')),
     url(r'^metric/', include('spike_metric.urls')),
+    #url(r'^dev/', include('spike_dev.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

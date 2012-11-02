@@ -1,3 +1,5 @@
 # must be first
-from metric import *
-from result import *
+from core import *
+
+# metrics
+from old import *

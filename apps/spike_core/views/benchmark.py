@@ -18,12 +18,12 @@ from ..util import render_to, PLOT_COLORS
 
 ##---MODEL-REFS
 
-Benchmark = models.get_model('spike_eval', 'benchmark')
-Trial = models.get_model('spike_eval', 'trial')
+Benchmark = models.get_model('spike', 'benchmark')
+Trial = models.get_model('spike', 'trial')
 
 ##---VIEWS
 
-@render_to('../templates/spike_eval/benchmark/list.html')
+@render_to('spike/benchmark/list.html')
 def list(request):
     """renders a list of available benchmarks"""
 
@@ -42,7 +42,7 @@ def list(request):
         bm_form = BenchmarkForm()
 
     # benchmark list
-    bm_list = Benchmark.objects.filter(status=Benchmark.ACCESS_CHOICES.public)
+    bm_list = Benchmark.objects.filter(status=Benchmark.STATUS.public)
     bm_list_self = None
     if request.user.is_authenticated():
         if request.user.is_superuser:
@@ -64,7 +64,7 @@ def list(request):
             'search_terms': search_terms}
 
 
-@render_to('../templates/spike_eval/benchmark/detail.html')
+@render_to('spike/benchmark/detail.html')
 def detail(request, bmid):
     """renders details of a particular benchmark"""
 
@@ -149,7 +149,7 @@ def detail(request, bmid):
             'tr_form': tr_form}
 
 
-@render_to('../templates/spike_eval/benchmark/trial.html')
+@render_to('spike/benchmark/trial.html')
 def trial(request, trid):
     """renders details of a trial"""
 
@@ -228,7 +228,7 @@ def delete(request, bmid):
         return redirect('bm_list')
 
 
-@render_to('../templates/spike_eval/benchmark/summary.html')
+@render_to('spike/benchmark/summary.html')
 def summary(request, bmid):
     """summary page for benchmark"""
 

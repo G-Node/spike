@@ -6,13 +6,12 @@ from django.views.generic import TemplateView
 ##---INIT
 
 class HomepageView(TemplateView):
-    templatev_name = 'homepage.html'
+    template_name = 'homepage.html'
 
 ##---URLS
 
 urlpatterns = patterns('',
-    url(r'^$', HomepageView.as_view()),
-)
+    url(r'^$', HomepageView.as_view()))
 
 urlpatterns += patterns('spike_core.views.algorithm',
     url(r'^al_list/$',

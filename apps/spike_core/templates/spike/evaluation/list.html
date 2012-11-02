@@ -1,4 +1,4 @@
-{% extends "..//evaluation/base.html" %}
+{% extends "spike/evaluation/base.html" %}
 
 {% load i18n %}
 {% load pagination_tags %}
@@ -18,7 +18,7 @@
         <small>only your Batches are listed here</small>
       </h2>
       {% with bt_list_self as blist %}
-        {% include "..//evaluation/_list.html" %}
+        {% include "spike/evaluation/_list.html" %}
       {% endwith %}
     </section>
   {% endif %}
@@ -31,7 +31,7 @@
       <p>There are no public Evaluations Batches available.</p>
     {% else %}
       {% with bt_list as blist %}
-        {% include "..//evaluation/_list.html" %}
+        {% include "spike/evaluation/_list.html" %}
       {% endwith %}
     {% endif %}
   </section>

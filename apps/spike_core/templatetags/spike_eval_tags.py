@@ -10,7 +10,7 @@ register = template.Library()
 ##---CONSTANTS
 
 User = models.get_model('auth', 'user')
-EvaluationResultsImg = models.get_model('evaluation', 'evaluationresultsimg')
+EvaluationResultsImg = models.get_model('spike', 'evaluationresultimg')
 
 ##---FILTERS
 

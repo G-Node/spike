@@ -160,9 +160,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.humanize",
 
-    # south
-    'south',
-
     # theme
     "pinax_theme_bootstrap",
     "django_forms_bootstrap",
@@ -179,6 +176,7 @@ INSTALLED_APPS = [
     "idios",
     "metron",
     "captcha",
+    "south",
 
     # debug
     "debug_toolbar",

@@ -36,7 +36,7 @@ class Algorithm(TimeStampedModel):
         help_text='The user associated with this Algorithm.')
     parent = models.ForeignKey(
         'Algorithm',
-        related_name='childs',
+        related_name='children',
         blank=True,
         null=True)
 

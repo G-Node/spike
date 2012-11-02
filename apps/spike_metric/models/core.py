@@ -9,10 +9,6 @@ from model_utils.managers import InheritanceManager
 
 __all__ = ['Metric', 'Result']
 
-##---MODEL-REFS
-
-Datafile = models.get_model('spike', 'datafile')
-
 ##---MODELS
 
 class Metric(TimeStampedModel):
@@ -63,7 +59,7 @@ class Result(TimeStampedModel):
     ## meta
 
     class Meta:
-        app_label = 'spike_metric'
+        app_label = 'spike'
 
     ## fields
 

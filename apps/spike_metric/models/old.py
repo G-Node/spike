@@ -2,46 +2,14 @@
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.contenttypes import generic
 
-from model_utils.managers import InheritanceManager
-from model_utils.models import TimeStampedModel
-
-__all__ = ['Result', 'EvaluationResult', 'EvaluationResultImg']
+__all__ = ['EvaluationResult', 'EvaluationResultImg']
 
 ##---MODEL-REFS
 
-Evaluation = models.get_model('spike', 'evaluation')
-Metric = models.get_model('spike', 'metric')
+Result = models.get_model('spike', 'result')
 
 ##---MODELS
-
-class Result(TimeStampedModel):
-    """evaluation result entity"""
-
-    ## meta
-
-    class Meta:
-        app_label = 'spike'
-
-    ## fields
-
-    evaluation = models.ForeignKey(Evaluation)
-    metric = models.ForeignKey(Metric)
-
-    ## managers
-
-    objects = InheritanceManager()
-    datafile_set = generic.GenericRelation('Datafile')
-
-    ## special methods
-
-    def __str__(self):
-        return str(self.__unicode__())
-
-    def __unicode__(self):
-        return unicode('=%s %s' % (self.pk, self.evaluation))
-
 
 class EvaluationResult(Result):
     """evaluation result entity"""
