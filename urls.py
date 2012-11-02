@@ -15,13 +15,10 @@ from forms import CaptchaSignupForm
 admin.autodiscover()
 handler500 = 'pinax.views.server_error'
 
-class HomepageView(TemplateView):
-    template_name = 'homepage.html'
-
 ##---URLS
 
 urlpatterns = patterns('',
-    url(r'^$', HomepageView.as_view(), name='home'),
+    url(r'^$', TemplateView.as_view(template_name='homepage.html'), name='home'),
     url(r'^admin/invite_user/$', 'pinax.apps.signup_codes.views.admin_invite_user', name='admin_invite_user'),
     url(r'^admin/', include(admin.site.urls)),
 )
@@ -42,10 +39,7 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
-    url(r'^core/', include('spike_core.urls')),
-    url(r'^datafile/', include('spike_datafile.urls')),
-    url(r'^metric/', include('spike_metric.urls')),
-    #url(r'^dev/', include('spike_dev.urls')),
+    url(r'^spike/', include('spike.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

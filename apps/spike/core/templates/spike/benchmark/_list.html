@@ -1,0 +1,78 @@
+{% load i18n %}
+{% load pagination_tags %}
+{% load sorting_tags %}
+{% load spike_tags %}
+
+
+{% autosort blist %}
+{% autopaginate blist 20 %}
+<form class="form" method="GET">
+  <div class="control-group clearfix">
+    <div class="controls">
+      <div class="input-prepend input-append">
+        <span class="add-on"><i class="icon-search"></i></span>
+        <input type="text" name="search" value="{{ search_terms }}"
+               class="input-medium search-query"/>
+        <input class="btn" type="submit" value="Search"/>
+        {% if search_terms %}
+          <a class="btn" href="{% clear_search_url request %}">Clear</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="controls">
+      <i class="icon-filter"></i>
+      {% anchor owner__username Author %}
+      {% anchor created Date %}
+      {% anchor name Name %}
+    </div>
+  </div>
+</form>
+
+<table class="table table-striped table-condensed">
+  <thead>
+  <tr>
+    <th>{% trans "Name" %}</th>
+    <th>{% trans "Owner" %}</th>
+    <th>{% trans "Date" %}</th>
+    <th>{% trans "#" %}</th>
+    <th>{% trans "Description" %}</th>
+    <th>{% trans "Actions" %}</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for bm in blist %}
+    <tr>
+      <td>
+        <a href="{{ bm.get_absolute_url }}">
+          {% if bm.is_public %}
+            <i class="icon-globe"></i>
+            <span style="color: green">{{ bm.name }}</span>
+          {% else %}
+            <span style="color: red">
+              <i class="icon-lock"></i>
+              <nobr><strong>{{ bm.name }}</strong></nobr>
+            </span>
+          {% endif %}
+        </a>
+      </td>
+      <td>{% icn_profile bm %}</td>
+      <td>{% icn_time bm.modified %}</td>
+      <td><a href="{% url "ev_list" bm.id %}">{{ bm.eval_batches|length }}</a></td>
+      <td>{{ bm.description|truncatewords:11|escape }}</td>
+      <td>
+        <div class="btn-group">
+          <a href="{% url bm_zip bm.id %}" class="btn btn-mini">{% trans "download" %}</a>
+          {% if bm|is_editable:user %}
+            <a href="{% url bm_toggle bm.id %}" class="btn btn-mini">{% trans "toggle" %}</a>
+            {% with bm as obj %}
+              {% include "spike/benchmark/_delete.html" %}
+            {% endwith %}
+          {% endif %}
+          <a href="{% url bm_summary bm.id %}" class="btn btn-mini">{% trans "summary" %}</a>
+        </div>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% paginate %}

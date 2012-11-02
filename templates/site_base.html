@@ -10,20 +10,16 @@
 
 {% block nav %}
   <ul class="nav">{% spaceless %}
-    {# spike_eval #}
-    <li class="divider-vertical"></li>
-    <li id="tab_home">
-      <a href="{% url home %}">{% trans "Home" %}</a>
-    </li>
+    {# spike.core #}
     <li class="divider-vertical"></li>
     <li id="tab_benchmark">
-      <a href="{% url bm_list %}">{% trans "Benchmarks" %}</a>
+      <a href="{% url bm_list %}">{% trans "Benchmark" %}</a>
     </li>
     <li id="tab_evaluation">
-      <a href="{% url ev_list %}">{% trans "Evaluations" %}</a>
+      <a href="{% url ev_list %}">{% trans "Evaluation" %}</a>
     </li>
     <li id="tab_algorithm">
-      <a href="{% url al_list %}">{% trans "Algorithms" %}</a>
+      <a href="{% url al_list %}">{% trans "Algorithm" %}</a>
     </li>
     <li class="divider-vertical"></li>
     <li id="tab_team">

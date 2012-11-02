@@ -159,6 +159,7 @@ INSTALLED_APPS = [
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.humanize",
+    "django.contrib.webdesign",
 
     # theme
     "pinax_theme_bootstrap",
@@ -175,20 +176,18 @@ INSTALLED_APPS = [
     "pagination",
     "idios",
     "metron",
-    "captcha",
-    "south",
 
-    # debug
-    "debug_toolbar",
-
-    # Pinax
+    # pinax
     "pinax.apps.account",
     "pinax.apps.signup_codes",
     "pinax.templatetags",
-
-    # project
     "about",
     "profiles",
+
+    # additional external
+    "captcha",
+    "debug_toolbar",
+    "south",
 ]
 
 FIXTURE_DIRS = [

@@ -1,0 +1,65 @@
+{% extends "spike/benchmark/base.html" %}
+
+{% load i18n %}
+{% load bootstrap_tags %}
+{% load spike_tags %}
+{% load taggit_extras %}
+
+{% block head_title %}{% trans "Benchmarks" %}{% endblock %}
+
+{% block content %}
+
+  {% if user.is_authenticated %}
+    <section class="well">
+      <form class="actions">
+        <span class="label">Actions:</span>
+        <a class="btn btn-mini"
+           onclick="$('#create-benchmark').toggle();">Create Benchmark</a>
+      </form>
+      <form id="create-benchmark" class="form form-horizontal"
+            method="POST"
+            {% if not bm_form.errors %}style="display:none"{% endif %}>
+        <fieldset>
+          <legend>Create Benchmark</legend>
+          {% csrf_token %}
+          {{ bm_form|as_bootstrap }}
+          <div class="form-actions">
+            <input type="submit" class="btn btn-primary"
+                   value="{% trans 'Create Benchmark' %}"/>
+          </div>
+        </fieldset>
+      </form>
+    </section>
+  {% endif %}
+
+  {% if bm_list_self %}
+    <section>
+      <h2>Benchmark List ({% icn_profile user %})
+        <small>only your Benchmarks are listed here</small>
+      </h2>
+      {% with bm_list_self as blist %}
+        {% include "spike/benchmark/_list.html" %}
+      {% endwith %}
+    </section>
+  {% endif %}
+
+  <section>
+    <h2>Benchmark List
+      <small>public Benchmarks are listed here</small>
+    </h2>
+    {% if not bm_list %}
+      <p>{% if user.is_authenticated %}
+        You don't have any private Benchmarks.
+      {% endif %}
+        There are no public Benchmarks available.</p>
+    {% else %}
+      <p>Search for available Benchmarks. Select a Benchmark to view its
+        details. From the details page you may learn more about the
+        Benchmark, download uts associated files and upload your results to start an
+        Evaluation.</p>
+      {% with bm_list as blist %}
+        {% include "spike/benchmark/_list.html" %}
+      {% endwith %}
+    {% endif %}
+  </section>
+{% endblock %}
