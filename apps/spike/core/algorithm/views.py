@@ -1,6 +1,7 @@
 ##---IMPORTS
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db import models
 from django.shortcuts import redirect
 from ..forms import AlgorithmForm, SupplementaryForm
@@ -53,7 +54,7 @@ def detail(request, pk):
         messages.error(request, 'You are not allowed to view or modify this Algorithm: %s' % ex)
         return redirect('al_list')
     al_form = None
-    sf_form = None
+    ap_form = None
 
     # post request
     if request.method == 'POST':
@@ -65,27 +66,35 @@ def detail(request, pk):
             else:
                 messages.error(request, 'Algorithm edit failed')
         elif 'sf_create' in request.POST:
-            sf_form = SupplementaryForm(request.POST, request.FILES)
-            if sf_form.is_valid():
-                sf = sf_form.save(user=request.user, obj=al)
+            ap_form = SupplementaryForm(request.POST, request.FILES)
+            if ap_form.is_valid():
+                sf = ap_form.save(user=request.user, obj=al)
                 messages.success(
                     request,
                     'Supplementary creation successful: "%s"' % sf)
             else:
                 messages.error(request, 'Supplementary creation failed')
-        elif 'sf_delete' in request.POST:
-            try:
-                sfid = int(request.POST['sf_id'])
-                al.datafile_set.get(pk=sfid).delete()
-                messages.success(request, 'Supplementary deleted!')
-            except:
-                messages.error(request, 'Supplementary delete failed')
 
     # response
     return {'al': al,
-            'sf_list': al.datafile_set.all(),
+            'appendix': al.datafile_set.all(),
             'al_form': al_form or AlgorithmForm(instance=al),
-            'sf_form': sf_form or SupplementaryForm()}
+            'ap_form': ap_form or SupplementaryForm()}
+
+
+@login_required
+def delete(request, pk):
+    """delete algorithm"""
+
+    try:
+        al = Algorithm.objects.get(pk=pk)
+        assert al.is_editable(request.user), 'insufficient permissions'
+        Algorithm.objects.get(pk=pk).delete()
+        messages.success(request, 'Algorithm "%s" deleted' % al)
+    except Exception, ex:
+        messages.error(request, 'Algorithm not deleted: %s' % ex)
+    finally:
+        return redirect('al_list')
 
 ##---MAIN
 

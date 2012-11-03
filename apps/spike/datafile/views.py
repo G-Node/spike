@@ -3,6 +3,8 @@
 import mimetypes
 from django.http import HttpResponse, Http404
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 from .models import Datafile
 
 ##---VIEWS
@@ -24,6 +26,23 @@ def download(request, pk):
         response['Content-Encoding'] = encoding
     response['X-Sendfile'] = str(df.file.path)
     return response
+
+
+@login_required
+def delete(request, pk):
+    """delete datafile"""
+
+    try:
+        df = Datafile.objects.get(pk=pk)
+        co = df.content_object
+        assert co.is_editable(request.user), 'insufficient permissions'
+        Datafile.objects.get(pk=pk).delete()
+        messages.success(request, 'Datafile "%s" deleted' % df)
+    except Exception, ex:
+        messages.error(request, 'Datafile not deleted: %s' % ex)
+    finally:
+        return redirect(co)
+
 
 if __name__ == '__main__':
     pass

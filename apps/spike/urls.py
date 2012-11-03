@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 ##---URLS
 
 urlpatterns = patterns('',
-    url(r'^core/', include('spike.core.urls')),
+    url(r'', include('spike.core.urls')),
     url(r'^datafile/', include('spike.datafile.urls')),
     url(r'^metric/', include('spike.metric.urls')),
 )

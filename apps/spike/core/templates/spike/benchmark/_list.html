@@ -55,17 +55,25 @@
           {% endif %}
         </a>
       </td>
-      <td>{% icn_profile bm %}</td>
-      <td>{% icn_time bm.modified %}</td>
-      <td><a href="{% url "ev_list" bm.id %}">{{ bm.eval_batches|length }}</a></td>
-      <td>{{ bm.description|truncatewords:11|escape }}</td>
+      <td>
+        {% icn_profile bm %}
+      </td>
+      <td>
+        {% icn_time bm.modified %}
+      </td>
+      <td>
+        <a href="{% url ev_list bm.id %}">{{ bm.eval_batches|length }}</a>
+      </td>
+      <td>
+        {{ bm.description|truncatewords:11|escape }}
+      </td>
       <td>
         <div class="btn-group">
           <a href="{% url bm_zip bm.id %}" class="btn btn-mini">{% trans "download" %}</a>
           {% if bm|is_editable:user %}
             <a href="{% url bm_toggle bm.id %}" class="btn btn-mini">{% trans "toggle" %}</a>
             {% with bm as obj %}
-              {% include "spike/benchmark/_delete.html" %}
+              {% include "spike/_delete.html" %}
             {% endwith %}
           {% endif %}
           <a href="{% url bm_summary bm.id %}" class="btn btn-mini">{% trans "summary" %}</a>

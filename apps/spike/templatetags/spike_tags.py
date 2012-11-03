@@ -1,7 +1,7 @@
 ##---IMPORTS
 
 from django import template
-from django.template.defaultfilters import date
+from django.template.defaultfilters import date, slugify
 from django.db import models
 from ..util import get_pc
 
@@ -15,13 +15,23 @@ EvaluationResultsImg = models.get_model('spike', 'evaluationresultimg')
 ##---FILTERS
 
 @register.filter
+def ident_slug(obj):
+    return slugify('%s-%s' % (obj, obj.pk))
+
+
+@register.filter
+def cls_name(obj):
+    return obj.__class__.__name__
+
+
+@register.filter
 def is_editable(obj, user):
     if user.is_superuser:
         return True
     if hasattr(obj, 'owner'):
         return obj.owner == user
-    if hasattr(obj, 'added_by'):
-        return obj.added_by == user
+    else:
+        return None
 
 
 @register.filter

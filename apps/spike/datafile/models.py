@@ -75,7 +75,11 @@ class Datafile(TimeStampedModel):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'download', (), {'pk': self.pk}
+        return 'df_download', (self.pk,), {}
+
+    @models.permalink
+    def get_delete_url(self):
+        return 'df_delete', (self.pk,), {}
 
     ## save and delete
 

@@ -58,6 +58,15 @@ class Algorithm(TimeStampedModel):
     def get_absolute_url(self):
         return 'al_detail', (self.pk,), {}
 
+    @models.permalink
+    def get_delete_url(self):
+        return 'al_delete', (self.pk,), {}
+
+    ## interface
+
+    def is_editable(self, user):
+        return self.owner == user or user.is_superuser
+
 ##---MAIN
 
 if __name__ == '__main__':

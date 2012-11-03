@@ -112,6 +112,8 @@
       <dd>
         {% for tag in bm.tags.all %}
           <i class="icon-tag"></i>&nbsp;{{ tag }}&nbsp;
+        {% empty %}
+          &nbsp;
         {% endfor %}
       </dd>
       <dt>
@@ -221,6 +223,10 @@
       </p>
     {% endif %}
   </section>
+
+  {% with bm as obj %}
+    {% include "spike/_appendix.html" %}
+  {% endwith %}
 
   <section>
     <h2>Supplementary Files

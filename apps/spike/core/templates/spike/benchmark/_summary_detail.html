@@ -1,11 +1,10 @@
 {% load i18n %}
-{% load pagination_tags %}
 {% load sorting_tags %}
-{% load spike_eval_tags %}
+{% load spike_tags %}
 
 <div class="row clearfix">
   <div class="span8 pull-left">
-    <img src="{% url bm_summary_plot bid=b.id mode=detail_mode %}"
+    <img src="{% url bm_summary_plot bm.id detail_mode %}"
          alt="Summary Plot ({{ detail_mode }})"
          border="1px"
          width="100%"/>
@@ -26,8 +25,8 @@
         </tr>
         </thead>
         <tbody>
-        {% for eb in eb_list %}
-          {% if eb.evaluation_set.all %}
+        {% for bt in bt_list %}
+          {% if bt.evaluation_set.all %}
             <tr>
               <td>
               <span class="badge" style="color: #ffffff; background-color: {% plot_color forloop.counter0 %};">
@@ -35,8 +34,8 @@
               </span>
               </td>
               <td>
-                <a href="{{ eb.get_absolute_url }}">
-                  <strong style="{% zero_red eb.access %}"> #{{ eb.id }}, {{ eb.algorithm }}</strong>
+                <a href="{{ bt.get_absolute_url }}">
+                  <strong style="{% zero_red bt.status %}"> #{{ bt.id }}, {{ bt.algorithm }}</strong>
                 </a>
               </td>
             </tr>

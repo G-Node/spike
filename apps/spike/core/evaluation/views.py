@@ -33,11 +33,11 @@ def sort_er(a, b):
 ##---VIEWS
 
 @render_to('spike/evaluation/list.html')
-def list(request, bmid=None):
+def list(request, pk=None):
     """renders a list of available batches"""
 
     # evaluation batch list
-    bt_list = Batch.objects.filter(status=Batch.ACCESS_CHOICES.public)
+    bt_list = Batch.objects.filter(status=Batch.STATUS.public)
     #print [bt.status for bt in bt_list]
     bt_list_self = None
     if request.user.is_authenticated():
@@ -46,10 +46,10 @@ def list(request, bmid=None):
         bt_list_self = Batch.objects.filter(owner=request.user)
 
     # filters
-    if bmid is not None:
-        bt_list = bt_list.filter(benchmark=bmid)
+    if pk is not None:
+        bt_list = bt_list.filter(benchmark=pk)
         if request.user.is_authenticated():
-            bt_list_self = bt_list_self.filter(benchmark=bmid)
+            bt_list_self = bt_list_self.filter(benchmark=pk)
 
     # search terms
     search_terms = request.GET.get('search', '')
@@ -67,12 +67,12 @@ def list(request, bmid=None):
 
 
 @render_to('spike/evaluation/detail.html')
-def detail(request, btid):
+def detail(request, pk):
     """renders details of a particular batch"""
 
     # init and checks
     try:
-        bt = Batch.objects.get(pk=btid)
+        bt = Batch.objects.get(pk=pk)
         assert bt.is_accessible(request.user), 'insufficient permissions'
     except Exception, ex:
         messages.error(request, 'You are not allowed to view or modify this Batch: %s' % ex)
@@ -109,11 +109,11 @@ def detail(request, btid):
 
 
 @login_required
-def toggle(request, btid):
+def toggle(request, pk):
     """toggle status for benchmark"""
 
     try:
-        bt = Batch.objects.get(pk=btid)
+        bt = Batch.objects.get(pk=pk)
         assert bt.is_editable(request.user), 'insufficient permissions'
         bt.toggle()
         messages.info(request, 'Batch "%s" toggled to %s' % (bt, bt.status))
@@ -124,13 +124,13 @@ def toggle(request, btid):
 
 
 @login_required
-def delete(request, btid):
+def delete(request, pk):
     """delete batch"""
 
     try:
-        bt = Batch.objects.get(pk=btid)
+        bt = Batch.objects.get(pk=pk)
         assert bt.is_editable(request.user), 'insufficient permissions'
-        Batch.objects.get(pk=btid).delete()
+        Batch.objects.get(pk=pk).delete()
         messages.success(request, 'Batch "%s" deleted' % bt)
     except Exception, ex:
         messages.error(request, 'Benchmark not deleted: %s' % ex)
@@ -138,10 +138,10 @@ def delete(request, btid):
         return redirect('ev_list')
 
 
-def zip(request, btid):
+def zip(request, pk):
     # init and checks
     try:
-        bt = Batch.objects.get(pk=btid)
+        bt = Batch.objects.get(pk=pk)
         assert bt.is_accessible(request.user), 'insufficient permissions'
     except Exception, ex:
         messages.error(request, 'You are not allowed to view or modify this Batch: %s' % ex)

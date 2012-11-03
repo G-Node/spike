@@ -149,55 +149,6 @@ def detail(request, pk):
             'tr_form': tr_form}
 
 
-@render_to('spike/benchmark/trial.html')
-def trial(request, pk):
-    """renders details of a trial"""
-
-    # init and checks
-    try:
-        tr = Trial.objects.get(pk=pk)
-        assert tr.benchmark.is_editable(request.user), 'insufficient permissions!'
-    except Exception, ex:
-        messages.error(request, 'You are not allowed to view or modify this Trial: %s' % ex)
-        return redirect('bm_list')
-    tr_form = None
-
-    # post request
-    if request.method == 'POST':
-        if 'tr_edit' in request.POST:
-            tr_form = TrialForm(request.POST, request.FILES, instance=tr)
-            if tr_form.is_valid():
-                if tr_form.save():
-                    messages.success(request, 'Trial edit successful')
-                else:
-                    messages.info(request, 'No changes detected')
-            else:
-                messages.error(request, 'Trial edit failed')
-        elif 'tr_delete' in request.POST:
-            bm = tr.benchmark
-            tr.delete()
-            messages.success(request, 'Trial "%s" deleted' % tr)
-            return redirect(bm)
-        elif 'tr_validate' in request.POST:
-            try:
-                if tr.rd_file:
-                    validate_rawdata_file(tr.rd_file.id)
-                if tr.gt_file:
-                    validate_groundtruth_file(tr.gt_file.id)
-            except:
-                messages.error(request, 'Trial validation failed')
-            else:
-                messages.info(request, 'Trial validation scheduled')
-
-    # create forms
-    if not tr_form:
-        tr_form = TrialForm(instance=tr, pv_label=tr.benchmark.parameter)
-
-    # response
-    return {'tr': tr,
-            'tr_form': tr_form}
-
-
 @login_required
 def toggle(request, pk):
     """toggle status for benchmark"""
@@ -214,13 +165,13 @@ def toggle(request, pk):
 
 
 @login_required
-def delete(request, bmid):
+def delete(request, pk):
     """delete benchmark"""
 
     try:
-        bm = Benchmark.objects.get(pk=bmid)
+        bm = Benchmark.objects.get(pk=pk)
         assert bm.is_editable(request.user), 'insufficient permissions'
-        Benchmark.objects.get(pk=bmid).delete()
+        Benchmark.objects.get(pk=pk).delete()
         messages.success(request, 'Benchmark "%s" deleted' % bm)
     except Exception, ex:
         messages.error(request, 'Benchmark not deleted: %s' % ex)
@@ -232,37 +183,44 @@ def delete(request, bmid):
 def summary(request, pk):
     """summary page for benchmark"""
 
-    b = get_object_or_404(Benchmark.objects.all(), id=pk)
-    eb_list = b.eval_batches(status=20)
+    try:
+        bm = Benchmark.objects.get(pk=pk)
+        assert bm.is_accessible(request.user), 'insufficient permissions'
+    except Exception, ex:
+        messages.error(request, 'You are not allowed to view or modify this Benchmark: %s' % ex)
+        return redirect('bm_list')
+    bt_list = bm.batch_set.filter(status=Benchmark.STATUS.public)
     if request.user.is_authenticated():
-        eb_list_self = b.eval_batches(status=10)
+        bt_list_self = bm.batch_set.filter(status=Benchmark.STATUS.private)
         if not request.user.is_superuser:
-            eb_list_self = eb_list_self.filter(added_by=request.user)
-        eb_list |= eb_list_self
-    return {'b': b,
-            'eb_list': eb_list.order_by('id')}
+            bt_list_self = bt_list_self.filter(owner=request.user)
+        bt_list |= bt_list_self
+    return {'bm': bm,
+            'bt_list': bt_list.order_by('id')}
 
 
 def summary_plot(request, pk=None, mode=None, legend=False):
     """generate a plot of the benchmark summary"""
 
     ## DEBUG
-    #print bmid, mode, legend
+    print 'pk :: %s(%s)' % (pk.__class__.__name__, pk)
+    print 'mode :: %s(%s)' % (mode.__class__.__name__, mode)
+    print 'legend :: %s(%s)' % (legend.__class__.__name__, legend)
     ## GUBED
 
     fig = None
     try:
         # init and checks
-        b = get_object_or_404(Benchmark.objects.all(), id=pk)
-        t_list = list(b.trial_set.order_by('parameter'))
-        eb_list = b.eval_batches(status=20)
+        bm = get_object_or_404(Benchmark.objects.all(), id=pk)
+        tr_list = bm.trial_set.order_by('parameter')
+        bt_list = bm.batch_set.filter(status=Benchmark.STATUS.public)
         if request.user.is_authenticated():
-            eb_list_self = b.eval_batches(status=10)
+            eb_list_self = bm.batch_set.filter(status=Benchmark.STATUS.private)
             if not request.user.is_superuser:
-                eb_list_self = eb_list_self.filter(added_by=request.user)
-            eb_list |= eb_list_self
-        eb_list.order_by('id')
-        param_labels = [t.parameter for t in t_list]
+                eb_list_self = eb_list_self.filter(owner=request.user)
+            bt_list |= eb_list_self
+        bt_list.order_by('id')
+        param_labels = [t.parameter for t in tr_list]
         np = len(param_labels)
         y_max = 1.
 
@@ -284,11 +242,11 @@ def summary_plot(request, pk=None, mode=None, legend=False):
                                                               'FPAEo',
                                                               'FNo']):
             mode = 'error_sum'
-        for eb in eb_list:
+        for bt in bt_list:
             y_curve = [nan] * np
-            for e in eb.evaluation_set.all():
+            for ev in bt.evaluation_set.all():
                 try:
-                    y_curve[t_list.index(e.trial)] = e.summary_table()[mode]
+                    y_curve[tr_list.index(ev.trial)] = ev.summary_table()[mode]
                 except:
                     pass
             if nansum(y_curve) >= 0:
@@ -296,14 +254,14 @@ def summary_plot(request, pk=None, mode=None, legend=False):
                 y_max = nanmax(y_curve + [y_max])
                 #y_curve = map(lambda x: x + 1.0, y_curve)
                 #ax.semilogy(y_curve, 'o-', label='EB #%s' % eb.id)
-                ax.plot(y_curve, 'o-', label='EB #%s' % eb.id)
+                ax.plot(y_curve, 'o-', label='EB #%s' % bt.id)
 
         # beautify Y-axis
         ax.set_ylabel('Error Count')
         y_margin = y_max * 0.05
         ax.set_ylim(-y_margin, y_max + y_margin)
         # beautify X-axis
-        ax.set_xlabel(b.parameter)
+        ax.set_xlabel(bm.parameter)
         x_margin = np * 0.05
         ax.set_xlim(-x_margin, (1 + .5 * (legend is True)) * np + x_margin - 1)
         ax.set_xticks(range(np))
@@ -387,6 +345,70 @@ def zip(request, pk):
             del buf
         except:
             pass
+
+
+@render_to('spike/benchmark/trial.html')
+def trial(request, pk):
+    """renders details of a trial"""
+
+    # init and checks
+    try:
+        tr = Trial.objects.get(pk=pk)
+        assert tr.benchmark.is_editable(request.user), 'insufficient permissions!'
+    except Exception, ex:
+        messages.error(request, 'You are not allowed to view or modify this Trial: %s' % ex)
+        return redirect('bm_list')
+    tr_form = None
+
+    # post request
+    if request.method == 'POST':
+        if 'tr_edit' in request.POST:
+            tr_form = TrialForm(request.POST, request.FILES, instance=tr)
+            if tr_form.is_valid():
+                if tr_form.save():
+                    messages.success(request, 'Trial edit successful')
+                else:
+                    messages.info(request, 'No changes detected')
+            else:
+                messages.error(request, 'Trial edit failed')
+        elif 'tr_delete' in request.POST:
+            bm = tr.benchmark
+            tr.delete()
+            messages.success(request, 'Trial "%s" deleted' % tr)
+            return redirect(bm)
+        elif 'tr_validate' in request.POST:
+            try:
+                if tr.rd_file:
+                    validate_rawdata_file(tr.rd_file.id)
+                if tr.gt_file:
+                    validate_groundtruth_file(tr.gt_file.id)
+            except:
+                messages.error(request, 'Trial validation failed')
+            else:
+                messages.info(request, 'Trial validation scheduled')
+
+    # create forms
+    if not tr_form:
+        tr_form = TrialForm(instance=tr, pv_label=tr.benchmark.parameter)
+
+    # response
+    return {'tr': tr,
+            'tr_form': tr_form}
+
+
+@login_required
+def trial_delete(request, pk):
+    """delete benchmark"""
+
+    try:
+        tr = Trial.objects.get(pk=pk)
+        assert tr.benchmark.is_editable(request.user), 'insufficient permissions'
+        Trial.objects.get(pk=pk).delete()
+        messages.success(request, 'Trial "%s" deleted' % tr)
+    except Exception, ex:
+        messages.error(request, 'Trial not deleted: %s' % ex)
+    finally:
+        return redirect(tr.benchmark)
 
 ##---MAIN
 

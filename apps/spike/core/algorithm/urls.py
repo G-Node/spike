@@ -1,7 +1,6 @@
 ##---IMPORTS
 
 from django.conf.urls.defaults import patterns, url
-from django.views.generic import TemplateView
 
 ##---URLS
 
@@ -12,6 +11,10 @@ urlpatterns = patterns('spike.core.algorithm.views',
     url(r'^detail/(?P<pk>\d+)/$',
         'detail',
         name='al_detail'),
+    url(r'^delete/(?P<pk>\d+)/$',
+        'delete',
+        name='al_delete'),
+
 )
 
 ##---MAIN

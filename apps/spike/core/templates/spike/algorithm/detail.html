@@ -1,62 +1,20 @@
 {% extends "spike/algorithm/base.html" %}
 
 {% load i18n %}
-{% load pagination_tags %}
-{% load spike_eval_tags %}
 {% load bootstrap_tags %}
+{% load pagination_tags %}
+{% load spike_tags %}
 
-{% block head_title %}{A:{{ al.id }}}&nbsp;{{ al.name }}{% endblock %}
+{% block head_title %}{A:{{ al.id }}}&nbsp;{{ al }}{% endblock %}
 
 {% block content %}
-
-  <header class="jumbotron">
-    <h2>{{ al }}</h2>
-    <dl class="dl-horizontal">
-      <dt>
-        <strong>Description:</strong>
-      </dt>
-      <dd>
-        {{ al.description|default:"no description" }}
-      </dd>
-      <dt>
-        <strong>Owner:</strong>
-      </dt>
-      <dd>
-        <nobr>
-          <i class=" icon-user"></i>
-          <a href="{% url profile_detail al.owner.username %}">
-            {{ al.owner.username }}
-          </a>
-          {% ifequal al.owner user %}(you){% endifequal %}
-        </nobr>
-      </dd>
-      <dt>
-        <strong>Date Created:</strong>
-      </dt>
-      <dd>
-        <nobr><i class="icon-time"></i>
-          {{ al.created|date }}</nobr>
-      </dd>
-      <dt>
-
-        <strong>Kind:</strong>
-      </dt>
-      <dd>
-        {% for kind in al.kind.all %}
-          <i class="icon-tag"></i>{{ kind }}&nbsp;
-        {% empty %}
-          &nbsp;
-        {% endfor %}
-      </dd>
-    </dl>
-  </header>
 
   {% if user.is_authenticated %}
     {% if al.owner == user or user.is_superuser %}
       <form class="form well">
         <span class="label">Actions:</span>
         <a id="edit-algorithm-toggle" class="btn btn-mini"> {% trans "Edit Algorithm" %}</a>
-        <a id="create-suppl-toggle" class="btn btn-mini"> {% trans "Create Supplementary" %}</a>
+        <a id="create-appendix-toggle" class="btn btn-mini"> {% trans "Create Appendix" %}</a>
       </form>
       <form id="edit-algorithm" method="POST" style="display:none" class="form form-horizontal well">
         <fieldset>
@@ -69,12 +27,12 @@
           </div>
         </fieldset>
       </form>
-      <form id="create-suppl" method="POST" enctype="multipart/form-data"
+      <form id="create-appendix" method="POST" enctype="multipart/form-data"
             style="display:none" class="form form-horizontal well">
         <fieldset>
-          <legend>Create Supplementary</legend>
+          <legend>Create Appendix</legend>
           {% csrf_token %}
-          {{ sf_form|as_bootstrap }}
+          {{ ap_form|as_bootstrap }}
           <div class="form-actions">
             <input type="submit" class="btn btn-primary" name="sf_create"
                    value="{% trans 'Create Supplementary' %}"/>
@@ -84,70 +42,56 @@
     {% endif %}
   {% endif %}
 
-  <section>
-    <h2>Supplementary Files
-      <small>additional files describing the Algorithm</small>
-    </h2>
-
-    {% if sf_list %}
-      <table class="table table-striped table-condensed">
-        <thead>
-        <tr>
-          <th>{% trans "Name" %}</th>
-          <th>{% trans "Filename" %}</th>
-          <th>{% trans "Size" %}</th>
-          <th>{% trans "Created" %}</th>
-          {% if user.is_authenticated %}
-            {% if al.owner == user or user.is_superuser %}
-              <th>{% trans "Actions" %}</th>
-            {% endif %}
-          {% endif %}
-        </tr>
-        </thead>
-        <tbody>
-        {% for sf in sf_list %}
-          <tr>
-            <td>
-              <nobr>{{ sf.name }}</nobr>
-            </td>
-            <td>
-              <nobr>
-                <a href="{{ sf.get_absolute_url }}">{{ sf.file.name }}</a>
-              </nobr>
-            </td>
-            <td>
-              {{ sf.size|filesizeformat }}
-            </td>
-            <td>
-              {% icn_time sf %}
-            </td>
-            {% if user.is_authenticated %}
-              {% if b.owner == user or user.is_superuser %}
-                <td>
-                  <form method="POST">
-                    {% csrf_token %}
-                    <input type="hidden" name="sf_id" value="{{ sf.id }}">
-                    <input type="submit" name="sf_delete" value="delete">
-                  </form>
-                </td>
-              {% endif %}
-            {% endif %}
-          </tr>
+  <header class="jumbotron">
+    <h2>{{ al }}</h2>
+    <dl class="dl-horizontal">
+      <dt>
+        <strong>Description:</strong>
+      </dt>
+      <dd>
+        {{ al.description|default:"no description" }}
+      </dd>
+      <dd>
+        {% icn_profile al %}
+        {% ifequal al.owner request.user %}(you){% endifequal %}
+        </nobr>
+      </dd>
+      <dt>
+        <strong>Created:</strong>
+      </dt>
+      <dd>
+        {% icn_time al.created %}
+      </dd>
+      <dt>
+        <strong>Modified:</strong>
+      </dt>
+      <dd>
+        {% icn_time al.modified %}
+      </dd>
+      <dt>
+        <strong>Kind:</strong>
+      </dt>
+      <dd>
+        {% for kind in al.kind.all %}
+          <i class="icon-tag"></i>&nbsp;{{ kind }}&nbsp;
+        {% empty %}
+          &nbsp;
         {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <p>This Algorithm has no Supplementaries yet. You can add new Supplementary Files by clicking on
-        the "Create Supplementary" button under "Actions:" above.</p>
-    {% endif %}
-  </section>
+      </dd>
+    </dl>
+  </header>
+
+  {% with al as obj %}
+    {% include "spike/_appendix.html" %}
+  {% endwith %}
+
 {% endblock %}
 
 {% block extra_body %}
   <script type="text/javascript">
     $(document).ready(function () {
       $('#edit-algorithm-toggle').click(function () {
-        $('#create-suppl').hide();
+        $('#create-appendix').hide();
         $('#edit-algorithm').toggle();
         return false;
       });
@@ -156,14 +100,14 @@
         $('#edit-algorithm .error').autoscroll();
       }
       ;
-      $('#create-suppl-toggle').click(function () {
+      $('#create-appendix-toggle').click(function () {
         $('#edit-algorithm').hide();
-        $('#create-suppl').toggle();
+        $('#create-appendix').toggle();
         return false;
       });
-      if ($('#create-suppl .error').length) {
-        $('#create-suppl').show();
-        $('#create-suppl .error').autoscroll();
+      if ($('#create-appendix .error').length) {
+        $('#create-appendix').show();
+        $('#create-appendix .error').autoscroll();
       }
       ;
     });

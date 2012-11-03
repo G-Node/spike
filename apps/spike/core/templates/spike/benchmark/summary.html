@@ -1,16 +1,14 @@
 {% extends "spike/benchmark/base.html" %}
 
 {% load i18n %}
-{% load pagination_tags %}
-{% load sorting_tags %}
-{% load spike_eval_tags %}
+{% load spike_tags %}
 
 {% block head_title %}{% trans "Benchmarks" %}{% endblock %}
 
 {% block content %}
 
   <section>
-    <h2>Summary: <a href="{{ b.get_absolute_url }}">{{ b }}</a>
+    <h2>Summary: <a href="{{ bm.get_absolute_url }}">{{ b }}</a>
       <small>visualisation and listing of evaluation results</small>
     </h2>
     <div>
@@ -25,32 +23,32 @@
       <div class="tab-content" id="tab-summary-content">
         <div class="tab-pane active" id="tab-summary-total">
           {% with 'error_sum' as detail_mode %}
-            {% include "spike/benchmark/summary_detail.html" %}
+            {% include "spike/benchmark/_summary_detail.html" %}
           {% endwith %}
         </div>
         <div class="tab-pane" id="tab-summary-FPAEno">
           {% with 'FPAEno' as detail_mode %}
-            {% include "spike/benchmark/summary_detail.html" %}
+            {% include "spike/benchmark/_summary_detail.html" %}
           {% endwith %}
         </div>
         <div class="tab-pane" id="tab-summary-FNno">
           {% with 'FNno' as detail_mode %}
-            {% include "spike/benchmark/summary_detail.html" %}
+            {% include "spike/benchmark/_summary_detail.html" %}
           {% endwith %}
         </div>
         <div class="tab-pane" id="tab-summary-FP">
           {% with 'FP' as detail_mode %}
-            {% include "spike/benchmark/summary_detail.html" %}
+            {% include "spike/benchmark/_summary_detail.html" %}
           {% endwith %}
         </div>
         <div class="tab-pane" id="tab-summary-FPAEo">
           {% with 'FPAEo' as detail_mode %}
-            {% include "spike/benchmark/summary_detail.html" %}
+            {% include "spike/benchmark/_summary_detail.html" %}
           {% endwith %}
         </div>
         <div class="tab-pane" id="tab-summary-FNo">
           {% with 'FNo' as detail_mode %}
-            {% include "spike/benchmark/summary_detail.html" %}
+            {% include "spike/benchmark/_summary_detail.html" %}
           {% endwith %}
         </div>
       </div>

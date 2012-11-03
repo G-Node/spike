@@ -73,11 +73,15 @@ class Benchmark(StatusModel, TimeStampedModel):
     def __unicode__(self):
         return unicode(self.name)
 
-    ## django interface
+    ## permanent urls
 
     @models.permalink
     def get_absolute_url(self):
         return 'bm_detail', (self.pk,), {}
+
+    @models.permalink
+    def get_delete_url(self):
+        return 'bm_delete', (self.pk,), {}
 
     ## interface
 
@@ -156,7 +160,11 @@ class Trial(TimeStampedModel):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'bm_trial', (), {'trid': self.pk}
+        return 'bm_trial', (self.pk,), {}
+
+    @models.permalink
+    def get_delete_url(self):
+        return 'bm_trial_delete', (self.pk,), {}
 
     ## interface
 
