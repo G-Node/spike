@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import models
 from django.shortcuts import redirect
-from ..forms import AlgorithmForm, SupplementaryForm
+from ..forms import AlgorithmForm, AppendixForm
 from ...util import render_to
 
 ##---MODEL-REFS
@@ -66,7 +66,7 @@ def detail(request, pk):
             else:
                 messages.error(request, 'Algorithm edit failed')
         elif 'sf_create' in request.POST:
-            ap_form = SupplementaryForm(request.POST, request.FILES)
+            ap_form = AppendixForm(request.POST, request.FILES)
             if ap_form.is_valid():
                 sf = ap_form.save(user=request.user, obj=al)
                 messages.success(
@@ -79,7 +79,7 @@ def detail(request, pk):
     return {'al': al,
             'appendix': al.datafile_set.all(),
             'al_form': al_form or AlgorithmForm(instance=al),
-            'ap_form': ap_form or SupplementaryForm()}
+            'ap_form': ap_form or AppendixForm()}
 
 
 @login_required

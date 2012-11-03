@@ -10,6 +10,7 @@
 {% block head_title %}{% trans "Algorithms" %}{% endblock %}
 
 {% block content %}
+
   {% if user.is_authenticated %}
     <section class="well">
       <form class="actions">
@@ -42,4 +43,5 @@
       {% endwith %}
     </section>
   {% endif %}
+
 {% endblock %}

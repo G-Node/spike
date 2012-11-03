@@ -7,6 +7,7 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('',
     url(r'^algorithm/', include('spike.core.algorithm.urls')),
     url(r'^benchmark/', include('spike.core.benchmark.urls')),
+    url(r'^datafile/', include('spike.core.datafile.urls')),
     url(r'^evaluation/', include('spike.core.evaluation.urls')),
 )
 

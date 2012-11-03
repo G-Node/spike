@@ -59,27 +59,29 @@ def toint(val):
 #return
 
 @task
-def _validate_rawdata_file(dfid):
+def _validate_rawdata_file(pk):
     """checks consistency of rawdata file
 
-    :type dfid: int
-    :param dfid: pk for Datafile entity
+    :type pk: int
+    :param pk: pk for Datafile entity
 
     :returns: bool -- True if Datafile validates, False else. Processing
     log, including errors, will be written to the Datafile entity.
     """
 
     # init and checks
-    state = 10
+    valid = False
+    logger = Logger.get_logger(StringIO())
     try:
-        df = Datafile.objects.get(id=dfid)
-        assert df.file_type == 10
-        logger = Logger.get_logger(StringIO())
+        df = Datafile.objects.get(id=pk)
+        assert df.file_type == 'rd_file'
+        tr = df.content_object
     except:
-        return state
+        logger.log('ERROR')
+        return valid
 
     try:
-        logger.log('looking at raw data file with id: %s' % df.id)
+        logger.log('looking at raw data file with id: %s' % pk)
         rd, sr = read_hdf5_arc(df.file.path)
         logger.log('found rd_file: %s' % df.name)
         len_rd_sec = rd.shape[0] / sr
@@ -89,24 +91,23 @@ def _validate_rawdata_file(dfid):
         # TODO: more checks?
 
         logger.log('rd_file passed all checks')
-        state = 20 # success
+        valid = True
     except Exception, ex:
-        state = 10 # failure
-        logger.log('error during trial check: %s' % str(ex))
+        logger.log('ERROR: trial check: %s' % str(ex))
     finally:
-        df.task_state = state
-        df.task_log = logger.get_content()
         df.save()
-        return state
+        tr.valid_rd_log = logger.get_content()
+        tr.save()
+        return valid
 
 
 def validate_rawdata_file(dfid):
-    rval = 0
+    rval = False
     if USE_CELERY:
         rval = _validate_rawdata_file.delay(dfid)
     else:
-        _validate_rawdata_file(dfid)
-    return str(rval)
+        rval = _validate_rawdata_file(dfid)
+    return rval
 
 
 @task
@@ -121,13 +122,15 @@ def _validate_groundtruth_file(dfid):
     """
 
     # init and checks
-    state = 10
+    valid = False
+    logger = Logger.get_logger(StringIO())
     try:
         df = Datafile.objects.get(id=dfid)
-        assert df.file_type == 20
-        logger = Logger.get_logger(StringIO())
+        assert df.file_type == 'gt_file'
+        tr = df.content_object
     except:
-        return state
+        logger.log('ERROR')
+        return valid
 
     try:
         logger.log('looking at ground truth file version with uid: %s' % df.id)
@@ -142,24 +145,23 @@ def _validate_groundtruth_file(dfid):
         # TODO: more checks?
 
         logger.log('gt_file passed all checks')
-        state = 20 # success
+        valid = True
     except Exception, ex:
-        state = 10 # failure
-        logger.log('error during trial check: %s' % str(ex))
+        logger.log('ERROR: trial check: %s' % str(ex))
     finally:
-        df.task_state = state
-        df.task_log = logger.get_content()
         df.save()
-        return state
+        tr.valid_gt_log = logger.get_content()
+        tr.save()
+        return valid
 
 
 def validate_groundtruth_file(dfid):
-    rval = 0
+    rval = False
     if USE_CELERY:
         rval = _validate_groundtruth_file.delay(dfid)
     else:
-        _validate_groundtruth_file(dfid)
-    return str(rval)
+        rval = _validate_groundtruth_file(dfid)
+    return rval
 
 #+Interface 2: The user uploads a sorting result. The frontend calls a
 #backend function and displays the state of the evaluation to the user.

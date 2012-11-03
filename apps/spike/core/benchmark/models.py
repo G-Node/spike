@@ -39,7 +39,7 @@ class Benchmark(StatusModel, TimeStampedModel):
         null=True,
         help_text='Use this field to give a detailed summary of the '\
                   'Benchmark. If you need to describe more than feasibly can '\
-                  'go in this field, please use the Supplementary upload '\
+                  'go in this field, please use the Appendix upload '\
                   'option. (character limit: none)')
     parameter = models.CharField(
         max_length=255,
@@ -85,13 +85,6 @@ class Benchmark(StatusModel, TimeStampedModel):
 
     ## interface
 
-    @property
-    def sp_files(self):
-        try:
-            return self.datafile_set.filter(file_type=40)
-        except IndexError:
-            return []
-
     def is_public(self):
         return self.status == Benchmark.STATUS.public
 
@@ -108,6 +101,9 @@ class Benchmark(StatusModel, TimeStampedModel):
             self.status = Benchmark.STATUS.public
         self.save()
 
+    def trial_set_valid(self):
+        return filter(lambda x: x.is_valid, self.trial_set.all())
+
 
 class Trial(TimeStampedModel):
     """represents an experimental trial
@@ -120,6 +116,8 @@ class Trial(TimeStampedModel):
 
     Raw data is stored in hdf5 format, ground truth is stored in gdf format.
     """
+
+    GT_TYPE = Choices('total', 'partial', 'none')
 
     ## meta
 
@@ -140,6 +138,21 @@ class Trial(TimeStampedModel):
     parameter = models.FloatField(
         default=0.0,
         help_text='The parameter value for this Trial. (type: float)')
+    valid_rd_log = models.TextField(
+        blank=True,
+        null=True)
+    valid_gt_log = models.TextField(
+        blank=True,
+        null=True)
+    gt_type = models.CharField(
+        choices=GT_TYPE,
+        default=GT_TYPE.total,
+        max_length=20,
+        help_text='Type of ground truth for this Trial.\n'
+                  'Total: all events are explained; '
+                  'Partial: events for some units are explained, there is additional background spiking not explained '
+                  'by the ground truth; '
+                  'None: no ground truth is provided;')
     benchmark = models.ForeignKey(
         'spike.Benchmark',
         help_text='The Benchmark associated with this Trial.')
@@ -171,32 +184,43 @@ class Trial(TimeStampedModel):
     @property
     def rd_file(self):
         try:
-            return self.datafile_set.filter(file_type=10)[0]
+            return self.datafile_set.filter(file_type='rd_file')[0]
         except IndexError:
             return None
 
     @property
+    def is_valid_rd_file(self):
+        if not self.rd_file:
+            return False
+        if not self.valid_rd_log:
+            return False
+        if self.valid_rd_log.find('ERROR') >= 0:
+            return False
+        return True
+
+    @property
     def gt_file(self):
         try:
-            return self.datafile_set.filter(file_type=20)[0]
+            return self.datafile_set.filter(file_type='gt_file')[0]
         except IndexError:
             return None
 
-    def is_validated(self):
-        """This indicates whether a trial had even been successfully
-        validated, means, at present it still has a successfully validated
-        pair of groundtruth - raw data files within different versions of
-        related file pairs. That also means this trial is available for
-        users to download and perform evaluation against it."""
-
-        try:
-            rd_good = self.rd_file.task_state == 20
-            gt_good = None
-            if self.gt_file:
-                gt_good = self.gt_file.task_state == 20
-            return rd_good and (gt_good or True)
-        except:
+    @property
+    def is_valid_gt_file(self):
+        if not self.gt_file:
+            return True
+        if not self.valid_gt_log:
             return False
+        if self.valid_gt_log.find('ERROR') >= 0:
+            return False
+        return True
+
+    @property
+    def is_valid(self):
+    #try:
+        return self.is_valid_rd_file and self.is_valid_gt_file
+        #except:
+        #    return False
 
 ##---MAIN
 

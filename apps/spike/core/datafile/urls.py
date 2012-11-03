@@ -4,7 +4,7 @@ from django.conf.urls.defaults import patterns, url
 
 ##---URLS
 
-urlpatterns = patterns('spike.datafile.views',
+urlpatterns = patterns('spike.core.datafile.views',
     url(r'^download/(?P<pk>\d+)/$',
         'download',
         name='df_download'),

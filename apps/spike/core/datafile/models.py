@@ -7,7 +7,7 @@ from django.contrib.contenttypes import generic
 
 from model_utils.models import TimeStampedModel
 
-__all__ = ['Datafile', 'FileManager']
+__all__ = ['Datafile', 'DatafileManager']
 
 ##---HELPERS
 
@@ -84,8 +84,6 @@ class Datafile(TimeStampedModel):
     ## save and delete
 
     def save(self, *args, **kwargs):
-        print args
-        print kwargs
         if self.pk is not None:
             orig = Datafile.objects.get(pk=self.pk)
             if orig.file != self.file:

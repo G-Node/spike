@@ -51,6 +51,11 @@
       <dd>
         {{ al.description|default:"no description" }}
       </dd>
+    </dl>
+    <dl class="dl-horizontal">
+      <dt>
+        <strong>Owner:</strong>
+      </dt>
       <dd>
         {% icn_profile al %}
         {% ifequal al.owner request.user %}(you){% endifequal %}

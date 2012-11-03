@@ -44,7 +44,7 @@ class BenchmarkForm(forms.ModelForm):
 class TrialForm(forms.ModelForm):
     class Meta:
         model = Trial
-        exclude = ('benchmark', 'created', 'modified')
+        exclude = ('benchmark', 'created', 'modified', 'valid_rd_log', 'valid_gt_log')
 
     ## fields
 
@@ -71,12 +71,9 @@ class TrialForm(forms.ModelForm):
             return
         if self.instance.id is None:
             bm = kwargs.pop('benchmark')
-            us = kwargs.pop('user')
             self.instance.benchmark = bm
             if 'rd_upload' not in self.changed_data:
-                raise forms.ValidationError
-        else:
-            us = self.instance.benchmark.owner
+                return
         tr = super(TrialForm, self).save(*args, **kwargs)
 
         # handling rd_file upload
@@ -86,10 +83,10 @@ class TrialForm(forms.ModelForm):
             rd_file = Datafile(
                 name=self.cleaned_data['rd_upload'].name,
                 file=self.cleaned_data['rd_upload'],
-                file_type=10,
+                file_type='rd_file',
                 content_object=tr)
             rd_file.save()
-            rd_file.task_id = validate_rawdata_file(rd_file.id)
+            validate_rawdata_file(rd_file.id)
 
         # handling gt_file upload
         if 'gt_upload' in self.changed_data:
@@ -98,10 +95,10 @@ class TrialForm(forms.ModelForm):
             gt_file = Datafile(
                 name=self.cleaned_data['gt_upload'].name,
                 file=self.cleaned_data['gt_upload'],
-                file_type=20,
+                file_type='gt_file',
                 content_object=tr)
             gt_file.save()
-            gt_file.task_id = validate_groundtruth_file(gt_file.id)
+            validate_groundtruth_file(gt_file.id)
 
         # return
         return tr
@@ -113,7 +110,7 @@ class BatchEditForm(forms.ModelForm):
         exclude = ('owner', 'status', 'status_changed', 'benchmark')
 
 
-class EvaluationSubmitForm(forms.ModelForm):
+class BatchSubmitForm(forms.ModelForm):
     class Meta:
         model = Batch
         exclude = ('owner', 'status', 'status_changed', 'benchmark')
@@ -126,9 +123,9 @@ class EvaluationSubmitForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.benchmark = kwargs.pop('benchmark')
-        super(EvaluationSubmitForm, self).__init__(*args, **kwargs)
+        super(BatchSubmitForm, self).__init__(*args, **kwargs)
         self.sub_ids = []
-        for tr in self.benchmark.trial_set.all():
+        for tr in self.benchmark.trial_set_valid():
             self.sub_ids.append('sub-tr-%s' % tr.id)
             self.fields['sub-tr-%s' % tr.id] = forms.FileField(
                 label='Upload Trial: %s' % tr.name,
@@ -142,7 +139,7 @@ class EvaluationSubmitForm(forms.ModelForm):
         self.instance.owner = user
         self.instance.benchmark = self.benchmark
         self.instance.status = Batch.STATUS.private
-        bt = super(EvaluationSubmitForm, self).save(*args, **kwargs)
+        bt = super(BatchSubmitForm, self).save(*args, **kwargs)
 
         # evaluations
         for sub_id in self.sub_ids:
@@ -247,7 +244,7 @@ class AlgorithmForm(forms.ModelForm):
         return super(AlgorithmForm, self).save(*args, **kwargs)
 
 
-class SupplementaryForm(forms.ModelForm):
+class AppendixForm(forms.ModelForm):
     class Meta:
         model = Datafile
         fields = ('name', 'file')
@@ -255,7 +252,7 @@ class SupplementaryForm(forms.ModelForm):
     ## constructor
 
     def __init__(self, *args, **kwargs):
-        super(SupplementaryForm, self).__init__(*args, **kwargs)
+        super(AppendixForm, self).__init__(*args, **kwargs)
 
     def save(self, *args, **kwargs):
         # init and checks
@@ -266,7 +263,7 @@ class SupplementaryForm(forms.ModelForm):
         self.instance.file_type = 40
         self.instance.added_by = user
         self.instance.content_object = obj
-        return super(SupplementaryForm, self).save(*args, **kwargs)
+        return super(AppendixForm, self).save(*args, **kwargs)
 
 if __name__ == '__main__':
     pass

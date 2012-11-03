@@ -3,7 +3,7 @@
 from django.contrib import admin
 from .models import Datafile
 
-##---DATAFILE
+##---ADMIN
 
 class DatafileAdmin(admin.ModelAdmin):
     pass

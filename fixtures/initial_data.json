@@ -40,5 +40,15 @@
       "is_superuser":false,
       "is_staff":false
     }
+  },
+  {
+    "pk":1,
+    "model":"spike.algorithm",
+    "fields":{
+      "name":"Undefined",
+      "version":"n/a",
+      "owner":2,
+      "description":"No algorithm was defined!"
+    }
   }
 ]

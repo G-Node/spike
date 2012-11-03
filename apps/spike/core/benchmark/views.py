@@ -12,7 +12,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from numpy import nan, nansum, nanmax
 
-from ..forms import BenchmarkForm, TrialForm, EvaluationSubmitForm, SupplementaryForm
+from ..forms import BenchmarkForm, TrialForm, BatchSubmitForm, AppendixForm
 from ..tasks import validate_groundtruth_file, validate_rawdata_file
 from ...util import render_to, PLOT_COLORS
 
@@ -75,11 +75,11 @@ def detail(request, pk):
     except Exception, ex:
         messages.error(request, 'You are not allowed to view or modify this Benchmark: %s' % ex)
         return redirect('bm_list')
-    bm_form = tr_form = ev_form = sf_form = None
+    bm_form = tr_form = bt_form = ap_form = None
     tr_list = bm.trial_set.order_by('parameter')
     if not bm.is_editable(request.user):
-        tr_list = filter(lambda x: x.is_validated(), tr_list)
-    sf_list = bm.datafile_set.all()
+        tr_list = filter(lambda x: x.is_valid, tr_list)
+    appendix = bm.datafile_set.all()
 
     # post request
     if request.method == 'POST':
@@ -94,58 +94,51 @@ def detail(request, pk):
                     messages.error(request, 'Benchmark edit failed!')
             elif 'tr_create' in request.POST:
                 tr_form = TrialForm(request.POST, request.FILES)
+                tr = None
                 if tr_form.is_valid():
-                    tr = tr_form.save(user=request.user, benchmark=bm)
+                    tr = tr_form.save(benchmark=bm)
+                if tr is not None:
                     messages.success(
                         request, 'Trial creation successful: "%s"' % tr)
                     return redirect(tr)
                 else:
                     messages.error(request, 'Trial creation failed')
-            elif 'sf_create' in request.POST:
-                sf_form = SupplementaryForm(request.POST, request.FILES)
-                if sf_form.is_valid():
-                    sf = sf_form.save(user=request.user, obj=bm)
-                    messages.success(request, 'Supplementary creation successful: "%s"' % sf)
+            elif 'ap_create' in request.POST:
+                ap_form = AppendixForm(request.POST, request.FILES)
+                if ap_form.is_valid():
+                    ap = ap_form.save(user=request.user, obj=bm)
+                    messages.success(request, 'Appendix creation successful: "%s"' % ap)
                 else:
-                    messages.error(request, 'Supplementary creation failed!')
-            elif 'sf_delete' in request.POST:
-                try:
-                    sid = int(request.POST['sf_id'])
-                    assert bm.is_editable(request.user), 'insufficient permissions'
-                    sf = bm.datafile_set.get(pk=sid)
-                    sf.delete()
-                    messages.success(request, 'Benchmark Supplementary "%s" deleted' % sf)
-                except Exception, ex:
-                    messages.error(request, 'Benchmark Supplementary not deleted: %s' % ex)
+                    messages.error(request, 'Appendix creation failed!')
 
         # user submission
         if 'ev_submit' in request.POST:
-            ev_form = EvaluationSubmitForm(
+            bt_form = BatchSubmitForm(
                 request.POST, request.FILES, benchmark=bm)
-            if ev_form.is_valid():
-                ev = ev_form.save(user=request.user)
+            if bt_form.is_valid():
+                ev = bt_form.save(user=request.user)
                 messages.success(request, 'Evaluation submission successful')
                 return redirect(ev)
             else:
                 messages.error(request, 'Evaluation submission failed')
 
     # build forms
+    if not ap_form:
+        ap_form = AppendixForm()
     if not bm_form:
         bm_form = BenchmarkForm(instance=bm)
     if not tr_form:
         tr_form = TrialForm(pv_label=bm.parameter)
-    if not sf_form:
-        sf_form = SupplementaryForm()
-    if not ev_form:
-        ev_form = EvaluationSubmitForm(benchmark=bm)
+    if not bt_form:
+        bt_form = BatchSubmitForm(benchmark=bm)
 
     # response
     return {'bm': bm,
-            'sf_list': sf_list,
+            'appendix': appendix,
             'tr_list': tr_list,
+            'ap_form': ap_form,
             'bm_form': bm_form,
-            'ev_form': ev_form,
-            'sf_form': sf_form,
+            'bt_form': bt_form,
             'tr_form': tr_form}
 
 
@@ -371,21 +364,6 @@ def trial(request, pk):
                     messages.info(request, 'No changes detected')
             else:
                 messages.error(request, 'Trial edit failed')
-        elif 'tr_delete' in request.POST:
-            bm = tr.benchmark
-            tr.delete()
-            messages.success(request, 'Trial "%s" deleted' % tr)
-            return redirect(bm)
-        elif 'tr_validate' in request.POST:
-            try:
-                if tr.rd_file:
-                    validate_rawdata_file(tr.rd_file.id)
-                if tr.gt_file:
-                    validate_groundtruth_file(tr.gt_file.id)
-            except:
-                messages.error(request, 'Trial validation failed')
-            else:
-                messages.info(request, 'Trial validation scheduled')
 
     # create forms
     if not tr_form:
@@ -398,7 +376,7 @@ def trial(request, pk):
 
 @login_required
 def trial_delete(request, pk):
-    """delete benchmark"""
+    """delete trial"""
 
     try:
         tr = Trial.objects.get(pk=pk)
@@ -409,6 +387,25 @@ def trial_delete(request, pk):
         messages.error(request, 'Trial not deleted: %s' % ex)
     finally:
         return redirect(tr.benchmark)
+
+
+@login_required
+def trial_validate(request, pk):
+    """validate trial"""
+
+    try:
+        tr = Trial.objects.get(pk=pk)
+        assert tr.benchmark.is_editable(request.user), 'insufficient permissions'
+        if tr.rd_file:
+            validate_rawdata_file(tr.rd_file.id)
+        if tr.gt_file:
+            validate_groundtruth_file(tr.gt_file.id)
+    except:
+        messages.error(request, 'Trial validation failed')
+    else:
+        messages.info(request, 'Trial validation scheduled')
+    finally:
+        return redirect(tr)
 
 ##---MAIN
 
