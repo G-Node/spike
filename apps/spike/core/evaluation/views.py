@@ -9,7 +9,6 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template.defaultfilters import slugify
 from ..forms import BatchEditForm
-from ..tasks import start_evaluation
 from ...util import render_to
 
 ##---MODEL-REFS
@@ -81,21 +80,7 @@ def detail(request, pk):
 
     # post request
     if request.method == 'POST':
-        if 'bt_toggle' in request.POST:
-            if bt.is_editable(request.user):
-                bt.toggle()
-                messages.success(request, 'Batch toggle successful')
-            else:
-                messages.error(request, 'Batch toggle failed')
-        elif 'ev_restart' in request.POST:
-            evid = request.POST.get('ev_restart_id', None)
-            if evid:
-                Evaluation.objects.get(id=evid).clear_results()
-                start_evaluation(evid)
-                messages.info(request, 'Evalulation is been restarted')
-            else:
-                messages.error(request, 'Evalulation restart failed')
-        elif 'bt_edit' in request.POST:
+        if 'bt_edit' in request.POST:
             bt_form = BatchEditForm(request.POST, instance=bt)
             if bt_form.is_valid():
                 bt_form.save()
@@ -227,6 +212,19 @@ def zip(request, pk):
             del buf
         except:
             pass
+
+
+@login_required
+def run(request, pk, dest=None):
+    try:
+        ev = Evaluation.objects.get(pk=pk)
+        assert ev.batch.is_editable(request.user), 'insufficient permissions'
+        ev.run()
+        messages.info(request, 'Evaluation run has been scheduled: %s' % ev)
+    except Exception, ex:
+        messages.error(request, 'Evaluation run not scheduled: %s' % ex)
+    finally:
+        return redirect(dest or ev.batch)
 
 ##---MAIN
 

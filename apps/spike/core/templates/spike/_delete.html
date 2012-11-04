@@ -1,6 +1,8 @@
 {% load spike_tags %}
 
-<a href="#delete-modal-{{ obj|ident_slug }}" role="button" class="btn btn-mini" data-toggle="modal">delete</a>
+<a href="#delete-modal-{{ obj|ident_slug }}" role="button" class="btn btn-mini" data-toggle="modal">
+  {{ btn_name|default:"delete" }}
+</a>
 <div id="delete-modal-{{ obj|ident_slug }}" class="modal hide fade"
      tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header">

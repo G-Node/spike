@@ -9,16 +9,15 @@ from spikeval.core import eval_core
 from spikeval.datafiles import read_gdf_sts, read_hdf5_arc
 from spikeval.logging import Logger
 from spikeval.module import MODULES
-import scipy as sp
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 ##---MODEL-REFS
 
-Datafile = models.get_model('spike', 'datafile')
 Evaluation = models.get_model('spike', 'evaluation')
 EvaluationResult = models.get_model('spike', 'evaluationresult')
 EvaluationResultImg = models.get_model('spike', 'evaluationresultimg')
+Metric = models.get_model('spike', 'metric')
 
 ##---CONSTANTS
 
@@ -31,14 +30,16 @@ def toint(val):
     res = int(float(val))
     return res
 
+TEST_METRIC = Metric.objects.get(pk=1)
+
 ##---TASKS
 
 @task
-def _start_evaluation(evid, **kwargs):
+def start_evaluation(pk, **kwargs):
     """core function to produce one evaluation result based on one set of
     data, ground truth spike train and estimated spike train.
-    :type evid: int
-    :param evid: pk for Evaluation entity
+    :type pk: int
+    :param pk: pk for Evaluation entity
     :type log: file_like
     :param log: logging stream
         Default=sys.stdout
@@ -48,18 +49,18 @@ def _start_evaluation(evid, **kwargs):
     """
 
     # init and checks
-    state = 30
+    valid = False
     try:
-        ev = Evaluation.objects.get(id=evid)
+        ev = Evaluation.objects.get(id=pk)
         logger = Logger.get_logger(StringIO())
     except:
-        return state
+        return valid
 
     try:
         rd_file = ev.trial.rd_file
         gt_file = ev.trial.gt_file
         ev_file = ev.ev_file
-        logger.log('processing evaluation ID: %s' % evid)
+        logger.log('processing evaluation ID: %s' % pk)
 
         # read in evaluation file
         logger.log('reading input files')
@@ -95,7 +96,8 @@ def _start_evaluation(evid, **kwargs):
         if modules[0].status == 'finalised':
             for i, t in enumerate(['wf_single', 'wf_all', 'clus12', 'clus34',
                                    'clus_proj', 'spiketrain']):
-                rval = EvaluationResultImg()
+                print EvaluationResultImg is None
+                rval = EvaluationResultImg(metric=TEST_METRIC)
                 rval.evaluation = ev
                 # Create a file-like object to write image data created by PIL
                 img_io = StringIO()
@@ -118,7 +120,7 @@ def _start_evaluation(evid, **kwargs):
         # we will send a MRTable instance here
         if modules[1].status == 'finalised':
             for row in modules[1].result[0].value:
-                rval = EvaluationResult()
+                rval = EvaluationResult(metric=TEST_METRIC)
                 rval.evaluation = ev
                 rval.gt_unit = row[0]
                 rval.found_unit = row[1]
@@ -139,25 +141,16 @@ def _start_evaluation(evid, **kwargs):
         else:
             logger.log('problem with %s: not finalised!' %
                        modules[1].__class__.__name__)
-        state = 20 # Success
+        valid = 20 # Success
     except Exception, ex:
-        logger.log('Exception: %s' % str(ex))
-        state = 30 # Failure
+        logger.log('ERROR: %s' % str(ex))
+        valid = 30 # Failure
     finally:
-        ev.task_state = state
+        ev.task_state = valid
         ev.task_log = logger.get_content()
         ev.save()
         print ev.task_log
-        return state
-
-
-def start_evaluation(evid):
-    rval = 0
-    if USE_CELERY:
-        rval = _start_evaluation.delay(evid)
-    else:
-        _start_evaluation(evid)
-    return str(rval)
+        return valid
 
 ##---MAIN
 

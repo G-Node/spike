@@ -3,10 +3,10 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes import generic
-
 from taggit.managers import TaggableManager
 from model_utils.models import StatusModel, TimeStampedModel
 from model_utils import Choices
+from ..signals import sig_validate_st, sig_validate_rd
 
 __all__ = ['Benchmark', 'Trial']
 
@@ -54,7 +54,7 @@ class Benchmark(StatusModel, TimeStampedModel):
         help_text='Access mode for the ground truth files if provided.')
     owner = models.ForeignKey(
         'auth.User',
-        blank=True,
+        default=2,
         help_text='The user associated with this Benchmark.')
 
     ## managers
@@ -201,7 +201,14 @@ class Trial(TimeStampedModel):
     @property
     def gt_file(self):
         try:
-            return self.datafile_set.filter(file_type='gt_file')[0]
+            return self.datafile_set.filter(file_type='st_file')[0]
+        except IndexError:
+            return None
+
+    @property
+    def st_file(self):
+        try:
+            return self.datafile_set.filter(file_type='st_file')[0]
         except IndexError:
             return None
 
@@ -221,6 +228,11 @@ class Trial(TimeStampedModel):
         return self.is_valid_rd_file and self.is_valid_gt_file
         #except:
         #    return False
+
+    def validate(self):
+        sig_validate_rd.send_robust(sender=self)
+        if self.gt_file:
+            sig_validate_st.send_robust(sender=self)
 
 ##---MAIN
 

@@ -1,10 +1,28 @@
 ##---IMPORTS
 
+from django.conf import  settings
+from django.dispatch import receiver
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from .core import Result
+from ..tasks import metric_ffranke
+from ...core.signals import sig_evaluation_run
 
 __all__ = ['EvaluationResult', 'EvaluationResultImg']
+
+##---CONSTANTS
+
+USE_CELERY = settings.USE_CELERY
+
+##---SIGNAL-HANDLER
+
+@receiver(sig_evaluation_run)
+def start_evaluation(sender, **kwargs):
+    print 'starting evaluation', sender.id
+    if USE_CELERY:
+        metric_ffranke.delay(sender.id)
+    else:
+        metric_ffranke(sender.id)
 
 ##---MODELS
 

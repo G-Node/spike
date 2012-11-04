@@ -69,7 +69,6 @@ class Result(TimeStampedModel):
     ## managers
 
     objects = InheritanceManager()
-    datafile_set = generic.GenericRelation('spike.Datafile')
 
 ##---MAIN
 

@@ -1,11 +1,10 @@
 ##---IMPORTS
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes import generic
-
 from model_utils.fields import Choices
 from model_utils.models import StatusModel, TimeStampedModel
+from ..signals import sig_evaluation_run, sig_validate_st
 
 __all__ = ['Batch', 'Evaluation']
 
@@ -30,8 +29,13 @@ class Batch(StatusModel, TimeStampedModel):
         'auth.User',
         blank=True,
         help_text='The user associated with this Batch.')
-    algorithm = models.ForeignKey('spike.Algorithm', default=1)
-    benchmark = models.ForeignKey('spike.Benchmark')
+    algorithm = models.ForeignKey(
+        'spike.Algorithm',
+        default=1,
+        help_text='The Algorithm associated with this Batch.')
+    benchmark = models.ForeignKey(
+        'spike.Benchmark',
+        help_text='The Benchmark associated with this Batch.')
 
     ## managers
 
@@ -49,7 +53,11 @@ class Batch(StatusModel, TimeStampedModel):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'ev_detail', (), {'btid': self.pk}
+        return 'ev_detail', (self.pk,), {}
+
+    @models.permalink
+    def get_delete_url(self):
+        return 'ev_delete', (self.pk,), {}
 
     ## interface
 
@@ -70,7 +78,7 @@ class Batch(StatusModel, TimeStampedModel):
         return self.is_public() or self.is_editable(user)
 
 
-class Evaluation(TimeStampedModel):
+class Evaluation(StatusModel, TimeStampedModel):
     """single trial evaluation object
 
     When user wants to evaluate the results of his spike sorting work, he
@@ -79,7 +87,7 @@ class Evaluation(TimeStampedModel):
     file and the evaluation results.
     """
 
-    TASK_STATE_CHOICES = Choices('running', 'success', 'failure')
+    STATUS = Choices('initial', 'running', 'success', 'failure')
 
     ## meta
 
@@ -88,14 +96,14 @@ class Evaluation(TimeStampedModel):
 
     ## fields
 
-    task_state = models.CharField(
-        choices=TASK_STATE_CHOICES,
-        default=TASK_STATE_CHOICES.running,
-        max_length=20)
     task_id = models.CharField(
         max_length=255,
-        blank=True)
+        blank=True,
+        null=True)
     task_log = models.TextField(
+        blank=True,
+        null=True)
+    valid_ev_log = models.TextField(
         blank=True,
         null=True)
     batch = models.ForeignKey('spike.Batch')
@@ -113,23 +121,32 @@ class Evaluation(TimeStampedModel):
     def __unicode__(self):
         return unicode(self.__str__())
 
-    ## django special methods
-
-    #@models.permalink
-    #def get_absolute_url(self):
-    #    return 'ev_detail', (), {'evid': self.pk}
-
     ## interface
 
     @property
     def ev_file(self):
         try:
-            return self.datafile_set.filter(file_type=30)[0]
+            return self.datafile_set.filter(file_type='st_file')[0]
         except IndexError:
             return None
 
+    @property
+    def st_file(self):
+        try:
+            return self.datafile_set.filter(file_type='st_file')[0]
+        except IndexError:
+            return None
+
+    @property
+    def is_valid_ev_file(self):
+        if not self.valid_gt_log:
+            return False
+        if self.valid_gt_log.find('ERROR') >= 0:
+            return False
+        return True
+
     def processed(self):
-        return self.task_state == 20
+        return self.status == self.STATUS.success
 
     def is_accessible(self, user):
         return self.batch.is_accessible(user)
@@ -139,6 +156,12 @@ class Evaluation(TimeStampedModel):
             self.result_set.all().delete()
         except:
             pass
+
+    def run(self):
+        sig_evaluation_run.send_robust(sender=self)
+
+    def validate(self):
+        sig_validate_st.send_robust(sender=self)
 
 ##---MAIN
 

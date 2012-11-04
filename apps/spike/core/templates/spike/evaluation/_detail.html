@@ -1,5 +1,5 @@
 {% load i18n %}
-{% load spike_eval_tags %}
+{% load spike_tags %}
 
 <div class="accordion-group">
   <div class="accordion-heading clearfix">
@@ -15,17 +15,28 @@
     </div>
     <dl class="dl-horizontal pull-left">
       <dt>
-        <strong>Trial:</strong>
+        <strong>Ident:</strong>
       </dt>
       <dd>
         {{ ev.trial }} ({{ ev }})
       </dd>
       <dt>
-        <strong>Task State:</strong>
+        <strong>Status:</strong>
       </dt>
       <dd>
-        <strong style="{% state_color ev.task_state %}">
-          {{ ev.get_task_state_display }}</strong>
+        {{ ev.status }}
+      </dd>
+      <dt>
+        <strong>Created:</strong>
+      </dt>
+      <dd>
+        {% icn_time ev.created %}
+      </dd>
+      <dt>
+        <strong>Modified:</strong>
+      </dt>
+      <dd>
+        {% icn_time ev.modified %}
       </dd>
       <dt></dt>
       <dd><a class="accordion-toogle" href="#eval-{{ ev.id }}"
@@ -38,15 +49,10 @@
     {% if user.is_authenticated %}
       {% if bt|is_editable:user %}
         <form class="form well" method="POST">
-          {% csrf_token %}
           <span class="label">Actions:</span>
-          <input type="hidden" name="ev_restart_id" value="{{ ev.id }}">
-          <input type="submit" class="btn btn-mini" name="ev_restart"
-                 value="{% trans "Restart Evaluation" %}"/>
-          <a href="#" class="btn btn-mini"
-             onclick="$('#show_log-{{ ev.id }}').toggle();return false;">
-            {% trans "Show Log" %}
-          </a>
+          <a href="{% url ev_run ev.id %}#" class="btn btn-mini">{% trans "Run Evaluation" %}</a>
+          <a href="#" class="btn btn-mini" onclick="$('#show_log-{{ ev.id }}').toggle();return false;">
+            {% trans "Show Log" %}</a>
         </form>
         <pre id="show_log-{{ ev.id }}" class="well"
              {% if ev.processed %}style="display:none"{% endif %}

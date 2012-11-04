@@ -22,9 +22,9 @@
     <div class="controls">
       <i class="icon-filter"></i>
       {% anchor algorithm__name Algorithm %}
-      {% anchor owner__username Author %}
+      {% anchor owner__username Owner %}
       {% anchor benchmark__name Benchmark %}
-      {% anchor created Date %}
+      {% anchor modified Date %}
     </div>
   </div>
 </form>
@@ -36,7 +36,6 @@
     <th>{% trans "Date" %}</th>
     <th>{% trans "Benchmark" %}</th>
     <th>{% trans "Description" %}</th>
-    <th>{% trans "Status" %}</th>
   </tr>
   </thead>
   <tbody>
@@ -59,16 +58,13 @@
         {% icn_profile bt %}
       </td>
       <td>
-        {% icn_time bt %}
+        {% icn_time bt.modified %}
       </td>
       <td>
         <a href="{{ bt.benchmark.get_absolute_url }}">{{ bt.benchmark.name }}</a>
       </td>
       <td>
         {{ bt.description|truncatewords:15|escape }}
-      </td>
-      <td>
-        <strong style="{% state_color bt.status %}">{{ bt.status }}</strong>
       </td>
     </tr>
   {% endfor %}

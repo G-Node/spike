@@ -8,9 +8,6 @@
 
 {% block content %}
 
-  <p>You may select a Benchmark and download files to start your own
-    Evaluations <a href="{% url bm_list %}">here</a>.</p>
-
   {% if bt_list_self %}
     <section>
       <h2>Batch List ({% icn_profile user %})
@@ -27,11 +24,12 @@
       <small>public Batches are listed here</small>
     </h2>
     {% if not bt_list %}
-      <p>There are no public Evaluations Batches available.</p>
+      <p>There are no public Batches available.</p>
     {% else %}
       {% with bt_list as blist %}
         {% include "spike/evaluation/_list.html" %}
       {% endwith %}
     {% endif %}
   </section>
+
 {% endblock %}

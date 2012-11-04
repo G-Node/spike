@@ -4,7 +4,7 @@
 {% load bootstrap_tags %}
 {% load spike_tags %}
 
-{% block head_title %}{T:{{ tr.id }}}&nbsp;{{ tr.name }}{% endblock %}
+{% block head_title %}{TR:{{ tr.id }}}{% endblock %}
 
 {% block content %}
 
@@ -88,16 +88,10 @@
       <small>per file logs of the validation run</small>
     </h2>
 
-    <strong>{% trans "Rawdata File" %}</strong>
-    {% if tr.valid_rd_log %}
-      ({{ tr.rd_file|default:"no rd_file!" }})
-      <pre>{{ tr.valid_rd_log|default:"no log!" }}</pre>
-    {% endif %}
-    <strong>{% trans "Groundtruth File" %}</strong>
-    {% if tr.valid_gt_log %}
-      ({{ tr.gt_file|default:"no gt_file!" }})
-      <pre>{{ tr.valid_gt_log|default:"no log!" }}</pre>
-    {% endif %}
+    <strong>{% trans "Rawdata File" %}({{ tr.rd_file|default:"no rd_file!" }})</strong>
+    <pre>{{ tr.valid_rd_log|default:"no log!" }}</pre>
+    <strong>{% trans "Groundtruth File" %}({{ tr.gt_file|default:"no gt_file!" }})</strong>
+    <pre>{{ tr.valid_gt_log|default:"no log!" }}</pre>
   </section>
 {% endblock %}
 

@@ -39,7 +39,7 @@ def list(request):
 
     # response
     return {'al_list': al_list,
-            'al_form': al_form or AlgorithmForm(),
+            'al_form': al_form or AlgorithmForm(initial={'owner': request.user}),
             'search_terms': search_terms}
 
 

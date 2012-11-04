@@ -8,6 +8,7 @@ from django.views.generic import TemplateView
 urlpatterns = patterns('',
     url(r'', include('spike.core.urls')),
     url(r'^metric/', include('spike.metric.urls')),
+    url(r'^dev/', include('spike.dev.urls')),
 )
 
 ##---MAIN

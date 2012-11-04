@@ -1,22 +1,24 @@
 {% extends "spike/evaluation/base.html" %}
 
 {% load i18n %}
-{% load spike_eval_tags %}
 {% load bootstrap_tags %}
+{% load spike_tags %}
 
-{% block head_title %}{BT:{{ bt.id }}}&nbsp;{{ bt.benchmark }}{% endblock %}
+
+{% block head_title %}{BT:{{ bt.id }}}{% endblock %}
 
 {% block content %}
+
   <section class="well">
     <form class="actions" method="POST">
       {% csrf_token %}
       <span class="label">Actions:</span>
       {% if bt|is_editable:user %}
         <a id="edit-batch-toggle" class="btn btn-mini">{% trans "Edit Batch" %}</a>
-        <a href="{% url ev_toggle bt.id %}" class="btn btn-mini">{% trans "Toggle Status" %}</a>
-        {% with bt as obj %}
-          {% include "spike/evaluation/_delete.html" %}
+        {% with obj=bt btn_name="Delete Batch" %}
+          {% include "spike/_delete.html" %}
         {% endwith %}
+        <a href="{% url ev_toggle bt.id %}" class="btn btn-mini">{% trans "Toggle Status" %}</a>
       {% endif %}
       <a href="{% url ev_zip bt.id %}" class="btn btn-mini">{% trans "Export Results" %}</a>
     </form>
@@ -39,17 +41,19 @@
     </h1>
     <dl class="dl-horizontal">
       <dt>
+        <strong>Description:</strong>
+      </dt>
+      <dd>
+        {{ bt.description|default:"no description" }}
+      </dd>
+    </dl>
+    <dl class="dl-horizontal">
+      <dt>
         <strong>Benchmark:</strong>
       </dt>
       <dd>
         <a href="{% url bm_detail bt.benchmark.id %}">
           {{ bt.benchmark.name }}</a>
-      </dd>
-      <dt>
-        <strong>Description:</strong>
-      </dt>
-      <dd>
-        {{ bt.description|default:"no description" }}
       </dd>
       <dt>
         <strong>Algorithm:</strong>

@@ -13,7 +13,6 @@ from matplotlib.figure import Figure
 from numpy import nan, nansum, nanmax
 
 from ..forms import BenchmarkForm, TrialForm, BatchSubmitForm, AppendixForm
-from ..tasks import validate_groundtruth_file, validate_rawdata_file
 from ...util import render_to, PLOT_COLORS
 
 ##---MODEL-REFS
@@ -390,22 +389,16 @@ def trial_delete(request, pk):
 
 
 @login_required
-def trial_validate(request, pk):
-    """validate trial"""
-
+def trial_validate(request, pk, dest=None):
     try:
         tr = Trial.objects.get(pk=pk)
         assert tr.benchmark.is_editable(request.user), 'insufficient permissions'
-        if tr.rd_file:
-            validate_rawdata_file(tr.rd_file.id)
-        if tr.gt_file:
-            validate_groundtruth_file(tr.gt_file.id)
-    except:
-        messages.error(request, 'Trial validation failed')
-    else:
-        messages.info(request, 'Trial validation scheduled')
+        tr.validate()
+        messages.info(request, 'Validation run has been scheduled: %s' % tr)
+    except Exception, ex:
+        messages.error(request, 'Validation run not scheduled: %s' % ex)
     finally:
-        return redirect(tr)
+        return redirect(dest or tr)
 
 ##---MAIN
 

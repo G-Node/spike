@@ -4,7 +4,7 @@
 {% load bootstrap_tags %}
 {% load spike_tags %}
 
-{% block head_title %}{B:{{ bm.id }}}&nbsp;{{ bm.name }}{% endblock %}
+{% block head_title %}{BM:{{ bm.id }}}{% endblock %}
 
 {% block content %}
 
@@ -12,12 +12,12 @@
     <section class="well">
       <form class="actions">
         <span class="label">Actions:</span>
-        <a id="edit-benchmark-toggle" class="btn btn-mini">
-          {% trans "Edit Benchmark" %}</a>
-        <a id="create-trial-toggle" class="btn btn-mini">
-          {% trans "Create Trial" %}</a>
-        <a id="create-appendix-toggle" class="btn btn-mini">
-          {% trans "Create Appendix" %}</a>
+        <a id="edit-benchmark-toggle" class="btn btn-mini">{% trans "Edit Benchmark" %}</a>
+        {% with obj=bm btn_name="Delete Benchmark" %}
+          {% include "spike/_delete.html" %}
+        {% endwith %}
+        <a id="create-trial-toggle" class="btn btn-mini">{% trans "Create Trial" %}</a>
+        <a id="create-appendix-toggle" class="btn btn-mini">{% trans "Create Appendix" %}</a>
       </form>
 
       <form id="edit-benchmark" class="form form-horizontal" method="POST" style="display:none">
