@@ -8,7 +8,7 @@ from django.contrib.contenttypes import generic
 from model_utils.models import TimeStampedModel
 from .managers import DataManager
 
-__all__ = ['Data']
+__all__ = ['Data', 'DataAnchorMixin']
 
 ##---MODELS
 
@@ -88,6 +88,19 @@ class Data(TimeStampedModel):
     @property
     def size(self):
         return self.file.size
+
+
+class DataAnchorMixin(models.Model):
+    """mixin providing the data_set relation"""
+
+    ## meta
+
+    class Meta:
+        abstract = True
+
+    ## relations
+
+    data_set = generic.GenericRelation('spike.data')
 
 ##---MAIN
 

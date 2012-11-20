@@ -1,1 +1,1 @@
-__author__ = 'pmeier'
+print 'LULU'
