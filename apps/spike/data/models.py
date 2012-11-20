@@ -6,19 +6,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 from model_utils.models import TimeStampedModel
+from .managers import DataManager
 
-__all__ = ['Data', 'DataManager']
-
-##---HELPERS
-
-# TODO: get_file_path
-
-##---MANAGER
-
-class DataManager(models.Manager):
-    def for_obj(self, obj):
-        object_type = ContentType.objects.get_for_model(obj)
-        return self.filter(content_type__pk=object_type.id, object_id=obj.id)
+__all__ = ['Data']
 
 ##---MODELS
 
