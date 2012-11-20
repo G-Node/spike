@@ -23,7 +23,7 @@ def list(request):
 
     # post request
     if request.method == 'POST':
-        al_form = AlgorithmForm(request.POST)
+        al_form = AlgorithmForm(data=request.POST)
         if al_form.is_valid():
             al = al_form.save(user=request.user)
             messages.success(request, 'Algorithm creation successful')
@@ -59,27 +59,25 @@ def detail(request, pk):
     # post request
     if request.method == 'POST':
         if 'al_edit' in request.POST:
-            al_form = AlgorithmForm(request.POST, instance=al)
+            al_form = AlgorithmForm(data=request.POST, instance=al)
             if al_form.is_valid():
                 al = al_form.save()
                 messages.success(request, 'Algorithm edit successful')
             else:
                 messages.error(request, 'Algorithm edit failed')
-        elif 'sf_create' in request.POST:
-            ap_form = AppendixForm(request.POST, request.FILES)
+        elif 'ap_create' in request.POST:
+            ap_form = AppendixForm(data=request.POST, files=request.FILES, obj=al)
             if ap_form.is_valid():
-                sf = ap_form.save(user=request.user, obj=al)
-                messages.success(
-                    request,
-                    'Supplementary creation successful: "%s"' % sf)
+                ap = ap_form.save()
+                messages.success(request, 'Appendix creation successful: "%s"' % ap)
             else:
-                messages.error(request, 'Supplementary creation failed')
+                messages.error(request, 'Appendix creation failed')
 
     # response
     return {'al': al,
-            'appendix': al.datafile_set.all(),
+            'appendix': al.datafile_set.filter(kind='appendix'),
             'al_form': al_form or AlgorithmForm(instance=al),
-            'ap_form': ap_form or AppendixForm()}
+            'ap_form': ap_form or AppendixForm(obj=al)}
 
 
 @login_required

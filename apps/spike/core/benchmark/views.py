@@ -28,7 +28,7 @@ def list(request):
 
     # post request
     if request.method == 'POST':
-        bm_form = BenchmarkForm(request.POST)
+        bm_form = BenchmarkForm(data=request.POST)
         if bm_form.is_valid():
             bm = bm_form.save(user=request.user)
             messages.success(request, 'Benchmark creation successful: "%s"' % bm.name)
@@ -78,13 +78,12 @@ def detail(request, pk):
     tr_list = bm.trial_set.order_by('parameter')
     if not bm.is_editable(request.user):
         tr_list = filter(lambda x: x.is_valid, tr_list)
-    appendix = bm.datafile_set.all()
 
     # post request
     if request.method == 'POST':
         if bm.is_editable(request.user):
             if 'bm_edit' in request.POST:
-                bm_form = BenchmarkForm(request.POST, instance=bm)
+                bm_form = BenchmarkForm(data=request.POST, instance=bm)
                 if bm_form.is_valid():
                     bm = bm_form.save()
                     messages.success(request, 'Benchmark edit successful!')
@@ -92,7 +91,7 @@ def detail(request, pk):
                 else:
                     messages.error(request, 'Benchmark edit failed!')
             elif 'tr_create' in request.POST:
-                tr_form = TrialForm(request.POST, request.FILES)
+                tr_form = TrialForm(data=request.POST, files=request.FILES)
                 tr = None
                 if tr_form.is_valid():
                     tr = tr_form.save(benchmark=bm)
@@ -103,17 +102,16 @@ def detail(request, pk):
                 else:
                     messages.error(request, 'Trial creation failed')
             elif 'ap_create' in request.POST:
-                ap_form = AppendixForm(request.POST, request.FILES)
+                ap_form = AppendixForm(data=request.POST, files=request.FILES, obj=bm)
                 if ap_form.is_valid():
-                    ap = ap_form.save(user=request.user, obj=bm)
+                    ap = ap_form.save()
                     messages.success(request, 'Appendix creation successful: "%s"' % ap)
                 else:
                     messages.error(request, 'Appendix creation failed!')
 
         # user submission
         if 'ev_submit' in request.POST:
-            bt_form = BatchSubmitForm(
-                request.POST, request.FILES, benchmark=bm)
+            bt_form = BatchSubmitForm(data=request.POST, files=request.FILES, benchmark=bm)
             if bt_form.is_valid():
                 ev = bt_form.save(user=request.user)
                 messages.success(request, 'Evaluation submission successful')
@@ -123,7 +121,7 @@ def detail(request, pk):
 
     # build forms
     if not ap_form:
-        ap_form = AppendixForm()
+        ap_form = AppendixForm(obj=bm)
     if not bm_form:
         bm_form = BenchmarkForm(instance=bm)
     if not tr_form:
@@ -133,7 +131,7 @@ def detail(request, pk):
 
     # response
     return {'bm': bm,
-            'appendix': appendix,
+            'appendix': bm.data_set.filter(kind='appendix'),
             'tr_list': tr_list,
             'ap_form': ap_form,
             'bm_form': bm_form,
@@ -355,7 +353,7 @@ def trial(request, pk):
     # post request
     if request.method == 'POST':
         if 'tr_edit' in request.POST:
-            tr_form = TrialForm(request.POST, request.FILES, instance=tr)
+            tr_form = TrialForm(data=request.POST, files=request.FILES, instance=tr)
             if tr_form.is_valid():
                 if tr_form.save():
                     messages.success(request, 'Trial edit successful')

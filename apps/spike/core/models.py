@@ -14,7 +14,6 @@ USE_CELERY = getattr(settings, 'USE_CELERY', False)
 
 @receiver(sig_validate_rd)
 def validate_rawdata_file(sender, **kwargs):
-    print 'signal caught:', sender
     if USE_CELERY:
         val_rd.delay(sender.rd_file.id)
     else:
@@ -23,7 +22,6 @@ def validate_rawdata_file(sender, **kwargs):
 
 @receiver(sig_validate_st)
 def validate_spiketrain_file(sender, **kwargs):
-    print 'signal caught:', sender
     if USE_CELERY:
         val_st.delay(sender.st_file.id)
     else:

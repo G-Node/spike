@@ -39,7 +39,7 @@ class Batch(StatusModel, TimeStampedModel):
 
     ## managers
 
-    datafile_set = generic.GenericRelation('spike.Datafile')
+    datafile_set = generic.GenericRelation('spike.Data')
 
     ## special methods
 
@@ -111,7 +111,7 @@ class Evaluation(StatusModel, TimeStampedModel):
 
     ## managers
 
-    datafile_set = generic.GenericRelation('spike.Datafile')
+    datafile_set = generic.GenericRelation('spike.Data')
 
     ## special methods
 

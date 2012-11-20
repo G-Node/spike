@@ -42,7 +42,7 @@ class Algorithm(TimeStampedModel):
     ## managers
 
     kind = TaggableManager('Kind')
-    datafile_set = generic.GenericRelation('spike.Datafile')
+    datafile_set = generic.GenericRelation('spike.Data')
 
     ## special methods
 

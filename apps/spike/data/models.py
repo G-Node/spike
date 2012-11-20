@@ -7,7 +7,7 @@ from django.contrib.contenttypes import generic
 
 from model_utils.models import TimeStampedModel
 
-__all__ = ['Datafile', 'DatafileManager']
+__all__ = ['Data', 'DataManager']
 
 ##---HELPERS
 
@@ -15,20 +15,19 @@ __all__ = ['Datafile', 'DatafileManager']
 
 ##---MANAGER
 
-
-class DatafileManager(models.Manager):
+class DataManager(models.Manager):
     def for_obj(self, obj):
         object_type = ContentType.objects.get_for_model(obj)
         return self.filter(content_type__pk=object_type.id, object_id=obj.id)
 
 ##---MODELS
 
-class Datafile(TimeStampedModel):
-    """physical file entity
+class Data(TimeStampedModel):
+    """entity: physical file
 
-    `Datafile`s can be any file that needs serving. Initially no assumptions are made about kind of file.
-    `Datafile`s will be stored with a hashed filename to prevent double savings. They also provide a
-    filetype field to specify the type of file for applications that need to distinguish. `Datafile`s
+    `Data`s can be any physical file that needs serving. Initially no assumptions are made about the kind
+    or format of the file. `Data`s will be stored on diskwith a hashed filename to prevent double savings. They also provide a
+    filetype field to specify the type of file for applications that need to distinguish. `Data`s
     can be linked to any entity using a `GenericForeignKey`.
     """
 
@@ -50,18 +49,18 @@ class Datafile(TimeStampedModel):
         blank=True,
         null=True)
     file = models.FileField(
-        upload_to='datafile/')
-    file_type = models.TextField(
+        upload_to='data/')
+    kind = models.TextField(
         blank=True,
         null=True)
-
+    # generic foreign key
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
     ## managers
 
-    objects = DatafileManager()
+    objects = DataManager()
 
     ## special methods
 
@@ -75,24 +74,24 @@ class Datafile(TimeStampedModel):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'df_download', (self.pk,), {}
+        return 'dt_download', (self.pk,), {}
 
     @models.permalink
     def get_delete_url(self):
-        return 'df_delete', (self.pk,), {}
+        return 'dt_delete', (self.pk,), {}
 
     ## save and delete
 
     def save(self, *args, **kwargs):
         if self.pk is not None:
-            orig = Datafile.objects.get(pk=self.pk)
+            orig = Data.objects.get(pk=self.pk)
             if orig.file != self.file:
                 orig.file.delete(save=False)
-        super(Datafile, self).save(*args, **kwargs)
+        super(Data, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         self.file.delete(save=False)
-        super(Datafile, self).delete(*args, **kwargs)
+        super(Data, self).delete(*args, **kwargs)
 
     ## interface
 

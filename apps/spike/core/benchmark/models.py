@@ -63,7 +63,7 @@ class Benchmark(StatusModel, TimeStampedModel):
         _('Benchmark Tags'),
         help_text='A comma-separated list of tags classifying the Benchmark.',
         blank=True)
-    datafile_set = generic.GenericRelation('spike.Datafile')
+    data_set = generic.GenericRelation('spike.Data')
 
     ## special methods
 
@@ -159,7 +159,7 @@ class Trial(TimeStampedModel):
 
     ## managers
 
-    datafile_set = generic.GenericRelation('spike.Datafile')
+    data_set = generic.GenericRelation('spike.Data')
 
     ## special methods
 
@@ -184,7 +184,7 @@ class Trial(TimeStampedModel):
     @property
     def rd_file(self):
         try:
-            return self.datafile_set.filter(file_type='rd_file')[0]
+            return self.data_set.filter(kind='rd_file')[0]
         except IndexError:
             return None
 
@@ -199,22 +199,15 @@ class Trial(TimeStampedModel):
         return True
 
     @property
-    def gt_file(self):
-        try:
-            return self.datafile_set.filter(file_type='st_file')[0]
-        except IndexError:
-            return None
-
-    @property
     def st_file(self):
         try:
-            return self.datafile_set.filter(file_type='st_file')[0]
+            return self.data_set.filter(kind='st_file')[0]
         except IndexError:
             return None
 
     @property
-    def is_valid_gt_file(self):
-        if not self.gt_file:
+    def is_valid_st_file(self):
+        if not self.st_file:
             return True
         if not self.valid_gt_log:
             return False
@@ -225,7 +218,7 @@ class Trial(TimeStampedModel):
     @property
     def is_valid(self):
     #try:
-        return self.is_valid_rd_file and self.is_valid_gt_file
+        return self.is_valid_rd_file and self.is_valid_st_file
         #except:
         #    return False
 

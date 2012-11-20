@@ -12,7 +12,7 @@ from forms import CaptchaSignupForm
 
 ##---INIT
 
-#admin.autodiscover()
+admin.autodiscover()
 handler500 = 'pinax.views.server_error'
 
 ##---URLS

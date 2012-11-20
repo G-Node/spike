@@ -4,13 +4,13 @@ from django.conf.urls.defaults import patterns, url
 
 ##---URLS
 
-urlpatterns = patterns('spike.core.logging.views',
+urlpatterns = patterns('spike.data.views',
     url(r'^download/(?P<pk>\d+)/$',
         'download',
-        name='lg_download'),
+        name='dt_download'),
     url(r'^delete/(?P<pk>\d+)/$',
         'delete',
-        name='lg_delete'),
+        name='dt_delete'),
 )
 
 ##---MAIN

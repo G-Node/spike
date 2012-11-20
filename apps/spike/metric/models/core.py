@@ -40,7 +40,7 @@ class Metric(TimeStampedModel):
 
     ## managers
 
-    datafile_set = generic.GenericRelation('spike.Datafile')
+    datafile_set = generic.GenericRelation('spike.Data')
 
     ## special methods
 

@@ -5,7 +5,7 @@ from django.http import HttpResponse, Http404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from .models import Datafile
+from .models import Data
 
 ##---VIEWS
 
@@ -13,9 +13,9 @@ def download(request, pk):
     """serve a datafile for download"""
 
     try:
-        df = Datafile.objects.get(pk=pk)
+        df = Data.objects.get(pk=pk)
     except Exception, ex:
-        messages.error(request, 'Error downloading Datafile: %s' % ex)
+        messages.error(request, 'Error downloading Data: %s' % ex)
         return Http404()
     mimetype, encoding = mimetypes.guess_type(df.file.path)
     mimetype = mimetype or 'application/octet-stream'
@@ -33,13 +33,13 @@ def delete(request, pk):
     """delete datafile"""
 
     try:
-        df = Datafile.objects.get(pk=pk)
+        df = Data.objects.get(pk=pk)
         co = df.content_object
         assert co.is_editable(request.user), 'insufficient permissions'
-        Datafile.objects.get(pk=pk).delete()
-        messages.success(request, 'Datafile "%s" deleted' % df)
+        Data.objects.get(pk=pk).delete()
+        messages.success(request, 'Data "%s" deleted' % df)
     except Exception, ex:
-        messages.error(request, 'Datafile not deleted: %s' % ex)
+        messages.error(request, 'Data not deleted: %s' % ex)
     finally:
         return redirect(co)
 

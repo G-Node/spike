@@ -9,7 +9,7 @@ import scipy as sp
 
 ##---MODEL-REFS
 
-Datafile = models.get_model('spike', 'datafile')
+Data = models.get_model('spike', 'data')
 
 ##---HELPERS
 
@@ -50,17 +50,17 @@ def validate_rawdata_file(pk):
     """checks consistency of rawdata file
 
     :type pk: int
-    :param pk: pk for Datafile entity
+    :param pk: pk for Data entity
 
-    :returns: bool -- True if Datafile validates, False else. Processing
-    log, including errors, will be written to the Datafile entity.
+    :returns: bool -- True if Data validates, False else. Processing
+    log, including errors, will be written to the Data entity.
     """
 
     # init and checks
     valid = False
     logger = Logger.get_logger(StringIO())
     try:
-        df = Datafile.objects.get(id=pk)
+        df = Data.objects.get(id=pk)
         assert df.file_type == 'rd_file'
         tr = df.content_object
     except:
@@ -93,17 +93,17 @@ def validate_spiketrain_file(dfid):
     """checks consistency of ground truth file
 
     :type dfid: int
-    :param dfid: pk for Datafile entity
+    :param dfid: pk for Data entity
 
-    :returns: bool -- True if Datafile validates, False else. Processing
-    log, including errors, will be written to the Datafile entity.
+    :returns: bool -- True if Data validates, False else. Processing
+    log, including errors, will be written to the Data entity.
     """
 
     # init and checks
     valid = False
     logger = Logger.get_logger(StringIO())
     try:
-        df = Datafile.objects.get(id=dfid)
+        df = Data.objects.get(id=dfid)
         assert df.file_type == 'st_file'
         tr = df.content_object
     except:

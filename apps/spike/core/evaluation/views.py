@@ -16,19 +16,6 @@ from ...util import render_to
 Batch = models.get_model('spike', 'batch')
 Evaluation = models.get_model('spike', 'evaluation')
 
-##---HELPERS
-
-def sort_er(a, b):
-    try:
-        return cmp(int(a), int(b))
-    except:
-        try:
-            int(a)
-        except:
-            return 1
-        else:
-            return -1
-
 ##---VIEWS
 
 @render_to('spike/evaluation/list.html')
@@ -37,7 +24,6 @@ def list(request, pk=None):
 
     # evaluation batch list
     bt_list = Batch.objects.filter(status=Batch.STATUS.public)
-    #print [bt.status for bt in bt_list]
     bt_list_self = None
     if request.user.is_authenticated():
         if request.user.is_superuser:
@@ -81,7 +67,7 @@ def detail(request, pk):
     # post request
     if request.method == 'POST':
         if 'bt_edit' in request.POST:
-            bt_form = BatchEditForm(request.POST, instance=bt)
+            bt_form = BatchEditForm(data=request.POST, instance=bt)
             if bt_form.is_valid():
                 bt_form.save()
                 messages.success(request, 'Batch edit successfull')

@@ -1,14 +1,14 @@
 ##---IMPORTS
 
 from django.contrib import admin
-from .models import Datafile
+from .models import Data
 
 ##---ADMIN
 
-class DatafileAdmin(admin.ModelAdmin):
+class DataAdmin(admin.ModelAdmin):
     pass
 
-admin.site.register(Datafile, DatafileAdmin)
+admin.site.register(Data, DataAdmin)
 
 ##---MAIN
 

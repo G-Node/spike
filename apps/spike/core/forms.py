@@ -8,7 +8,7 @@ from django.db import models
 
 Benchmark = models.get_model('spike', 'benchmark')
 Trial = models.get_model('spike', 'trial')
-Datafile = models.get_model('spike', 'datafile')
+Data = models.get_model('spike', 'data')
 Batch = models.get_model('spike', 'batch')
 Evaluation = models.get_model('spike', 'evaluation')
 Algorithm = models.get_model('spike', 'algorithm')
@@ -47,7 +47,7 @@ class TrialForm(forms.ModelForm):
     ## fields
 
     rd_upload = forms.FileField(label='Rawdata File', required=False)
-    gt_upload = forms.FileField(label='Groundtruth File', required=False)
+    st_upload = forms.FileField(label='Spiketrain File', required=False)
 
     ## constructor
 
@@ -58,8 +58,8 @@ class TrialForm(forms.ModelForm):
             self.fields.pop('benchmark')
         if self.instance.rd_file:
             self.initial['rd_upload'] = self.instance.rd_file.file
-        if self.instance.gt_file:
-            self.initial['gt_upload'] = self.instance.gt_file.file
+        if self.instance.st_file:
+            self.initial['st_upload'] = self.instance.st_file.file
         if pv_label is not None:
             self.fields['parameter'].label = pv_label
 
@@ -79,23 +79,23 @@ class TrialForm(forms.ModelForm):
         if 'rd_upload' in self.changed_data:
             if tr.rd_file:
                 tr.rd_file.delete()
-            rd_file = Datafile(
+            rd_file = Data(
                 name=self.cleaned_data['rd_upload'].name,
                 file=self.cleaned_data['rd_upload'],
-                file_type='rd_file',
+                kind='rd_file',
                 content_object=tr)
             rd_file.save()
 
-        # handling gt_file upload
+        # handling st_file upload
         if 'gt_upload' in self.changed_data:
-            if tr.gt_file:
-                tr.gt_file.delete()
-            gt_file = Datafile(
+            if tr.st_file:
+                tr.st_file.delete()
+            st_file = Data(
                 name=self.cleaned_data['gt_upload'].name,
                 file=self.cleaned_data['gt_upload'],
-                file_type='st_file',
+                kind='st_file',
                 content_object=tr)
-            gt_file.save()
+            st_file.save()
 
         # validate
         tr.validate()
@@ -153,10 +153,10 @@ class BatchSubmitForm(forms.ModelForm):
             ev.save()
 
             # datafile
-            ev_file = Datafile(
+            ev_file = Data(
                 name=self.cleaned_data[sub_id].name,
                 file=self.cleaned_data[sub_id],
-                file_type='st_file',
+                kind='st_file',
                 content_object=ev)
             ev_file.save()
             ev.validate()
@@ -184,23 +184,18 @@ class AlgorithmForm(forms.ModelForm):
 
 class AppendixForm(forms.ModelForm):
     class Meta:
-        model = Datafile
+        model = Data
         fields = ('name', 'file')
 
     ## constructor
 
     def __init__(self, *args, **kwargs):
+        self.obj = kwargs.pop('obj', None)
         super(AppendixForm, self).__init__(*args, **kwargs)
 
     def save(self, *args, **kwargs):
-        # init and checks
-        obj = kwargs.pop('obj')
-        user = kwargs.pop('user', obj.owner)
-
-        # build instance
-        self.instance.file_type = 40
-        self.instance.added_by = user
-        self.instance.content_object = obj
+        self.instance.kind = 'appendix'
+        self.instance.content_object = self.obj
         return super(AppendixForm, self).save(*args, **kwargs)
 
 if __name__ == '__main__':

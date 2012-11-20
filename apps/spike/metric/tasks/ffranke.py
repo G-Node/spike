@@ -30,8 +30,6 @@ def toint(val):
     res = int(float(val))
     return res
 
-TEST_METRIC = Metric.objects.get(pk=1)
-
 ##---TASKS
 
 @task
@@ -90,7 +88,7 @@ def metric_ffranke(pk, **kwargs):
         logger.log('starting to save evaluation results')
         if this_mod.status == 'finalised':
             for row in this_mod.result[0].value:
-                rval = EvaluationResult(metric=TEST_METRIC)
+                rval = EvaluationResult(metric=Metric.objects.get(pk=1))
                 rval.evaluation = ev
                 rval.gt_unit = row[0]
                 rval.found_unit = row[1]

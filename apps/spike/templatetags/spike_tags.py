@@ -16,11 +16,19 @@ EvaluationResultsImg = models.get_model('spike', 'evaluationresultimg')
 
 @register.filter
 def ident_slug(obj):
+    """returns ident slug for use in templates
+
+    :param obj: django model instance
+    :type obj:
+    :return: slugified ident str
+    """
+
     return slugify('%s-%s' % (obj, obj.pk))
 
 
 @register.filter
 def cls_name(obj):
+
     return obj.__class__.__name__
 
 
@@ -28,6 +36,8 @@ def cls_name(obj):
 def is_editable(obj, user):
     if user.is_superuser:
         return True
+    if hasattr(obj, 'is_editable'):
+        return obj.is_editable(user)
     if hasattr(obj, 'owner'):
         return obj.owner == user
     else:

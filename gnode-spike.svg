@@ -70,7 +70,7 @@
 <g id="node6" class="node"><title>spike_core_datafile_models_Datafile</title>
 <polygon fill="palegoldenrod" stroke="palegoldenrod" points="600,-88 600,-224 730,-224 730,-88 600,-88"/>
 <polygon fill="#698b22" stroke="#698b22" points="600,-196 600,-224 730,-224 730,-196 600,-196"/>
-<text text-anchor="start" x="649.5" y="-213.633" font-family="Helvetica Bold" font-size="8.00" fill="white">Datafile</text>
+<text text-anchor="start" x="649.5" y="-213.633" font-family="Helvetica Bold" font-size="8.00" fill="white">Data</text>
 <text text-anchor="start" x="623.5" y="-204.033" font-family="Helvetica Bold" font-size="8.00" fill="white">&lt;</text>
 <text text-anchor="start" x="628.5" y="-204.033" font-family="Helvetica Italic" font-size="8.00" fill="white">TimeStampedModel</text>
 <text text-anchor="start" x="701.5" y="-204.033" font-family="Helvetica Bold" font-size="8.00" fill="white">&gt;</text>
