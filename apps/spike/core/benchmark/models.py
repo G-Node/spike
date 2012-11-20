@@ -6,7 +6,7 @@ from django.contrib.contenttypes import generic
 from taggit.managers import TaggableManager
 from model_utils.models import StatusModel, TimeStampedModel
 from model_utils import Choices
-from ..signals import sig_validate_st, sig_validate_rd
+from ..signals import spike_validate_st, spike_validate_rd
 
 __all__ = ['Benchmark', 'Trial']
 
@@ -223,9 +223,9 @@ class Trial(TimeStampedModel):
         #    return False
 
     def validate(self):
-        sig_validate_rd.send_robust(sender=self)
+        spike_validate_rd.send_robust(sender=self)
         if self.gt_file:
-            sig_validate_st.send_robust(sender=self)
+            spike_validate_st.send_robust(sender=self)
 
 ##---MAIN
 

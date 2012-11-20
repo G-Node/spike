@@ -11,13 +11,6 @@ import scipy as sp
 
 Data = models.get_model('spike', 'data')
 
-##---HELPERS
-
-def toint(val):
-    #if type(val) == type(""):
-    res = int(float(val))
-    return res
-
 ##---TASKS
 
 #+Interface 1: The user uploads a file pair. The frontend calls a
@@ -47,7 +40,7 @@ def toint(val):
 
 @task
 def validate_rawdata_file(pk):
-    """checks consistency of rawdata file
+    """validates a rawdata file - that is an archive holding data to be analysed
 
     :type pk: int
     :param pk: pk for Data entity
@@ -89,11 +82,11 @@ def validate_rawdata_file(pk):
 
 
 @task
-def validate_spiketrain_file(dfid):
-    """checks consistency of ground truth file
+def validate_spiketrain_file(pk):
+    """validate a spiketrain file - that is a text file in gdf format (space separated, 2col, [key,time])
 
-    :type dfid: int
-    :param dfid: pk for Data entity
+    :type pk: int
+    :param pk: pk for Data entity
 
     :returns: bool -- True if Data validates, False else. Processing
     log, including errors, will be written to the Data entity.
@@ -103,7 +96,7 @@ def validate_spiketrain_file(dfid):
     valid = False
     logger = Logger.get_logger(StringIO())
     try:
-        df = Data.objects.get(id=dfid)
+        df = Data.objects.get(id=pk)
         assert df.file_type == 'st_file'
         tr = df.content_object
     except:

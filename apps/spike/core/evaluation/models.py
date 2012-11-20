@@ -4,7 +4,7 @@ from django.db import models
 from django.contrib.contenttypes import generic
 from model_utils.fields import Choices
 from model_utils.models import StatusModel, TimeStampedModel
-from ..signals import sig_evaluation_run, sig_validate_st
+from ..signals import spike_evaluation_run, spike_validate_st
 
 __all__ = ['Batch', 'Evaluation']
 
@@ -158,10 +158,10 @@ class Evaluation(StatusModel, TimeStampedModel):
             pass
 
     def run(self):
-        sig_evaluation_run.send_robust(sender=self)
+        spike_evaluation_run.send_robust(sender=self)
 
     def validate(self):
-        sig_validate_st.send_robust(sender=self)
+        spike_validate_st.send_robust(sender=self)
 
 ##---MAIN
 

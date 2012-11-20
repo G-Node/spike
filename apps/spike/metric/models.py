@@ -37,6 +37,11 @@ class Metric(TimeStampedModel):
         'spike.Benchmark',
         blank=True,
         symmetrical=True)
+    parent = models.ForeignKey(
+        'self',
+        related_name='children',
+        blank=True,
+        null=True)
 
     ## managers
 

@@ -34,7 +34,7 @@ class Algorithm(TimeStampedModel):
         'auth.User',
         default=2)
     parent = models.ForeignKey(
-        'spike.Algorithm',
+        'self',
         related_name='children',
         blank=True,
         null=True)
