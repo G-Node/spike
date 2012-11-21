@@ -15,6 +15,7 @@ CELERY_TEXT = ''
 if getattr(settings, 'USE_CELERY'):
     CELERY_TEXT = """
 import djcelery
+djcelery.setup_loader()
 """
 
 AP_CFG_TEXT = """## apache config file for the spikesorting evaluation website

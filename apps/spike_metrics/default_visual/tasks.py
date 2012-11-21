@@ -10,6 +10,10 @@ from spikeval.datafiles import read_gdf_sts, read_hdf5_arc
 from spikeval.logging import Logger
 from spikeval.module import MODULES
 
+from ...spike.core.signals import spike_evaluation_run
+from django.conf import  settings
+from django.dispatch import receiver
+
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
 ##---MODEL-REFS
@@ -22,6 +26,12 @@ Metric = models.get_model('spike', 'metric')
 ##---CONSTANTS
 
 USE_CELERY = getattr(settings, 'USE_CELERY', False)
+
+##---RECEIVER
+
+@receiver(spike_evaluation_run)
+def start_evaluation(sender, **kwargs):
+    print 'starting evaluation [picz] (%s)' % sender.id
 
 ##---HELPERS
 

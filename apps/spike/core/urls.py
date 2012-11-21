@@ -4,7 +4,7 @@ from django.conf.urls.defaults import *
 
 ##---URLS
 
-urlpatterns = patterns('',
+urlpatterns = patterns('spike.core',
     url(r'^algorithm/', include('spike.core.algorithm.urls')),
     url(r'^benchmark/', include('spike.core.benchmark.urls')),
     url(r'^evaluation/', include('spike.core.evaluation.urls')),

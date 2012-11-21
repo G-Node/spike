@@ -1,33 +1,18 @@
 ##---IMPORTS
 
-from django.conf import  settings
-from django.dispatch import receiver
 from django.db import models
-from ..models import Result
-from ..tasks import metric_ffranke
-from ...core.signals import sig_evaluation_run
 
 __all__ = ['EvaluationResultImg']
 
-##---CONSTANTS
-
-USE_CELERY = settings.USE_CELERY
-
-##---SIGNAL-HANDLER
-
-@receiver(sig_evaluation_run)
-def start_evaluation(sender, **kwargs):
-    print 'starting evaluation [picz] (%s)' % sender.id
-
 ##---MODELS
 
-class EvaluationResultImg(Result):
-    """evaluation results picture entity"""
+class MR_default_visual(Result):
+    """default visual result image"""
 
     ## meta
 
     class Meta:
-        app_label = 'spike'
+        app_label = 'spike_metrics'
 
     ## order
 
