@@ -1,15 +1,56 @@
 ##---IMPORTS
 
+from django.conf import settings
 from django.db import models
+from django.dispatch import receiver
 from celery.task import task
 from StringIO import StringIO
 from spikeval.datafiles import read_gdf_sts, read_hdf5_arc
 from spikeval.logging import Logger
 import scipy as sp
+from .signals import spike_validate_st, spike_validate_rd
+from ..log.models import Log
+
+##---OVERRIDE-CELERY-FLAG
+
+# DEBUG --- set to True or False to override settings, or None for no effect
+CELERY_USE_PRIORITY = False
+# BUGED
 
 ##---MODEL-REFS
 
 Data = models.get_model('spike', 'data')
+
+##---RECEIVERS
+
+@receiver(spike_validate_rd)
+def validate_rawdata_file(sender, **kwargs):
+    # DEBUG
+    print 'validate rawdata file:', sender
+    # BUGED
+
+    use_celery = getattr(settings, 'USE_CELERY', False)
+    if CELERY_USE_PRIORITY is not None:
+        use_celery = CELERY_USE_PRIORITY
+    if use_celery:
+        task_validate_rawdata_file.delay(sender.rd_file.id)
+    else:
+        task_validate_rawdata_file(sender.rd_file.id)
+
+
+@receiver(spike_validate_st)
+def validate_spiketrain_file(sender, **kwargs):
+    # DEBUG
+    print 'validate spiketrain file:', sender
+    # BUGED
+
+    use_celery = getattr(settings, 'USE_CELERY', False)
+    if CELERY_USE_PRIORITY is not None:
+        use_celery = CELERY_USE_PRIORITY
+    if use_celery:
+        task_validate_spiketrain_file.delay(sender.gt_file.id)
+    else:
+        task_validate_spiketrain_file(sender.gt_file.id)
 
 ##---TASKS
 
@@ -39,7 +80,7 @@ Data = models.get_model('spike', 'data')
 #return
 
 @task
-def validate_rawdata_file(pk):
+def task_validate_rawdata_file(pk):
     """validates a rawdata file - that is an archive holding data to be analysed
 
     :type pk: int
@@ -54,14 +95,14 @@ def validate_rawdata_file(pk):
     logger = Logger.get_logger(StringIO())
     try:
         df = Data.objects.get(id=pk)
-        assert df.file_type == 'rd_file'
+        assert df.kind == 'rd_file'
         tr = df.content_object
     except:
         logger.log('ERROR')
         return valid
 
     try:
-        logger.log('looking at raw data file with id: %s' % pk)
+        logger.log('looking at raw data file with pk: %s' % pk)
         rd, sr = read_hdf5_arc(df.file.path)
         logger.log('found rd_file: %s' % df.name)
         len_rd_sec = rd.shape[0] / sr
@@ -73,7 +114,7 @@ def validate_rawdata_file(pk):
         logger.log('rd_file passed all checks')
         valid = True
     except Exception, ex:
-        logger.log('ERROR: trial check: %s' % str(ex))
+        logger.log('ERROR: rawdata file check: %s' % str(ex))
     finally:
         df.save()
         tr.valid_rd_log = logger.get_content()
@@ -82,7 +123,7 @@ def validate_rawdata_file(pk):
 
 
 @task
-def validate_spiketrain_file(pk):
+def task_validate_spiketrain_file(pk):
     """validate a spiketrain file - that is a text file in gdf format (space separated, 2col, [key,time])
 
     :type pk: int
@@ -97,28 +138,28 @@ def validate_spiketrain_file(pk):
     logger = Logger.get_logger(StringIO())
     try:
         df = Data.objects.get(id=pk)
-        assert df.file_type == 'st_file'
+        assert df.kind == 'st_file'
         tr = df.content_object
     except:
         logger.log('ERROR')
         return valid
 
     try:
-        logger.log('looking at ground truth file version with uid: %s' % df.id)
-        gt = read_gdf_sts(df.file.path)
-        logger.log('found gt_file: %s' % df.name)
-        for st in gt:
-            if not isinstance(gt[st], sp.ndarray):
+        logger.log('looking at spiketrain file version with pk: %s' % df.id)
+        sts = read_gdf_sts(df.file.path)
+        logger.log('found st_file: %s' % df.name)
+        for st in sts:
+            if not isinstance(sts[st], sp.ndarray):
                 raise TypeError('spike train %s not ndarray' % st)
-            if not gt[st].ndim == 1:
+            if not sts[st].ndim == 1:
                 raise ValueError('spike trains have to be ndim==1')
 
         # TODO: more checks?
 
-        logger.log('gt_file passed all checks')
+        logger.log('st_file passed all checks')
         valid = True
     except Exception, ex:
-        logger.log('ERROR: trial check: %s' % str(ex))
+        logger.log('ERROR: spiketrain file check: %s' % str(ex))
     finally:
         df.save()
         tr.valid_gt_log = logger.get_content()

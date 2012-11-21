@@ -13,7 +13,9 @@
       {% csrf_token %}
       <span class="label">Actions:</span>
       <a id="edit-trial-toggle" class="btn btn-mini">{% trans "Edit Trial" %}</a>
-      <a class="btn btn-mini" href="{% url bm_trial_delete tr.id %}">{% trans "Delete Trial" %}</a>
+      {% with obj=tr btn_name="Delete Trial" %}
+        {% include "spike/_delete.html" %}
+      {% endwith %}
       <a class="btn btn-mini" href="{% url bm_trial_validate tr.id %}">{% trans "Validate Trial" %}</a>
     </form>
     <form id="edit-trial" class="form form-horizontal well" method="POST"
@@ -67,6 +69,12 @@
       </dt>
       <dd>
         {% icn_time tr.modified %}
+      </dd>
+      <dt>
+        <strong>GT type:</strong>
+      </dt>
+      <dd>
+        {{ tr.gt_type }}
       </dd>
       <dt>
         <strong>Status:</strong>

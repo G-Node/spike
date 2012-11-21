@@ -372,7 +372,7 @@ def trial(request, pk):
 
 
 @login_required
-def trial_delete(request, pk):
+def trial_delete(request, pk, dest=None):
     """delete trial"""
 
     try:
@@ -383,7 +383,7 @@ def trial_delete(request, pk):
     except Exception, ex:
         messages.error(request, 'Trial not deleted: %s' % ex)
     finally:
-        return redirect(tr.benchmark)
+        return redirect(dest or tr.benchmark)
 
 
 @login_required

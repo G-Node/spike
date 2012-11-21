@@ -47,7 +47,7 @@ class TrialForm(forms.ModelForm):
     ## fields
 
     rd_upload = forms.FileField(label='Rawdata File', required=False)
-    st_upload = forms.FileField(label='Spiketrain File', required=False)
+    gt_upload = forms.FileField(label='Groundtruth File', required=False)
 
     ## constructor
 
@@ -58,8 +58,8 @@ class TrialForm(forms.ModelForm):
             self.fields.pop('benchmark')
         if self.instance.rd_file:
             self.initial['rd_upload'] = self.instance.rd_file.file
-        if self.instance.st_file:
-            self.initial['st_upload'] = self.instance.st_file.file
+        if self.instance.gt_file:
+            self.initial['gt_upload'] = self.instance.gt_file.file
         if pv_label is not None:
             self.fields['parameter'].label = pv_label
 
@@ -79,25 +79,32 @@ class TrialForm(forms.ModelForm):
         if 'rd_upload' in self.changed_data:
             if tr.rd_file:
                 tr.rd_file.delete()
-            rd_file = Data(
-                name=self.cleaned_data['rd_upload'].name,
-                file=self.cleaned_data['rd_upload'],
-                kind='rd_file',
-                content_object=tr)
-            rd_file.save()
+                tr.valid_rd_log = None
+                tr.save()
+            if self.cleaned_data['rd_upload']:
+                rd_file = Data(
+                    name=self.cleaned_data['rd_upload'].name,
+                    file=self.cleaned_data['rd_upload'],
+                    kind='rd_file',
+                    content_object=tr)
+                rd_file.save()
 
         # handling st_file upload
         if 'gt_upload' in self.changed_data:
-            if tr.st_file:
-                tr.st_file.delete()
-            st_file = Data(
-                name=self.cleaned_data['gt_upload'].name,
-                file=self.cleaned_data['gt_upload'],
-                kind='st_file',
-                content_object=tr)
-            st_file.save()
+            if tr.gt_file:
+                tr.gt_file.delete()
+                tr.valid_gt_log = None
+                tr.save()
+            if self.cleaned_data['gt_upload']:
+                st_file = Data(
+                    name=self.cleaned_data['gt_upload'].name,
+                    file=self.cleaned_data['gt_upload'],
+                    kind='st_file',
+                    content_object=tr)
+                st_file.save()
 
         # validate
+        #tr.save()
         tr.validate()
 
         # return

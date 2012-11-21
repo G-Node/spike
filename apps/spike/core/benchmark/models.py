@@ -199,15 +199,15 @@ class Trial(TimeStampedModel):
         return True
 
     @property
-    def st_file(self):
+    def gt_file(self):
         try:
             return self.data_set.filter(kind='st_file')[0]
         except IndexError:
             return None
 
     @property
-    def is_valid_st_file(self):
-        if not self.st_file:
+    def is_valid_gt_file(self):
+        if not self.gt_file:
             return True
         if not self.valid_gt_log:
             return False
@@ -217,10 +217,7 @@ class Trial(TimeStampedModel):
 
     @property
     def is_valid(self):
-    #try:
-        return self.is_valid_rd_file and self.is_valid_st_file
-        #except:
-        #    return False
+        return self.is_valid_rd_file and self.is_valid_gt_file
 
     def validate(self):
         spike_validate_rd.send_robust(sender=self)

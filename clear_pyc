@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo -n "clearing *.pyc files.. ";
+find . -type f -name '*.pyc' -exec rm {} \;
+echo "done!";

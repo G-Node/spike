@@ -1,3 +1,4 @@
 #!/bin/bash
 
 ./manage.py reset_db --router=default && ./manage.py syncdb && ./manage.py migrate
+./clear_pyc
