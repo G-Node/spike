@@ -24,16 +24,19 @@ class Module(TimeStampedModel):
     name = models.CharField(
         max_length=255,
         unique=True,
-        blank=False)
+        primary_key=True)
     version = models.CharField(
         max_length=32,
         default='0.1')
-    description = description = models.TextField(
-        blank=True)
     path = models.CharField(
         max_length=255,
         unique=True,
         blank=False)
+    enabled = models.BooleanField(
+        default=True)
+    description = models.TextField(
+        blank=True,
+        default='')
     benchmarks = models.ManyToManyField(
         'spike.Benchmark',
         blank=True,

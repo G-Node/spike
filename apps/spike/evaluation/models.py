@@ -131,13 +131,6 @@ class Evaluation(StatusModel, TimeStampedModel):
             return None
 
     @property
-    def st_file(self):
-        try:
-            return self.datafile_set.filter(kind='st_file')[0]
-        except IndexError:
-            return None
-
-    @property
     def is_valid_ev_file(self):
         if not self.valid_gt_log:
             return False

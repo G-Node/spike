@@ -51,6 +51,8 @@ def task_run_modules(ev, **kwargs):
 
     success = None
     try:
+        ev.status = ev.STATUS.running
+        ev.save()
         mod_list = ev.trial.benchmark.module_set.all()
         logger = Logger.get_logger(StringIO())
     except:
@@ -86,10 +88,11 @@ def task_run_modules(ev, **kwargs):
         except Exception, ex:
             logger.log('ERROR: %s' % str(ex))
             success = False
+            ev.status = ev.STATUS.failure
         else:
             success = True
+            ev.status = ev.STATUS.success
         finally:
-            ev.task_state = success
             ev.task_log = logger.get_content()
             ev.save()
             print ev.task_log

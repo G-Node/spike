@@ -10,7 +10,8 @@ register = template.Library()
 ##---CONSTANTS
 
 User = models.get_model('auth', 'user')
-EvaluationResultsImg = models.get_model('spike', 'evaluationresultimg')
+Benchmark = models.get_model('spike', 'benchmark')
+Module = models.get_model('spike', 'module')
 
 ##---FILTERS
 
@@ -28,7 +29,6 @@ def ident_slug(obj):
 
 @register.filter
 def cls_name(obj):
-
     return obj.__class__.__name__
 
 
@@ -95,6 +95,12 @@ def sorted_plots(res_qset):
         cmp=lambda a, b: cmp(a.order, b.order))
 
 ##---TAGS
+
+@register.simple_tag
+@register.inclusion_tag
+def module_list():
+    return Module.objects.filter(enabled=True)
+
 
 @register.simple_tag
 def state_color(value):
@@ -185,8 +191,8 @@ def result_plot_desc(obj):
     """returns a string describing the result plots"""
 
     desc_text = 'Could not produce description!'
-    if hasattr(obj, 'file_type'):
-        if obj.file_type in ['wf_single', 'wf_all', 'clus12', 'clus34', 'clus_proj', 'spiketrain']:
+    if hasattr(obj, 'kind'):
+        if obj.kind in ['wf_single', 'wf_all', 'clus12', 'clus34', 'clus_proj', 'spiketrain']:
             desc_text = {'wf_single': 'For every neuron in the sorting a piece of data '
                                       'is cut around every of its spikes. This is done for every channel (for '
                                       'multielectrode data) individually. The plot shows all cut spike '
@@ -217,5 +223,5 @@ def result_plot_desc(obj):
                                        'the uploaded spike train file correctly. Also, if the spike sorter '
                                        'splitted one cluster incorrectly into two (e.g. due to waveform change '
                                        'over time) this is clearly visible in this plot.',
-                        }[obj.file_type]
+                        }[obj.kind]
     return '<p>%s</p>' % desc_text
