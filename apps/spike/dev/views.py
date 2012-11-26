@@ -1,7 +1,5 @@
 ##---IMPORTS
 
-from ..apps.spike.core.signals import sig_evaluation_run
-
 ##---VIEWS
 
 ##---MAIN

@@ -223,6 +223,8 @@ LOGOUT_REDIRECT_URLNAME = "home"
 EMAIL_CONFIRMATION_DAYS = 2
 EMAIL_DEBUG = DEBUG
 
+# debug toolbar
+
 def dbt_visible(request):
     if not request.user.is_authenticated:
         return False

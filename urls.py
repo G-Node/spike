@@ -39,7 +39,7 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
-    url(r'^spike/', include('spike.urls')),
+    url(r'^', include('spike.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()
