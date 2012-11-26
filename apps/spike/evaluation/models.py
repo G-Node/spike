@@ -126,14 +126,14 @@ class Evaluation(StatusModel, TimeStampedModel):
     @property
     def ev_file(self):
         try:
-            return self.datafile_set.filter(file_type='st_file')[0]
+            return self.datafile_set.filter(kind='st_file')[0]
         except IndexError:
             return None
 
     @property
     def st_file(self):
         try:
-            return self.datafile_set.filter(file_type='st_file')[0]
+            return self.datafile_set.filter(kind='st_file')[0]
         except IndexError:
             return None
 
