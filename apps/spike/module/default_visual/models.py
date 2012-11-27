@@ -1,7 +1,9 @@
 ##---IMPORTS
 
 from django.db import models
+from django.db.models.signals import post_delete
 from model_utils.fields import Choices
+from ...models import file_cleanup
 
 __all__ = ['ResultDefaultVisual']
 
@@ -23,6 +25,7 @@ class ResultDefaultVisual(Result):
     ## order
 
     KIND = Choices(
+        (00, 'unknown'),
         (10, 'wf_single'),
         (20, 'wf_all'),
         (30, 'clus12'),
@@ -33,21 +36,10 @@ class ResultDefaultVisual(Result):
 
     ## fields
 
-    file = models.ImageField(upload_to='results/default_visual/%Y/%m/%d/')
-    kind = models.IntegerField(choices=KIND)
+    file = models.ImageField(upload_to='results/default_visual/')
+    kind = models.IntegerField(choices=KIND, default=00)
 
-    ## save and delete
-
-    def save(self, *args, **kwargs):
-        if self.pk is not None:
-            orig = ResultDefaultVisual.objects.get(pk=self.pk)
-            if orig.file != self.file:
-                orig.file.delete(save=False)
-        super(ResultDefaultVisual, self).save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        self.file.delete(save=False)
-        super(ResultDefaultVisual, self).delete(*args, **kwargs)
+post_delete.connect(file_cleanup, sender=ResultDefaultVisual, dispatch_uid=__file__)
 
 ##---MAIN
 

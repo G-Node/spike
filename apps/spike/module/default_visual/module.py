@@ -45,7 +45,7 @@ class Module(ModDefaultVisual):
             res.value.save(img_data, format='PNG')
 
             # file
-            filename = 'eval%d_%s.png' % (ev.id, KINDS.get(i + 1, 'unknown%d' % i))
+            filename = 'eval%d_%s.png' % (ev.id, KINDS.get(kind, 'unknown%d' % i))
             rval.file = InMemoryUploadedFile(
                 file=img_data,
                 field_name=None,

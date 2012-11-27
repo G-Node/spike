@@ -153,7 +153,11 @@ class Evaluation(StatusModel, TimeStampedModel):
 
     def clear_results(self):
         try:
-            self.result_set.all().delete()
+            for res in self.result_set.all():
+                res.delete()
+                # INFO:
+                # dont use bulk delete, as the overloaded delete wont be called!
+                # this will leave the files in place, we dont want that
         except:
             pass
 

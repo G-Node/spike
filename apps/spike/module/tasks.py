@@ -2,7 +2,6 @@
 
 from django.conf import settings
 from django.db import models
-from django.dispatch import receiver
 from django.utils import importlib
 from celery.task import task
 from datetime import datetime
@@ -25,7 +24,6 @@ if getattr(settings, 'CELERY_USE_PRIORITY', None) is not None:
 
 ##---RECEIVER
 
-@receiver(spike_evaluation_run, dispatch_uid=__file__)
 def run_modules_for_evaluation(sender, **kwargs):
     # DEBUG
     print 'starting evaluation [class: %s::%s]' % (sender.__class__.__name__, sender.id)
@@ -35,6 +33,9 @@ def run_modules_for_evaluation(sender, **kwargs):
         task_run_modules.delay(sender)
     else:
         task_run_modules(sender)
+
+spike_evaluation_run.connect(run_modules_for_evaluation, dispatch_uid=__file__)
+#spike_evaluation_run.connect(run_modules_for_evaluation, sender=Evaluation, dispatch_uid=__file__)
 
 ##---TASKS
 

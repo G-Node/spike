@@ -1,12 +1,12 @@
-{% load spike_tags %}
+{% load default_visual_tags %}
 
-{% if ev %}
+{% if res_list %}
   <div>
     <h3>Default Visual Plots</h3>
-    {% for img in res_list %}
+    {% for res in res_list|sort %}
       <div class="row-fluid" style="margin-bottom: 10px">
-        <div class="span5"><img src="{{ img.file.url }}"/></div>
-        <div class="span5">{% result_plot_desc img %}</div>
+        <div class="span5"><img src="{{ res.file.url }}"/></div>
+        <div class="span5">{% desc res %}</div>
       </div>
     {% endfor %}
   </div>

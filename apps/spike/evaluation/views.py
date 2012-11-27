@@ -205,6 +205,7 @@ def run(request, pk, dest=None):
     try:
         ev = Evaluation.objects.get(pk=pk)
         assert ev.batch.is_editable(request.user), 'insufficient permissions'
+        ev.clear_results()
         ev.run()
         messages.info(request, 'Evaluation run has been scheduled: %s' % ev)
     except Exception, ex:

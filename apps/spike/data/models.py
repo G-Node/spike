@@ -4,6 +4,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+from django.db.models.signals import post_delete
+from ..models import file_cleanup
 
 from model_utils.models import TimeStampedModel
 from .managers import DataManager
@@ -70,24 +72,13 @@ class Data(TimeStampedModel):
     def get_delete_url(self):
         return 'dt_delete', (self.pk,), {}
 
-    ## save and delete
-
-    def save(self, *args, **kwargs):
-        if self.pk is not None:
-            orig = Data.objects.get(pk=self.pk)
-            if orig.file != self.file:
-                orig.file.delete(save=False)
-        super(Data, self).save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        self.file.delete(save=False)
-        super(Data, self).delete(*args, **kwargs)
-
     ## interface
 
     @property
     def size(self):
         return self.file.size
+
+post_delete.connect(file_cleanup, sender=Data, dispatch_uid=__file__)
 
 
 class DataAnchorMixin(models.Model):
