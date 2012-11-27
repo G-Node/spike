@@ -1,0 +1,13 @@
+{% load spike_tags %}
+
+{% if ev %}
+  <div>
+    <h3>Default Visual Plots</h3>
+    {% for img in res_list %}
+      <div class="row-fluid" style="margin-bottom: 10px">
+        <div class="span5"><img src="{{ img.file.url }}"/></div>
+        <div class="span5">{% result_plot_desc img %}</div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

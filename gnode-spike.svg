@@ -29,8 +29,8 @@
 <text text-anchor="start" x="182" y="-859.133" font-family="Helvetica Bold" font-size="8.00">status_changed</text>
 <text text-anchor="start" x="251" y="-859.133" font-family="Helvetica Bold" font-size="8.00">MonitorField</text>
 </g>
-<!-- spike_core_algorithm_models_Algorithm -->
-<g id="node3" class="node"><title>spike_core_algorithm_models_Algorithm</title>
+<!-- spike_algorithm_models_Algorithm -->
+<g id="node3" class="node"><title>spike_algorithm_models_Algorithm</title>
 <polygon fill="palegoldenrod" stroke="palegoldenrod" points="915,-292 915,-392 1049,-392 1049,-292 915,-292"/>
 <polygon fill="#698b22" stroke="#698b22" points="915,-364 915,-392 1049,-392 1049,-364 915,-364"/>
 <text text-anchor="start" x="962" y="-381.633" font-family="Helvetica Bold" font-size="8.00" fill="white">Algorithm</text>
@@ -50,37 +50,13 @@
 <text text-anchor="start" x="917" y="-296.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">description</text>
 <text text-anchor="start" x="968" y="-296.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">TextField</text>
 </g>
-<!-- spike_core_algorithm_models_Algorithm&#45;&gt;spike_core_algorithm_models_Algorithm -->
-<g id="edge6" class="edge"><title>spike_core_algorithm_models_Algorithm&#45;&gt;spike_core_algorithm_models_Algorithm</title>
+<!-- spike_algorithm_models_Algorithm&#45;&gt;spike_algorithm_models_Algorithm -->
+<g id="edge6" class="edge"><title>spike_algorithm_models_Algorithm&#45;&gt;spike_algorithm_models_Algorithm</title>
 <path fill="none" stroke="black" d="M1057.2,-357.14C1067.8,-354.69 1075,-349.65 1075,-342 1075,-334.35 1067.8,-329.31 1057.2,-326.86"/>
 <text text-anchor="middle" x="1105" y="-340.8" font-family="Helvetica,sans-Serif" font-size="8.00">parent (children)</text>
 </g>
-<!-- taggit_models_TaggedItem -->
-<g id="node4" class="node"><title>taggit_models_TaggedItem</title>
-<polygon fill="palegoldenrod" stroke="palegoldenrod" points="828.5,-147.5 828.5,-164.5 885.5,-164.5 885.5,-147.5 828.5,-147.5"/>
-<polygon fill="#698b22" stroke="#698b22" points="829,-147 829,-164 886,-164 886,-147 829,-147"/>
-<text text-anchor="start" x="834" y="-153.633" font-family="Helvetica Bold" font-size="8.00" fill="white">TaggedItem</text>
-</g>
-<!-- spike_core_algorithm_models_Algorithm&#45;&gt;taggit_models_TaggedItem -->
-<g id="edge2" class="edge"><title>spike_core_algorithm_models_Algorithm&#45;&gt;taggit_models_TaggedItem</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M963.26,-278.37C958.73,-267.17 953.33,-255.93 947,-246 931.03,-220.94 907,-197.38 887.79,-180.65"/>
-<polygon fill="black" stroke="black" points="960.006,-279.661 966.86,-287.74 966.541,-277.15 960.006,-279.661"/>
-<polygon fill="black" stroke="black" points="890.039,-177.968 880.16,-174.14 885.496,-183.293 890.039,-177.968"/>
-<text text-anchor="middle" x="998" y="-250.8" font-family="Helvetica,sans-Serif" font-size="8.00">tagged_items (algorithm)</text>
-</g>
-<!-- django_contrib_auth_models_User -->
-<g id="node6" class="node"><title>django_contrib_auth_models_User</title>
-<polygon fill="palegoldenrod" stroke="palegoldenrod" points="1161.5,-147.5 1161.5,-164.5 1190.5,-164.5 1190.5,-147.5 1161.5,-147.5"/>
-<polygon fill="#698b22" stroke="#698b22" points="1162,-147 1162,-164 1191,-164 1191,-147 1162,-147"/>
-<text text-anchor="start" x="1167" y="-153.633" font-family="Helvetica Bold" font-size="8.00" fill="white">User</text>
-</g>
-<!-- spike_core_algorithm_models_Algorithm&#45;&gt;django_contrib_auth_models_User -->
-<g id="edge4" class="edge"><title>spike_core_algorithm_models_Algorithm&#45;&gt;django_contrib_auth_models_User</title>
-<path fill="none" stroke="black" d="M1057.4,-321.84C1091.7,-308.96 1129.9,-288.74 1154,-258 1173.1,-233.61 1176.5,-196.29 1176.7,-174.2"/>
-<text text-anchor="middle" x="1193" y="-250.8" font-family="Helvetica,sans-Serif" font-size="8.00">owner (algorithm)</text>
-</g>
 <!-- spike_data_models_Data -->
-<g id="node9" class="node"><title>spike_data_models_Data</title>
+<g id="node4" class="node"><title>spike_data_models_Data</title>
 <polygon fill="palegoldenrod" stroke="palegoldenrod" points="510,-88 510,-224 640,-224 640,-88 510,-88"/>
 <polygon fill="#698b22" stroke="#698b22" points="510,-196 510,-224 640,-224 640,-196 510,-196"/>
 <text text-anchor="start" x="565.5" y="-213.633" font-family="Helvetica Bold" font-size="8.00" fill="white">Data</text>
@@ -106,12 +82,36 @@
 <text text-anchor="start" x="512" y="-92.1333" font-family="Helvetica Bold" font-size="8.00">object_id</text>
 <text text-anchor="start" x="559" y="-92.1333" font-family="Helvetica Bold" font-size="8.00">PositiveIntegerField</text>
 </g>
-<!-- spike_core_algorithm_models_Algorithm&#45;&gt;spike_data_models_Data -->
-<g id="edge8" class="edge"><title>spike_core_algorithm_models_Algorithm&#45;&gt;spike_data_models_Data</title>
+<!-- spike_algorithm_models_Algorithm&#45;&gt;spike_data_models_Data -->
+<g id="edge2" class="edge"><title>spike_algorithm_models_Algorithm&#45;&gt;spike_data_models_Data</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M902.34,-282.19C899.21,-280.07 896.09,-278 893,-276 879.31,-267.12 875.01,-266.36 861,-258 852.42,-252.88 851.02,-250.29 842,-246 782.54,-217.7 711.78,-194.28 658.05,-178.43"/>
 <polygon fill="black" stroke="black" points="900.434,-285.127 910.66,-287.9 904.395,-279.356 900.434,-285.127"/>
 <polygon fill="black" stroke="black" points="658.801,-175.003 648.22,-175.55 656.833,-181.721 658.801,-175.003"/>
 <text text-anchor="middle" x="902" y="-250.8" font-family="Helvetica,sans-Serif" font-size="8.00">datafile_set (algorithm)</text>
+</g>
+<!-- django_contrib_auth_models_User -->
+<g id="node6" class="node"><title>django_contrib_auth_models_User</title>
+<polygon fill="palegoldenrod" stroke="palegoldenrod" points="1161.5,-147.5 1161.5,-164.5 1190.5,-164.5 1190.5,-147.5 1161.5,-147.5"/>
+<polygon fill="#698b22" stroke="#698b22" points="1162,-147 1162,-164 1191,-164 1191,-147 1162,-147"/>
+<text text-anchor="start" x="1167" y="-153.633" font-family="Helvetica Bold" font-size="8.00" fill="white">User</text>
+</g>
+<!-- spike_algorithm_models_Algorithm&#45;&gt;django_contrib_auth_models_User -->
+<g id="edge4" class="edge"><title>spike_algorithm_models_Algorithm&#45;&gt;django_contrib_auth_models_User</title>
+<path fill="none" stroke="black" d="M1057.4,-321.84C1091.7,-308.96 1129.9,-288.74 1154,-258 1173.1,-233.61 1176.5,-196.29 1176.7,-174.2"/>
+<text text-anchor="middle" x="1193" y="-250.8" font-family="Helvetica,sans-Serif" font-size="8.00">owner (algorithm)</text>
+</g>
+<!-- taggit_models_TaggedItem -->
+<g id="node9" class="node"><title>taggit_models_TaggedItem</title>
+<polygon fill="palegoldenrod" stroke="palegoldenrod" points="828.5,-147.5 828.5,-164.5 885.5,-164.5 885.5,-147.5 828.5,-147.5"/>
+<polygon fill="#698b22" stroke="#698b22" points="829,-147 829,-164 886,-164 886,-147 829,-147"/>
+<text text-anchor="start" x="834" y="-153.633" font-family="Helvetica Bold" font-size="8.00" fill="white">TaggedItem</text>
+</g>
+<!-- spike_algorithm_models_Algorithm&#45;&gt;taggit_models_TaggedItem -->
+<g id="edge8" class="edge"><title>spike_algorithm_models_Algorithm&#45;&gt;taggit_models_TaggedItem</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M963.26,-278.37C958.73,-267.17 953.33,-255.93 947,-246 931.03,-220.94 907,-197.38 887.79,-180.65"/>
+<polygon fill="black" stroke="black" points="960.006,-279.661 966.86,-287.74 966.541,-277.15 960.006,-279.661"/>
+<polygon fill="black" stroke="black" points="890.039,-177.968 880.16,-174.14 885.496,-183.293 890.039,-177.968"/>
+<text text-anchor="middle" x="998" y="-250.8" font-family="Helvetica,sans-Serif" font-size="8.00">tagged_items (algorithm)</text>
 </g>
 <!-- django_contrib_contenttypes_models_ContentType -->
 <g id="node11" class="node"><title>django_contrib_contenttypes_models_ContentType</title>
@@ -124,8 +124,8 @@
 <path fill="none" stroke="black" d="M536.47,-83.814C529.83,-73.44 522.59,-63.183 515,-54 509.81,-47.722 503.48,-41.6 497.36,-36.236"/>
 <text text-anchor="middle" x="557" y="-58.8" font-family="Helvetica,sans-Serif" font-size="8.00">content_type (data)</text>
 </g>
-<!-- spike_core_benchmark_models_Benchmark -->
-<g id="node13" class="node"><title>spike_core_benchmark_models_Benchmark</title>
+<!-- spike_benchmark_models_Benchmark -->
+<g id="node13" class="node"><title>spike_benchmark_models_Benchmark</title>
 <polygon fill="palegoldenrod" stroke="palegoldenrod" points="623.5,-280 623.5,-404 776.5,-404 776.5,-280 623.5,-280"/>
 <polygon fill="#698b22" stroke="#698b22" points="624,-376 624,-404 777,-404 777,-376 624,-376"/>
 <text text-anchor="start" x="678" y="-393.633" font-family="Helvetica Bold" font-size="8.00" fill="white">Benchmark</text>
@@ -149,27 +149,27 @@
 <text text-anchor="start" x="626" y="-284.133" font-family="Helvetica Bold" font-size="8.00">parameter</text>
 <text text-anchor="start" x="696" y="-284.133" font-family="Helvetica Bold" font-size="8.00">CharField</text>
 </g>
-<!-- spike_core_benchmark_models_Benchmark&#45;&gt;taggit_models_TaggedItem -->
-<g id="edge12" class="edge"><title>spike_core_benchmark_models_Benchmark&#45;&gt;taggit_models_TaggedItem</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M730.91,-267.09C735.19,-259.68 739.89,-252.5 745,-246 765.73,-219.62 795.59,-196.12 819.26,-179.76"/>
-<polygon fill="black" stroke="black" points="727.828,-265.43 726.08,-275.88 733.963,-268.801 727.828,-265.43"/>
-<polygon fill="black" stroke="black" points="821.361,-182.564 827.68,-174.06 817.437,-176.768 821.361,-182.564"/>
-<text text-anchor="middle" x="793.5" y="-250.8" font-family="Helvetica,sans-Serif" font-size="8.00">tagged_items (benchmark)</text>
-</g>
-<!-- spike_core_benchmark_models_Benchmark&#45;&gt;django_contrib_auth_models_User -->
-<g id="edge14" class="edge"><title>spike_core_benchmark_models_Benchmark&#45;&gt;django_contrib_auth_models_User</title>
-<path fill="none" stroke="black" d="M784.11,-281.59C788.7,-279.49 793.35,-277.61 798,-276 902.88,-239.79 943.58,-298.19 1047,-258 1093.8,-239.8 1137.2,-198.41 1159.8,-174.33"/>
-<text text-anchor="middle" x="1106.5" y="-250.8" font-family="Helvetica,sans-Serif" font-size="8.00">owner (benchmark)</text>
-</g>
-<!-- spike_core_benchmark_models_Benchmark&#45;&gt;spike_data_models_Data -->
-<g id="edge16" class="edge"><title>spike_core_benchmark_models_Benchmark&#45;&gt;spike_data_models_Data</title>
+<!-- spike_benchmark_models_Benchmark&#45;&gt;spike_data_models_Data -->
+<g id="edge12" class="edge"><title>spike_benchmark_models_Benchmark&#45;&gt;spike_data_models_Data</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M624.64,-267.41C622.32,-264.3 620.1,-261.16 618,-258 613.66,-251.47 609.62,-244.43 605.88,-237.22"/>
 <polygon fill="black" stroke="black" points="622.092,-269.834 631,-275.57 627.613,-265.531 622.092,-269.834"/>
 <polygon fill="black" stroke="black" points="608.887,-235.405 601.31,-228 602.615,-238.514 608.887,-235.405"/>
 <text text-anchor="middle" x="657.5" y="-250.8" font-family="Helvetica,sans-Serif" font-size="8.00">data_set (benchmark)</text>
 </g>
-<!-- spike_core_benchmark_models_Trial -->
-<g id="node17" class="node"><title>spike_core_benchmark_models_Trial</title>
+<!-- spike_benchmark_models_Benchmark&#45;&gt;django_contrib_auth_models_User -->
+<g id="edge14" class="edge"><title>spike_benchmark_models_Benchmark&#45;&gt;django_contrib_auth_models_User</title>
+<path fill="none" stroke="black" d="M784.11,-281.59C788.7,-279.49 793.35,-277.61 798,-276 902.88,-239.79 943.58,-298.19 1047,-258 1093.8,-239.8 1137.2,-198.41 1159.8,-174.33"/>
+<text text-anchor="middle" x="1106.5" y="-250.8" font-family="Helvetica,sans-Serif" font-size="8.00">owner (benchmark)</text>
+</g>
+<!-- spike_benchmark_models_Benchmark&#45;&gt;taggit_models_TaggedItem -->
+<g id="edge16" class="edge"><title>spike_benchmark_models_Benchmark&#45;&gt;taggit_models_TaggedItem</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M730.91,-267.09C735.19,-259.68 739.89,-252.5 745,-246 765.73,-219.62 795.59,-196.12 819.26,-179.76"/>
+<polygon fill="black" stroke="black" points="727.828,-265.43 726.08,-275.88 733.963,-268.801 727.828,-265.43"/>
+<polygon fill="black" stroke="black" points="821.361,-182.564 827.68,-174.06 817.437,-176.768 821.361,-182.564"/>
+<text text-anchor="middle" x="793.5" y="-250.8" font-family="Helvetica,sans-Serif" font-size="8.00">tagged_items (benchmark)</text>
+</g>
+<!-- spike_benchmark_models_Trial -->
+<g id="node17" class="node"><title>spike_benchmark_models_Trial</title>
 <polygon fill="palegoldenrod" stroke="palegoldenrod" points="535.5,-460 535.5,-608 672.5,-608 672.5,-460 535.5,-460"/>
 <polygon fill="#698b22" stroke="#698b22" points="536,-580 536,-608 673,-608 673,-580 536,-580"/>
 <text text-anchor="start" x="595.5" y="-597.633" font-family="Helvetica Bold" font-size="8.00" fill="white">Trial</text>
@@ -197,20 +197,20 @@
 <text text-anchor="start" x="538" y="-464.133" font-family="Helvetica Bold" font-size="8.00">gt_access</text>
 <text text-anchor="start" x="592" y="-464.133" font-family="Helvetica Bold" font-size="8.00">CharField</text>
 </g>
-<!-- spike_core_benchmark_models_Trial&#45;&gt;spike_data_models_Data -->
-<g id="edge20" class="edge"><title>spike_core_benchmark_models_Trial&#45;&gt;spike_data_models_Data</title>
+<!-- spike_benchmark_models_Trial&#45;&gt;spike_data_models_Data -->
+<g id="edge18" class="edge"><title>spike_benchmark_models_Trial&#45;&gt;spike_data_models_Data</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M596.25,-446C593.6,-438.91 590.24,-432.13 586,-426 576.94,-412.9 562.95,-421.81 555,-408 525.73,-357.16 550.16,-334.47 555,-276 556.02,-263.71 557.61,-250.78 559.47,-238.15"/>
 <polygon fill="black" stroke="black" points="593.026,-447.405 599.45,-455.83 599.683,-445.238 593.026,-447.405"/>
 <polygon fill="black" stroke="black" points="562.955,-238.513 561,-228.1 556.035,-237.459 562.955,-238.513"/>
 <text text-anchor="middle" x="581" y="-340.8" font-family="Helvetica,sans-Serif" font-size="8.00">data_set (trial)</text>
 </g>
-<!-- spike_core_benchmark_models_Trial&#45;&gt;spike_core_benchmark_models_Benchmark -->
-<g id="edge18" class="edge"><title>spike_core_benchmark_models_Trial&#45;&gt;spike_core_benchmark_models_Benchmark</title>
+<!-- spike_benchmark_models_Trial&#45;&gt;spike_benchmark_models_Benchmark -->
+<g id="edge20" class="edge"><title>spike_benchmark_models_Trial&#45;&gt;spike_benchmark_models_Benchmark</title>
 <path fill="none" stroke="black" d="M630.49,-455.78C634.65,-445.6 639.19,-435.44 644,-426 647.02,-420.07 650.38,-414.04 653.91,-408.09"/>
 <text text-anchor="middle" x="674.5" y="-430.8" font-family="Helvetica,sans-Serif" font-size="8.00">benchmark (trial)</text>
 </g>
-<!-- spike_core_evaluation_models_Batch -->
-<g id="node20" class="node"><title>spike_core_evaluation_models_Batch</title>
+<!-- spike_evaluation_models_Batch -->
+<g id="node20" class="node"><title>spike_evaluation_models_Batch</title>
 <polygon fill="palegoldenrod" stroke="palegoldenrod" points="743.5,-484 743.5,-584 896.5,-584 896.5,-484 743.5,-484"/>
 <polygon fill="#698b22" stroke="#698b22" points="744,-556 744,-584 897,-584 897,-556 744,-556"/>
 <text text-anchor="start" x="808.5" y="-573.633" font-family="Helvetica Bold" font-size="8.00" fill="white">Batch</text>
@@ -230,30 +230,30 @@
 <text text-anchor="start" x="746" y="-488.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">description</text>
 <text text-anchor="start" x="816" y="-488.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">TextField</text>
 </g>
-<!-- spike_core_evaluation_models_Batch&#45;&gt;spike_core_algorithm_models_Algorithm -->
-<g id="edge26" class="edge"><title>spike_core_evaluation_models_Batch&#45;&gt;spike_core_algorithm_models_Algorithm</title>
+<!-- spike_evaluation_models_Batch&#45;&gt;spike_algorithm_models_Algorithm -->
+<g id="edge28" class="edge"><title>spike_evaluation_models_Batch&#45;&gt;spike_algorithm_models_Algorithm</title>
 <path fill="none" stroke="black" d="M865.77,-479.75C887.85,-453.58 914.27,-422.27 936.34,-396.12"/>
 <text text-anchor="middle" x="940.5" y="-430.8" font-family="Helvetica,sans-Serif" font-size="8.00">algorithm (batch)</text>
 </g>
-<!-- spike_core_evaluation_models_Batch&#45;&gt;django_contrib_auth_models_User -->
-<g id="edge24" class="edge"><title>spike_core_evaluation_models_Batch&#45;&gt;django_contrib_auth_models_User</title>
-<path fill="none" stroke="black" d="M904.02,-517.89C974.73,-500.74 1075.1,-467.62 1144,-408 1202,-357.87 1209.5,-332.09 1229,-258 1237.3,-226.55 1213.5,-193.79 1195.2,-174.15"/>
-<text text-anchor="middle" x="1249.5" y="-340.8" font-family="Helvetica,sans-Serif" font-size="8.00">owner (batch)</text>
-</g>
-<!-- spike_core_evaluation_models_Batch&#45;&gt;spike_data_models_Data -->
-<g id="edge28" class="edge"><title>spike_core_evaluation_models_Batch&#45;&gt;spike_data_models_Data</title>
+<!-- spike_evaluation_models_Batch&#45;&gt;spike_data_models_Data -->
+<g id="edge22" class="edge"><title>spike_evaluation_models_Batch&#45;&gt;spike_data_models_Data</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M821.2,-469.95C821.1,-403.23 816.74,-304.52 793,-276 774.92,-254.27 757.68,-269.82 732,-258 706.49,-246.25 680.32,-230.82 656.84,-215.53"/>
 <polygon fill="black" stroke="black" points="817.7,-469.953 821.18,-479.96 824.7,-469.967 817.7,-469.953"/>
 <polygon fill="black" stroke="black" points="658.593,-212.493 648.32,-209.9 654.733,-218.333 658.593,-212.493"/>
 <text text-anchor="middle" x="853.5" y="-340.8" font-family="Helvetica,sans-Serif" font-size="8.00">datafile_set (batch)</text>
 </g>
-<!-- spike_core_evaluation_models_Batch&#45;&gt;spike_core_benchmark_models_Benchmark -->
-<g id="edge22" class="edge"><title>spike_core_evaluation_models_Batch&#45;&gt;spike_core_benchmark_models_Benchmark</title>
+<!-- spike_evaluation_models_Batch&#45;&gt;django_contrib_auth_models_User -->
+<g id="edge26" class="edge"><title>spike_evaluation_models_Batch&#45;&gt;django_contrib_auth_models_User</title>
+<path fill="none" stroke="black" d="M904.02,-517.89C974.73,-500.74 1075.1,-467.62 1144,-408 1202,-357.87 1209.5,-332.09 1229,-258 1237.3,-226.55 1213.5,-193.79 1195.2,-174.15"/>
+<text text-anchor="middle" x="1249.5" y="-340.8" font-family="Helvetica,sans-Serif" font-size="8.00">owner (batch)</text>
+</g>
+<!-- spike_evaluation_models_Batch&#45;&gt;spike_benchmark_models_Benchmark -->
+<g id="edge24" class="edge"><title>spike_evaluation_models_Batch&#45;&gt;spike_benchmark_models_Benchmark</title>
 <path fill="none" stroke="black" d="M768.35,-479.78C757.45,-466.72 746.65,-452.37 738,-438 732.41,-428.71 727.33,-418.45 722.85,-408.19"/>
 <text text-anchor="middle" x="772" y="-430.8" font-family="Helvetica,sans-Serif" font-size="8.00">benchmark (batch)</text>
 </g>
-<!-- spike_core_evaluation_models_Evaluation -->
-<g id="node25" class="node"><title>spike_core_evaluation_models_Evaluation</title>
+<!-- spike_evaluation_models_Evaluation -->
+<g id="node25" class="node"><title>spike_evaluation_models_Evaluation</title>
 <polygon fill="palegoldenrod" stroke="palegoldenrod" points="457.5,-664 457.5,-788 610.5,-788 610.5,-664 457.5,-664"/>
 <polygon fill="#698b22" stroke="#698b22" points="458,-760 458,-788 611,-788 611,-760 458,-760"/>
 <text text-anchor="start" x="513" y="-777.633" font-family="Helvetica Bold" font-size="8.00" fill="white">Evaluation</text>
@@ -277,20 +277,20 @@
 <text text-anchor="start" x="460" y="-668.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">valid_ev_log</text>
 <text text-anchor="start" x="530" y="-668.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">TextField</text>
 </g>
-<!-- spike_core_evaluation_models_Evaluation&#45;&gt;spike_data_models_Data -->
-<g id="edge34" class="edge"><title>spike_core_evaluation_models_Evaluation&#45;&gt;spike_data_models_Data</title>
+<!-- spike_evaluation_models_Evaluation&#45;&gt;spike_data_models_Data -->
+<g id="edge30" class="edge"><title>spike_evaluation_models_Evaluation&#45;&gt;spike_data_models_Data</title>
 <path fill="none" stroke="black" stroke-dasharray="1,5" d="M523.94,-649.93C522.28,-637.27 520.58,-624.26 519,-612 508.35,-529.44 486.44,-508.57 497,-426 505.74,-357.67 516.68,-342.12 536,-276 539.62,-263.6 543.65,-250.55 547.69,-237.8"/>
 <polygon fill="black" stroke="black" points="520.49,-650.54 525.26,-660 527.431,-649.63 520.49,-650.54"/>
 <polygon fill="black" stroke="black" points="551.073,-238.711 550.79,-228.12 544.407,-236.576 551.073,-238.711"/>
 <text text-anchor="middle" x="539.5" y="-430.8" font-family="Helvetica,sans-Serif" font-size="8.00">datafile_set (evaluation)</text>
 </g>
-<!-- spike_core_evaluation_models_Evaluation&#45;&gt;spike_core_benchmark_models_Trial -->
-<g id="edge32" class="edge"><title>spike_core_evaluation_models_Evaluation&#45;&gt;spike_core_benchmark_models_Trial</title>
+<!-- spike_evaluation_models_Evaluation&#45;&gt;spike_benchmark_models_Trial -->
+<g id="edge34" class="edge"><title>spike_evaluation_models_Evaluation&#45;&gt;spike_benchmark_models_Trial</title>
 <path fill="none" stroke="black" d="M558.09,-659.92C563.71,-644.52 569.74,-627.98 575.52,-612.11"/>
 <text text-anchor="middle" x="598" y="-634.8" font-family="Helvetica,sans-Serif" font-size="8.00">trial (evaluation)</text>
 </g>
-<!-- spike_core_evaluation_models_Evaluation&#45;&gt;spike_core_evaluation_models_Batch -->
-<g id="edge30" class="edge"><title>spike_core_evaluation_models_Evaluation&#45;&gt;spike_core_evaluation_models_Batch</title>
+<!-- spike_evaluation_models_Evaluation&#45;&gt;spike_evaluation_models_Batch -->
+<g id="edge32" class="edge"><title>spike_evaluation_models_Evaluation&#45;&gt;spike_evaluation_models_Batch</title>
 <path fill="none" stroke="black" d="M618.26,-669.43C656.49,-643.77 701.49,-613.56 739.29,-588.19"/>
 <text text-anchor="middle" x="709" y="-634.8" font-family="Helvetica,sans-Serif" font-size="8.00">batch (evaluation)</text>
 </g>
@@ -322,42 +322,40 @@
 </g>
 <!-- spike_module_models_Module -->
 <g id="node31" class="node"><title>spike_module_models_Module</title>
-<polygon fill="palegoldenrod" stroke="palegoldenrod" points="252,-466 252,-602 386,-602 386,-466 252,-466"/>
-<polygon fill="#698b22" stroke="#698b22" points="252,-574 252,-602 386,-602 386,-574 252,-574"/>
-<text text-anchor="start" x="304" y="-591.633" font-family="Helvetica Bold" font-size="8.00" fill="white">Module</text>
-<text text-anchor="start" x="277.5" y="-582.033" font-family="Helvetica Bold" font-size="8.00" fill="white">&lt;</text>
-<text text-anchor="start" x="282.5" y="-582.033" font-family="Helvetica Italic" font-size="8.00" fill="white">TimeStampedModel</text>
-<text text-anchor="start" x="355.5" y="-582.033" font-family="Helvetica Bold" font-size="8.00" fill="white">&gt;</text>
-<text text-anchor="start" x="254" y="-566.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">id</text>
-<text text-anchor="start" x="305" y="-566.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">AutoField</text>
-<text text-anchor="start" x="254" y="-554.133" font-family="Helvetica Italic" font-size="8.00">created</text>
-<text text-anchor="start" x="305" y="-554.133" font-family="Helvetica Italic" font-size="8.00">AutoCreatedField</text>
-<text text-anchor="start" x="254" y="-542.133" font-family="Helvetica Italic" font-size="8.00">modified</text>
-<text text-anchor="start" x="305" y="-542.133" font-family="Helvetica Italic" font-size="8.00">AutoLastModifiedField</text>
-<text text-anchor="start" x="254" y="-530.133" font-family="Helvetica Bold" font-size="8.00">name</text>
-<text text-anchor="start" x="305" y="-530.133" font-family="Helvetica Bold" font-size="8.00">CharField</text>
-<text text-anchor="start" x="254" y="-518.133" font-family="Helvetica Bold" font-size="8.00">version</text>
-<text text-anchor="start" x="305" y="-518.133" font-family="Helvetica Bold" font-size="8.00">CharField</text>
-<text text-anchor="start" x="254" y="-506.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">description</text>
-<text text-anchor="start" x="305" y="-506.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">TextField</text>
-<text text-anchor="start" x="254" y="-494.133" font-family="Helvetica Bold" font-size="8.00">exec_name</text>
-<text text-anchor="start" x="305" y="-494.133" font-family="Helvetica Bold" font-size="8.00">TextField</text>
-<text text-anchor="start" x="254" y="-482.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">temp_name</text>
-<text text-anchor="start" x="305" y="-482.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">TextField</text>
-<text text-anchor="start" x="254" y="-470.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">rest_name</text>
-<text text-anchor="start" x="305" y="-470.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">TextField</text>
+<polygon fill="palegoldenrod" stroke="palegoldenrod" points="252,-472 252,-596 386,-596 386,-472 252,-472"/>
+<polygon fill="#698b22" stroke="#698b22" points="252,-568 252,-596 386,-596 386,-568 252,-568"/>
+<text text-anchor="start" x="304" y="-585.633" font-family="Helvetica Bold" font-size="8.00" fill="white">Module</text>
+<text text-anchor="start" x="277.5" y="-576.033" font-family="Helvetica Bold" font-size="8.00" fill="white">&lt;</text>
+<text text-anchor="start" x="282.5" y="-576.033" font-family="Helvetica Italic" font-size="8.00" fill="white">TimeStampedModel</text>
+<text text-anchor="start" x="355.5" y="-576.033" font-family="Helvetica Bold" font-size="8.00" fill="white">&gt;</text>
+<text text-anchor="start" x="254" y="-560.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">id</text>
+<text text-anchor="start" x="305" y="-560.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">AutoField</text>
+<text text-anchor="start" x="254" y="-548.133" font-family="Helvetica Italic" font-size="8.00">created</text>
+<text text-anchor="start" x="305" y="-548.133" font-family="Helvetica Italic" font-size="8.00">AutoCreatedField</text>
+<text text-anchor="start" x="254" y="-536.133" font-family="Helvetica Italic" font-size="8.00">modified</text>
+<text text-anchor="start" x="305" y="-536.133" font-family="Helvetica Italic" font-size="8.00">AutoLastModifiedField</text>
+<text text-anchor="start" x="254" y="-524.133" font-family="Helvetica Bold" font-size="8.00">name</text>
+<text text-anchor="start" x="305" y="-524.133" font-family="Helvetica Bold" font-size="8.00">CharField</text>
+<text text-anchor="start" x="254" y="-512.133" font-family="Helvetica Bold" font-size="8.00">version</text>
+<text text-anchor="start" x="305" y="-512.133" font-family="Helvetica Bold" font-size="8.00">CharField</text>
+<text text-anchor="start" x="254" y="-500.133" font-family="Helvetica Bold" font-size="8.00">path</text>
+<text text-anchor="start" x="305" y="-500.133" font-family="Helvetica Bold" font-size="8.00">CharField</text>
+<text text-anchor="start" x="254" y="-488.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">enabled</text>
+<text text-anchor="start" x="305" y="-488.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">BooleanField</text>
+<text text-anchor="start" x="254" y="-476.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">description</text>
+<text text-anchor="start" x="305" y="-476.133" font-family="Helvetica Bold" font-size="8.00" fill="#7b7b7b">TextField</text>
 </g>
 <!-- spike_module_models_Module&#45;&gt;spike_data_models_Data -->
-<g id="edge42" class="edge"><title>spike_module_models_Module&#45;&gt;spike_data_models_Data</title>
-<path fill="none" stroke="black" stroke-dasharray="1,5" d="M332.58,-451.85C345.07,-397.14 368.23,-326.32 410,-276 437.22,-243.21 458.38,-252.84 493,-228 493.18,-227.87 493.37,-227.74 493.55,-227.61"/>
-<polygon fill="black" stroke="black" points="329.106,-451.351 330.37,-461.87 335.942,-452.859 329.106,-451.351"/>
+<g id="edge40" class="edge"><title>spike_module_models_Module&#45;&gt;spike_data_models_Data</title>
+<path fill="none" stroke="black" stroke-dasharray="1,5" d="M331.28,-457.68C343.43,-402.25 366.74,-328.12 410,-276 437.22,-243.21 458.38,-252.84 493,-228 493.18,-227.87 493.37,-227.74 493.55,-227.61"/>
+<polygon fill="black" stroke="black" points="327.785,-457.292 329.14,-467.8 334.633,-458.74 327.785,-457.292"/>
 <polygon fill="black" stroke="black" points="495.872,-230.245 501.81,-221.47 491.696,-224.627 495.872,-230.245"/>
 <text text-anchor="middle" x="448" y="-340.8" font-family="Helvetica,sans-Serif" font-size="8.00">datafile_set (module)</text>
 </g>
-<!-- spike_module_models_Module&#45;&gt;spike_core_benchmark_models_Benchmark -->
-<g id="edge40" class="edge"><title>spike_module_models_Module&#45;&gt;spike_core_benchmark_models_Benchmark</title>
-<path fill="none" stroke="black" d="M364.18,-455.58C374.2,-443.94 385.83,-433.38 399,-426 478.01,-381.72 516.63,-438.25 602,-408 604.18,-407.23 606.35,-406.4 608.52,-405.52"/>
-<ellipse fill="black" stroke="black" cx="361.633" cy="-458.672" rx="4.00002" ry="4.00002"/>
+<!-- spike_module_models_Module&#45;&gt;spike_benchmark_models_Benchmark -->
+<g id="edge42" class="edge"><title>spike_module_models_Module&#45;&gt;spike_benchmark_models_Benchmark</title>
+<path fill="none" stroke="black" d="M359.33,-461.46C370.39,-447.52 383.64,-434.61 399,-426 478.01,-381.72 516.63,-438.25 602,-408 604.18,-407.23 606.35,-406.4 608.52,-405.52"/>
+<ellipse fill="black" stroke="black" cx="356.834" cy="-464.738" rx="4.00002" ry="4.00002"/>
 <ellipse fill="black" stroke="black" cx="612.193" cy="-403.919" rx="4.00002" ry="4.00002"/>
 <text text-anchor="middle" x="438.5" y="-430.8" font-family="Helvetica,sans-Serif" font-size="8.00">benchmarks (module)</text>
 </g>
@@ -381,14 +379,14 @@
 <text text-anchor="start" x="340" y="-848.133" font-family="Helvetica Italic" font-size="8.00">modified</text>
 <text text-anchor="start" x="387" y="-848.133" font-family="Helvetica Italic" font-size="8.00">AutoLastModifiedField</text>
 </g>
-<!-- spike_module_models_Result&#45;&gt;spike_core_evaluation_models_Evaluation -->
-<g id="edge46" class="edge"><title>spike_module_models_Result&#45;&gt;spike_core_evaluation_models_Evaluation</title>
+<!-- spike_module_models_Result&#45;&gt;spike_evaluation_models_Evaluation -->
+<g id="edge46" class="edge"><title>spike_module_models_Result&#45;&gt;spike_evaluation_models_Evaluation</title>
 <path fill="none" stroke="black" d="M434.71,-839.69C447.21,-825.38 461.96,-808.49 476.22,-792.16"/>
 <text text-anchor="middle" x="488" y="-814.8" font-family="Helvetica,sans-Serif" font-size="8.00">evaluation (result)</text>
 </g>
 <!-- spike_module_models_Result&#45;&gt;spike_module_models_Module -->
 <g id="edge44" class="edge"><title>spike_module_models_Result&#45;&gt;spike_module_models_Module</title>
-<path fill="none" stroke="black" d="M394.09,-839.72C380.49,-784.37 354.3,-677.72 336.73,-606.19"/>
+<path fill="none" stroke="black" d="M394.09,-839.72C380.11,-782.82 352.83,-671.72 335.28,-600.27"/>
 <text text-anchor="middle" x="408.5" y="-724.8" font-family="Helvetica,sans-Serif" font-size="8.00">module (result)</text>
 </g>
 <!-- spike_module_default_visual_models_ResultDefaultVisual -->

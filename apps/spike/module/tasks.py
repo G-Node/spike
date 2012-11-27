@@ -28,7 +28,7 @@ if getattr(settings, 'CELERY_USE_PRIORITY', None) is not None:
 @receiver(spike_evaluation_run, dispatch_uid=__file__)
 def run_modules_for_evaluation(sender, **kwargs):
     # DEBUG
-    print 'starting evaluation [class: %s :: id: %s]' % (sender, sender.id)
+    print 'starting evaluation [class: %s::%s]' % (sender.__class__.__name__, sender.id)
     # BUGED
 
     if USE_CELERY:
@@ -59,13 +59,13 @@ def task_run_modules(ev, **kwargs):
         success = False
     else:
         try:
-            # get handles
+            logger.log_delimiter_line()
+
             rd_file = ev.trial.rd_file
             gt_file = ev.trial.gt_file
             ev_file = ev.ev_file
-            logger.log('processing evaluation ID: %s' % ev)
+            logger.log('processing: %s' % ev)
 
-            # read in evaluation file
             logger.log('reading input files')
             rd, sampling_rate = read_hdf5_arc(rd_file.file.path)
             if sampling_rate is not None:
@@ -74,17 +74,21 @@ def task_run_modules(ev, **kwargs):
             gt_sts = read_gdf_sts(gt_file.file.path)
             logger.log('done reading input files')
 
+            logger.log_delimiter_line()
+
             # modules
             assert len(mod_list), 'Module list is empty!'
             for mod in mod_list:
-                logger.log('loading module: %s' % mod)
-                mod_pkg = importlib.import_module('spike.module.%s' % mod.path)
-                logger.log('starting module: %s' % __package__)
+                logger.log('starting module: %s' % mod)
+                module_pkg = importlib.import_module('spike.module.%s' % mod.path)
                 _tick_ = datetime.now()
-                mod = Module(rd, gt_sts, ev_sts, **kwargs)
-                mod.apply()
+                module = module_pkg.module_cls(rd, gt_sts, ev_sts, logger, **kwargs)
+                module.apply()
+                module.save(mod, ev)
                 _tock_ = datetime.now()
                 logger.log('finished: %s' % str(_tock_ - _tick_))
+                logger.log_delimiter_line()
+                del module, module_pkg
         except Exception, ex:
             logger.log('ERROR: %s' % str(ex))
             success = False

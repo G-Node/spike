@@ -124,6 +124,13 @@ class Evaluation(StatusModel, TimeStampedModel):
     ## interface
 
     @property
+    def modules(self):
+        try:
+            return self.trial.benchmark.module_set.filter(enabled=True)
+        except:
+            return []
+
+    @property
     def ev_file(self):
         try:
             return self.datafile_set.filter(kind='st_file')[0]

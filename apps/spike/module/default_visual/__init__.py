@@ -12,6 +12,8 @@ __module_path__ = os.path.split(os.path.split(__file__)[0])[1]
 
 ##---INIT
 
+module = None
+Module = None
 try:
     Module = models.get_model('spike', 'module')
     module, created = Module.objects.get_or_create(
@@ -33,3 +35,5 @@ except Exception, ex:
     print ex
 finally:
     del os, models, Module, module
+
+from .module import Module as module_cls

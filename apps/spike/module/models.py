@@ -23,8 +23,7 @@ class Module(TimeStampedModel):
 
     name = models.CharField(
         max_length=255,
-        unique=True,
-        primary_key=True)
+        unique=True)
     version = models.CharField(
         max_length=32,
         default='0.1')
@@ -80,6 +79,30 @@ class Result(TimeStampedModel):
     ## managers
 
     objects = InheritanceManager()
+
+    ## interface:
+
+    @property
+    def trial(self):
+        try:
+            return self.evaluation.trial
+        except:
+            return None
+
+    @property
+    def batch(self):
+        try:
+            return self.evaluation.batch
+        except:
+            return None
+
+    @property
+    def benchmark(self):
+        try:
+            return self.evaluation.trial.benchmark
+            #return self.evaluation.batch.benchmark
+        except:
+            return None
 
 ##---MAIN
 

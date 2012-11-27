@@ -1,100 +1,59 @@
 ##---IMPORTS
 
-import plot, util
+from spikeval.module import ModDefaultVisual, ModuleExecutionError
 
 from .models import ResultDefaultVisual
-from ..base_module import BaseModule, ModuleInputError, ModuleExecutionError
 
 from StringIO import StringIO
-import scipy as sp
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
-##---METRIC CONTEXT
+##---CONSTANTS
 
-class Module(BaseModule):
-    """module implementation"""
+KINDS = dict(ResultDefaultVisual.KIND)
 
-    def _check_parameters(self, parameters):
-        return {
-            'sampling_rate': parameters.get('sampling_rate', 32000.0),
-            'cut': parameters.get('cut', (32, 32)),
-            'name': parameters.get('name', 'noname'),
-            'noise_cov': parameters.get('noise_cov', None)}
+##---MODULE
 
-    def _check_raw_data(self, raw_data):
-        if raw_data is None:
-            raise ModuleInputError('raw_data: needs raw data!')
-        if raw_data.ndim != 2:
-            raise ModuleInputError('raw_data: ndim != 2')
-        if raw_data.shape[0] < sum(self.parameters['cut']):
-            raise ModuleInputError('raw_data: fewer samples than waveform length!')
-        return raw_data
+class Module(ModDefaultVisual):
+    """module for default visuals - for use in the django context"""
 
-    def _check_sts_ev(self, sts_ev):
-        if sts_ev is None:
-            raise ModuleInputError('sts_ev: needs evaluation spike train set')
-        util.dict_list2arr(sts_ev)
-        util.dict_arrsort(sts_ev)
-        return sts_ev
+    #RESULT_TYPES = [
+    # 10 'wf_single'    MRPlot, # waveforms by units
+    # 20 'wf_all'       MRPlot, # waveforms all spikes
+    # 30 'clus12'       MRPlot, # cluster PC1/2
+    # 40 'clus34'       MRPlot, # cluster PC3/4
+    # 50 'clus_proj'    MRPlot, # cluster projection
+    # 60 'spiketrain'   MRPlot] # spike train set
 
-    def _apply(self):
-        cut = self.parameters['cut']
-        spikes = {}
-        for k, v in sorted(self.sts_ev.items()):
-            train = v[(v > cut[0]) * (v < self.raw_data.shape[0] - cut[1])]
-            if len(train) == 0:
-                continue
-            epochs = sp.vstack((
-                train - cut[0],
-                train + cut[1])).T
-            spikes[k] = util.extract_spikes(self.raw_data, epochs)
+    ## save django model results
 
-        # produce plot results
-        self.plot_waveforms(spikes)
+    def save(self, mod, ev):
+        """save django result entities"""
 
-    ## implementation
+        # check for results
+        if self._stage != 3:
+            raise ModuleExecutionError('save initiated when module was not finalised!')
 
-    def plot_waveforms(self, spikes):
-        """:spikeplot.waveforms: plots
+        # per result saving:
+        for i, res in enumerate(self.result):
+            # result
+            kind = (i + 1) * 10
+            rval = ResultDefaultVisual(evaluation=ev, module=mod, kind=kind)
 
-        There will be one plot with waveforms per unit and one plot with all
-        waveforms stacked.
+            # data
+            img_data = StringIO()
+            res.value.save(img_data, format='PNG')
 
-        :type spikes: dict
-        :param spikes: one set of waveforms per unit {k:[n,samples]}
-        """
-
-        # produce plots for all units ...
-        fig = plot.waveforms(
-            spikes,
-            #samples_per_second=self.parameters['sampling_rate'],
-            tf=sum(self.parameters['cut']),
-            plot_mean=True,
-            plot_single_waveforms=True,
-            plot_separate=True,
-            title='waveforms by units')
-
-        # save results
-        #for i, t in enumerate(['wf_single', 'wf_all', 'clus12', 'clus34',
-        #                       'clus_proj', 'spiketrain']):
-
-    def create_result(self, ev):
-        rval = ResultDefaultVisual(evaluation=ev, )
-        rval.evaluation = ev
-        # Create a file-like object to write image data created by PIL
-        img_io = StringIO()
-        modules[0].result[i].value.save(img_io, format='JPEG')
-        # create a unique file name as: evaluation ID + picture prefix
-        filename = "eval%d_%s.jpg" % (ev.id, t)
-        # Create a new Django file-like object to be used in models as
-        # ImageField using InMemoryUploadedFile.
-        img_file = InMemoryUploadedFile(img_io, None, filename,
-            'image/jpeg',
-            img_io.len, None)
-        rval.file = img_file
-        rval.img_type = t
-        rval.save()
+            # file
+            filename = 'eval%d_%s.png' % (ev.id, KINDS.get(i + 1, 'unknown%d' % i))
+            rval.file = InMemoryUploadedFile(
+                file=img_data,
+                field_name=None,
+                name=filename,
+                content_type='image/png',
+                size=img_data.len,
+                charset=None)
+            rval.save()
 
 ##---MAIN
 
