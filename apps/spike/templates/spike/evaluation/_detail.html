@@ -5,19 +5,6 @@
 <div class="accordion-group">
   <div class="accordion-heading clearfix">
 
-    {% comment %}
-    <div class="well pull-right">
-      {% if ev.processed %}
-        {% with ev.summary_short as ev_sum %}
-          <p>True positive: {{ ev_sum.TP|floatformat:2 }}%</p>
-          <p>False positive: {{ ev_sum.FP|floatformat:2 }}%</p>
-        {% endwith %}
-      {% else %}
-        <p>No results available yet.</p>
-      {% endif %}
-    </div>
-    {% endcomment %}
-
     <dl class="dl-horizontal pull-left">
       <dt>
         <strong>Ident:</strong>
@@ -66,8 +53,11 @@
     {% endif %}
 
     {% if ev.processed %}
-      {% for mod in ev.modules %}
-        {% render_results ev mod %}
+      {% for mod in ev.modules|sort %}
+        <div class="well well-small">
+          <h2>Module: {{ mod.name }}</h2>
+          {% render_results ev mod %}
+        </div>
       {% endfor %}
     {% endif %}
   </div>

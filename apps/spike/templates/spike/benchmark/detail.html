@@ -9,7 +9,7 @@
 {% block content %}
 
   {% if bm|is_editable:user %}
-    <section class="well">
+    <section class="well well-small">
       <form class="actions">
         <span class="label">Actions:</span>
         <a id="edit-benchmark-toggle" class="btn btn-mini">{% trans "Edit Benchmark" %}</a>
@@ -233,11 +233,11 @@
 
   <section>
     {% if not user.is_authenticated %}
-      <p class="well">Please log in to submit your own Evaluations!</p>
+      <p class="well well-small">Please log in to submit your own Evaluations!</p>
     {% else %}
       {% if bm.trial_set_valid %}
         <form method="POST" enctype="multipart/form-data"
-              class="form form-horizontal well">
+              class="form form-horizontal well well-small">
           <fieldset>
             <legend>Submit Evaluation</legend>
             {% csrf_token %}

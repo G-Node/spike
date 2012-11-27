@@ -1,0 +1,97 @@
+{% load i18n %}
+{% load metric_ffranke_tags %}
+
+{% if res_list %}
+  <div>
+    <h4>Evaluation Summary</h4>
+    <table class="table table-striped table-condensed table-bordered">
+      <thead>
+      <tr>
+        <th colspan=4>{% trans "Detection Errors" %}</th>
+        <th colspan=3>{% trans "Classification Errors" %}</th>
+      </tr>
+      <tr>
+        <th colspan=1>{% trans "False Positives" %}</th>
+        <th colspan=3>{% trans "False Negatives" %}</th>
+        <th colspan=3></th>
+      </tr>
+      <tr>
+        <th>{% trans "Total" %}</th>
+        <th>{% trans "Total" %}</th>
+        <th>{% trans "Non-Overlaps" %}</th>
+        <th>{% trans "Overlaps" %}</th>
+        <th>{% trans "Total" %}</th>
+        <th>{% trans "Non-Overlaps" %}</th>
+        <th>{% trans "Overlaps" %}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        {% with res_list|summary_table as sum_tbl %}
+          <td>{{ sum_tbl.FP }}</td>
+          <td>{{ sum_tbl.FN }}</td>
+          <td>{{ sum_tbl.FNno }}</td>
+          <td>{{ sum_tbl.FNo }}</td>
+          <td>{{ sum_tbl.FPAE }}</td>
+          <td>{{ sum_tbl.FPAEno }}</td>
+          <td>{{ sum_tbl.FPAEo }}</td>
+        {% endwith %}
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <h4>Evaluation Results</h4>
+    <table class="table table-striped table-condensed table-bordered">
+      <thead>
+      <tr>
+        <th rowspan=3>{% trans "GT Unit" %}</th>
+        <th rowspan=3>{% trans "Found Unit" %}</th>
+        <th colspan=3>{% trans "Ground Truth" %}</th>
+        <th colspan=3>{% trans "Found Spikes of Unit" %}</th>
+        <th colspan=3>{% trans "False Positives" %}</th>
+        <th colspan=4>{% trans "False Negatives" %}</th>
+      </tr>
+      <tr>
+        <th colspan=3>{% trans "(True Spikes)" %}</th>
+        <th colspan=3>{% trans "(True Positives)" %}</th>
+        <th colspan=2>{% trans "Other Spikes" %}</th>
+        <th colspan=1>{% trans "Noise" %}</th>
+        <th colspan=2>{% trans "Found by other Unit" %}</th>
+        <th colspan=2>{% trans "Not detected" %}</th>
+      </tr>
+      <tr>
+        <th>{% trans "Total" %}</th>
+        <th>{% trans "N-O" %}</th>
+        <th>{% trans "O" %}</th>
+        <th>{% trans "Total" %}</th>
+        <th>{% trans "N-O" %}</th>
+        <th>{% trans "O" %}</th>
+        <th>{% trans "N-O" %}</th>
+        <th>{% trans "O" %}</th>
+        <th>{% trans "FP" %}</th>
+        <th>{% trans "N-O" %}</th>
+        <th>{% trans "O" %}</th>
+        <th>{% trans "N-O" %}</th>
+        <th>{% trans "O" %}</th>
+      </tr>
+      </thead>
+      <tfoot>
+      <tr>
+        <td colspan="15">
+          GT = Ground Truth, O = Overlaps, N-O = Non-Overlaps
+        </td>
+      </tr>
+      </tfoot>
+      <tbody>
+      {% for res in res_list|sort %}
+        <tr>
+          {% for val in res.display %}
+            <td>{{ val }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}

@@ -12,12 +12,12 @@
 {% block content %}
 
   {% if user.is_authenticated %}
-    <section class="well">
-      <form class="actions">
+    <section class="well well-small">
+      <div class="actions">
         <span class="label">Actions:</span>
         <a class="btn btn-mini"
            onclick="$('#create-algorithm').toggle();">Create Algorithm</a>
-      </form>
+      </div>
       <form id="create-algorithm" class="form form-horizontal" method="POST"
             {% if not al_form.errors %}style="display:none"{% endif %}>
         <fieldset>

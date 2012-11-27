@@ -11,6 +11,15 @@ Evaluation = models.get_model('spike', 'Evaluation')
 Module = models.get_model('spike', 'Module')
 Result = models.get_model('spike', 'Result')
 
+##---FILTER
+
+@register.filter
+def sort(qset):
+    try:
+        return qset.order_by('id')
+    except:
+        return qset
+
 ##---TAGS
 
 @register.inclusion_tag('spike/module/result_base.html')

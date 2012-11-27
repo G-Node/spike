@@ -9,9 +9,8 @@
 
 {% block content %}
 
-  <section class="well">
-    <form class="actions" method="POST">
-      {% csrf_token %}
+  <section class="well well-small">
+    <div class="actions">
       <span class="label">Actions:</span>
       {% if bt|is_editable:user %}
         <a id="edit-batch-toggle" class="btn btn-mini">{% trans "Edit Batch" %}</a>
@@ -21,8 +20,8 @@
         <a href="{% url ev_toggle bt.id %}" class="btn btn-mini">{% trans "Toggle Status" %}</a>
       {% endif %}
       <a href="{% url ev_zip bt.id %}" class="btn btn-mini">{% trans "Export Results" %}</a>
-    </form>
-    <form id="edit-batch" class="form form-horizontal well" method="POST" style="display: none;">
+    </div>
+    <form id="edit-batch" class="form form-horizontal" method="POST" style="display: none;">
       {% csrf_token %}
       <fieldset>
         {{ bt_form|as_bootstrap }}

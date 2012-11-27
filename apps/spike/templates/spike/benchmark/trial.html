@@ -8,17 +8,16 @@
 
 {% block content %}
 
-  <section class=well>
-    <form class="actions" method="POST">
-      {% csrf_token %}
+  <section class="well well-small">
+    <div class="actions">
       <span class="label">Actions:</span>
       <a id="edit-trial-toggle" class="btn btn-mini">{% trans "Edit Trial" %}</a>
       {% with obj=tr btn_name="Delete Trial" %}
         {% include "spike/_delete.html" %}
       {% endwith %}
       <a class="btn btn-mini" href="{% url bm_trial_validate tr.id %}">{% trans "Validate Trial" %}</a>
-    </form>
-    <form id="edit-trial" class="form form-horizontal well" method="POST"
+    </div>
+    <form id="edit-trial" class="form form-horizontal" method="POST"
           enctype="multipart/form-data" style="display:none">
       <fieldset>
         <legend>Edit Trial</legend>

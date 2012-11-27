@@ -39,8 +39,8 @@ class Module(TimeStampedModel):
     benchmarks = models.ManyToManyField(
         'spike.Benchmark',
         blank=True,
-        null=True,
-        symmetrical=True)
+        null=True)#,
+        #symmetrical=True)
     parent = models.ForeignKey(
         'self',
         related_name='children',
