@@ -16,7 +16,7 @@ Module = models.get_model('spike', 'module')
 ##---FILTERS
 
 @register.filter
-def ident_slug(obj):
+def ident(obj):
     """returns ident slug for use in templates
 
     :param obj: django model instance
@@ -169,6 +169,29 @@ def icn_time(obj):
   <i class="icon-time"></i>
   <span>%s</span>
 </nobr>""" % date_str
+
+
+@register.inclusion_tag('spike/_delete.html')
+def delete(obj, btn_name='delete', delete_url=None):
+    """deletes the object"""
+
+    if delete_url is None:
+        delete_url = getattr(obj, 'get_delete_url', ('delete_url', '#'))
+    disabled = delete_url == '#'
+
+    return {'obj': obj,
+            'btn_name': btn_name,
+            'delete_url': delete_url,
+            'disabled': disabled}
+
+
+@register.inclusion_tag('spike/_appendix.html', takes_context=True)
+def appendix(context, obj):
+    """appendix for object"""
+
+    return {'obj': obj,
+            'appendix': obj.datafile_set.filter(kind='appendix'),
+            'user': context['user']}
 
 ##---MAIN
 

@@ -9,6 +9,7 @@ __author__ = 'pmeier'
 __version__ = '0.1'
 __module__ = 'metric ffranke'
 __module_path__ = os.path.split(os.path.split(__file__)[0])[1]
+__has_summary__ = True
 
 ##---INIT
 

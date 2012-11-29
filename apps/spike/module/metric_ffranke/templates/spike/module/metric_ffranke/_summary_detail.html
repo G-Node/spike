@@ -2,9 +2,18 @@
 {% load sorting_tags %}
 {% load spike_tags %}
 
-<div class="row clearfix">
+<div>
+  <div>
+    <h3>DEBUG</h3>
+
+    <p>bm : {{ bm }}</p>
+
+    <p>mod : {{ mod }}</p>
+
+    <p>res_list : {{ res_list }}</p>
+  </div>
   <div class="span8 pull-left">
-    <img src="{% url bm_summary_plot bm.id detail_mode %}"
+    <img src="{% url bm_summary_plot bm.id mod.id detail_mode %}"
          alt="Summary Plot ({{ detail_mode }})"
          border="1px"
          width="100%"/>

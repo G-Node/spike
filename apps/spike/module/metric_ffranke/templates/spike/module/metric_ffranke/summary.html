@@ -1,0 +1,47 @@
+{% load i18n %}
+{% load metric_ffranke_tags %}
+
+<div>
+  <ul class="nav nav-tabs" id="tab-summary">
+    <li class="active"><a href="#tab-summary-total" data-toggle="tab">Total Error</a></li>
+    <li><a href="#tab-summary-FPAEno" data-toggle="tab">Classification Error (NO)</a></li>
+    <li><a href="#tab-summary-FNno" data-toggle="tab">False Negative (NO)</a></li>
+    <li><a href="#tab-summary-FP" data-toggle="tab">False Positive (NO)</a></li>
+    <li><a href="#tab-summary-FPAEo" data-toggle="tab">Classification Error (O)</a></li>
+    <li><a href="#tab-summary-FNo" data-toggle="tab">False Negative (O)</a></li>
+  </ul>
+  <div class="tab-content" id="tab-summary-content">
+    <div class="tab-pane active" id="tab-summary-total">
+      {% with 'error_sum' as detail_mode %}
+        {% include "spike/module/metric_ffranke/_summary_detail.html" %}
+      {% endwith %}
+    </div>
+    {% comment %}
+    <div class="tab-pane" id="tab-summary-FPAEno">
+      {% with 'FPAEno' as detail_mode %}
+        {% include "spike/module/metric_ffranke/_summary_detail.html" %}
+      {% endwith %}
+    </div>
+    <div class="tab-pane" id="tab-summary-FNno">
+      {% with 'FNno' as detail_mode %}
+        {% include "spike/module/metric_ffranke/_summary_detail.html" %}
+      {% endwith %}
+    </div>
+    <div class="tab-pane" id="tab-summary-FP">
+      {% with 'FP' as detail_mode %}
+        {% include "spike/module/metric_ffranke/_summary_detail.html" %}
+      {% endwith %}
+    </div>
+    <div class="tab-pane" id="tab-summary-FPAEo">
+      {% with 'FPAEo' as detail_mode %}
+        {% include "spike/module/metric_ffranke/_summary_detail.html" %}
+      {% endwith %}
+    </div>
+    <div class="tab-pane" id="tab-summary-FNo">
+      {% with 'FNo' as detail_mode %}
+        {% include "spike/module/metric_ffranke/_summary_detail.html" %}
+      {% endwith %}
+    </div>
+    {% endcomment %}
+  </div>
+</div>

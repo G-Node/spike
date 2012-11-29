@@ -8,6 +8,7 @@ from django.db import models
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.defaultfilters import slugify
+from django.utils import importlib
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 from numpy import nan, nansum, nanmax
@@ -19,6 +20,7 @@ from ..util import render_to, PLOT_COLORS
 
 Benchmark = models.get_model('spike', 'benchmark')
 Trial = models.get_model('spike', 'trial')
+Module = models.get_model('spike', 'module')
 
 ##---VIEWS
 
@@ -42,25 +44,28 @@ def list(request):
 
     # benchmark list
     bm_list = Benchmark.objects.filter(status=Benchmark.STATUS.public)
-    bm_list_self = None
     if request.user.is_authenticated():
         if request.user.is_superuser:
             bm_list = Benchmark.objects.all()
-        bm_list_self = Benchmark.objects.filter(owner=request.user)
+
+    # search_user
+    scope = request.GET.get('scope', None)
+    if scope is not None and  request.user.is_authenticated():
+        bm_list = bm_list.filter(owner=request.user)
 
     # search terms
-    search_terms = request.GET.get('search', '')
+    search_terms = request.GET.get('search', None)
     if search_terms:
         bm_list = (
             bm_list.filter(name__icontains=search_terms) |
             bm_list.filter(description__icontains=search_terms) |
-            bm_list.filter(owner_name__icontains=search_terms))
+            bm_list.filter(owner__username__icontains=search_terms))
 
     # response
     return {'bm_form': bm_form,
             'bm_list': bm_list,
-            'bm_list_self': bm_list_self,
-            'search_terms': search_terms}
+            'search_terms': search_terms,
+            'scope': scope is not None}
 
 
 @render_to('spike/benchmark/detail.html')
@@ -185,15 +190,30 @@ def summary(request, pk):
         if not request.user.is_superuser:
             bt_list_self = bt_list_self.filter(owner=request.user)
         bt_list |= bt_list_self
+    mod_list = bm.module_set.filter(enabled=True)
+    for mod in mod_list:
+        keep = False
+        try:
+            module_pkg = importlib.import_module('spike.module.%s' % mod.path)
+            keep = module_pkg.__has_summary__
+        except:
+            pass
+        finally:
+            if keep is False:
+                mod_list = mod_list.exclude(id=mod.id)
+
+    # TODO: order by clause for modules
     return {'bm': bm,
-            'bt_list': bt_list.order_by('id')}
+            'bt_list': bt_list.order_by('id'),
+            'mod_list': mod_list}
 
 
-def summary_plot(request, pk=None, mode=None, legend=False):
+def summary_plot(request, bm_pk=None, mod_pk=None, mode=None, legend=False):
     """generate a plot of the benchmark summary"""
 
     ## DEBUG
-    print 'pk :: %s(%s)' % (pk.__class__.__name__, pk)
+    print 'bm_pk :: %s(%s)' % (bm_pk.__class__.__name__, bm_pk)
+    print 'mod_pk :: %s(%s)' % (mod_pk.__class__.__name__, mod_pk)
     print 'mode :: %s(%s)' % (mode.__class__.__name__, mode)
     print 'legend :: %s(%s)' % (legend.__class__.__name__, legend)
     ## GUBED
@@ -201,7 +221,7 @@ def summary_plot(request, pk=None, mode=None, legend=False):
     fig = None
     try:
         # init and checks
-        bm = get_object_or_404(Benchmark.objects.all(), id=pk)
+        bm = get_object_or_404(Benchmark.objects.all(), id=bm_pk)
         tr_list = bm.trial_set.order_by('parameter')
         bt_list = bm.batch_set.filter(status=Benchmark.STATUS.public)
         if request.user.is_authenticated():

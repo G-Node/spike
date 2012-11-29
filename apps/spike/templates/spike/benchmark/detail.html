@@ -19,7 +19,6 @@
         <a id="create-trial-toggle" class="btn btn-mini">{% trans "Create Trial" %}</a>
         <a id="create-appendix-toggle" class="btn btn-mini">{% trans "Create Appendix" %}</a>
       </form>
-
       <form id="edit-benchmark" class="form form-horizontal" method="POST" style="display:none">
         <fieldset>
           <legend>Edit Benchmark</legend>
@@ -31,7 +30,6 @@
           </div>
         </fieldset>
       </form>
-
       <form id="create-trial" class="form form-horizontal" method="POST"
             enctype="multipart/form-data" style="display:none">
         <fieldset>
@@ -44,7 +42,6 @@
           </div>
         </fieldset>
       </form>
-
       <form id="create-appendix" class="form form-horizontal" method="POST"
             enctype="multipart/form-data" style="display:none">
         <fieldset>
@@ -62,7 +59,7 @@
 
   <section>
     <h1>
-      &quot;{{ bm }}&quot;
+      &quot;{{ bm.name }}&quot;
       <small>({{ bm.status }})</small>
     </h1>
     <dl class="dl-horizontal">
@@ -94,20 +91,18 @@
       <dd>
         {% icn_time bm.modified %}
       </dd>
-      {% if bm|is_editable:user %}
-        <dt>
-          <strong>Status:</strong>
-        </dt>
-        <dd>
-          {% if bm.is_public %}
-            <i class="icon-globe"></i>
-            <b style="color: green">ACTIVE</b> - available for user download
-          {% else %}
-            <i class="icon-lock"></i>
-            <b style="color: red">INACTIVE</b> - for your eyes only
-          {% endif %}
-        </dd>
-      {% endif %}
+      <dt>
+        <strong>Status:</strong>
+      </dt>
+      <dd>
+        {% if bm.is_public %}
+          <i class="icon-globe"></i>
+          <b style="color: green">{{ bm.status }}</b> - available for user download
+        {% else %}
+          <i class="icon-lock"></i>
+          <b style="color: red">{{ bm.status }}</b> - for your eyes only
+        {% endif %}
+      </dd>
       <dt>
         <strong>Tags:</strong>
       </dt>
@@ -122,7 +117,7 @@
         <strong>Summary</strong>
       </dt>
       <dd>
-        <a href="{% url bm_summary bm.id %}">CLICK HERE TO VIEW COMPARISON OF DIFFERENT EVALUATIONS</a><br>
+        <a class="label alert" href="{% url bm_summary bm.id %}">CLICK HERE TO VIEW COMPARISON OF DIFFERENT EVALUATIONS</a><br>
       </dd>
     </dl>
   </section>

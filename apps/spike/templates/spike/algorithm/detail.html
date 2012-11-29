@@ -15,9 +15,7 @@
         <div class="actions">
           <span class="label">Actions:</span>
           <a id="edit-algorithm-toggle" class="btn btn-mini"> {% trans "Edit Algorithm" %}</a>
-          {% with obj=al btn_name="Delete Algorithm" %}
-            {% include "spike/_delete.html" %}
-          {% endwith %}
+          {% delete al "Delete Algorithm" %}
           <a id="create-appendix-toggle" class="btn btn-mini"> {% trans "Create Appendix" %}</a>
         </div>
         <form id="edit-algorithm" method="POST" style="display:none" class="form form-horizontal">
@@ -91,9 +89,7 @@
     </dl>
   </header>
 
-  {% with al as obj %}
-    {% include "spike/_appendix.html" %}
-  {% endwith %}
+  {% appendix al %}
 
 {% endblock %}
 

@@ -12,7 +12,6 @@ urlpatterns = patterns('',
     url(r'^data/', include('spike.data.urls')),
     url(r'^log/', include('spike.log.urls')),
     url(r'^module/', include('spike.module.urls')),
-    url(r'^dev/', include('spike.dev.urls')),
 )
 
 ##---MAIN

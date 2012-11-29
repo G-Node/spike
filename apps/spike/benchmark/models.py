@@ -97,7 +97,12 @@ class Benchmark(StatusModel, TimeStampedModel):
         self.save()
 
     def trial_set_valid(self):
-        return filter(lambda x: x.is_valid, self.trial_set.all())
+        return self.trial_set.filter(
+            ~models.Q(valid_rd_log__contains='ERROR'),
+            ~models.Q(valid_gt_log__contains='ERROR'))
+
+    def batch_count(self, user=None):
+        return self.batch_set.filter(status__exact='public').count()
 
 
 class Trial(TimeStampedModel):

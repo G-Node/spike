@@ -19,8 +19,6 @@ def file_cleanup(sender, **kwargs):
     >>> post_delete.connect(file_cleanup, sender=MyModel, dispatch_uid="mymodel.file_cleanup")
     """
 
-    print 'deleting', sender, kwargs
-
     for fieldname in sender._meta.get_all_field_names():
         try:
             field = sender._meta.get_field(fieldname)

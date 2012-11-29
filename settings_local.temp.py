@@ -15,10 +15,11 @@ COMPRESS = False
 ##---ADMIN-EMAILS
 
 ADMINS = [
+    ("Philipp Meier", "pmeier82+sew@googlemail.com"),
     # ("Your Name", "your_email@domain.com"),
 ]
 MANAGERS = ADMINS
-CONTACT_EMAIL = 'support@example.com'
+CONTACT_EMAIL = 'pmeier82+support@googlemail.com'
 
 ##---DATABASE
 
@@ -66,17 +67,18 @@ INSTALLED_APPS += [
     "taggit",
     "taggit_templatetags",
     "django_extensions",
-    "django_sorting",
 
-    # spike_eval
-    "spike_eval",
-    "spike_eval.website",
-    "spike_eval.benchmark",
-    "spike_eval.datafile",
-    "spike_eval.evaluation",
-]
-MIDDLEWARE_CLASSES += [
-    "django_sorting.middleware.SortingMiddleware",
+    # project apps
+    "spike",
+    "spike.algorithm",
+    "spike.benchmark",
+    "spike.evaluation",
+    "spike.data",
+    "spike.log",
+    # modules
+    "spike.module",
+    "spike.module.default_visual",
+    "spike.module.metric_ffranke",
 ]
 
 ##---ACCOUNT

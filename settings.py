@@ -118,12 +118,12 @@ MIDDLEWARE_CLASSES = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    #"django_openid.consumer.SessionConsumer",
     "django.contrib.messages.middleware.MessageMiddleware",
     "pinax.apps.account.middleware.LocaleMiddleware",
     "pagination.middleware.PaginationMiddleware",
     "pinax.middleware.security.HideSensistiveFieldsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "django_sorting.middleware.SortingMiddleware",
 ]
 
 ROOT_URLCONF = "urls"
@@ -186,6 +186,7 @@ INSTALLED_APPS = [
 
     # additional external
     "captcha",
+    "django_sorting",
     "debug_toolbar",
     "south",
 ]
@@ -206,7 +207,7 @@ AUTH_PROFILE_MODULE = "profiles.Profile"
 NOTIFICATION_LANGUAGE_MODULE = "account.Account"
 
 ACCOUNT_OPEN_SIGNUP = True
-ACCOUNT_USE_OPENID = False
+#ACCOUNT_USE_OPENID = False
 ACCOUNT_REQUIRED_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = True
 ACCOUNT_EMAIL_AUTHENTICATION = True

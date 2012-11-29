@@ -1,10 +1,9 @@
 {% load i18n %}
-{% load spike_tags %}
 {% load module_tags %}
+{% load spike_tags %}
 
 <div class="accordion-group">
   <div class="accordion-heading clearfix">
-
     <dl class="dl-horizontal pull-left">
       <dt>
         <strong>Ident:</strong>
@@ -31,31 +30,45 @@
         {% icn_time ev.modified %}
       </dd>
       <dt></dt>
-      <dd><a class="accordion-toogle" href="#eval-{{ ev.id }}"
-             data-toggle="collapse" data-parent="#trial-container">TOGGLE DETAILS</a>
-      </dd>
     </dl>
+    <div class="pull-right">
+      <span class="btn btn-large accordion-toogle" href="#eval-{{ ev.id }}"
+            data-toggle="collapse" data-parent="#trial-container">
+        TOGGLE DETAILS
+      </span>
+    </div>
   </div>
 
   <div id="eval-{{ ev.id }}" class="accordion-body collapse" style="margin: 5px;">
     {% if user.is_authenticated %}
       {% if bt|is_editable:user %}
-        <form class="form well" method="POST">
+        <div class="form well well-small" method="POST">
           <span class="label">Actions:</span>
           <a href="{% url ev_run ev.id %}#" class="btn btn-mini">{% trans "Run Evaluation" %}</a>
           <a href="#" class="btn btn-mini" onclick="$('#show_log-{{ ev.id }}').toggle();return false;">
             {% trans "Show Log" %}</a>
-        </form>
-        <pre id="show_log-{{ ev.id }}" class="well"
-             {% if ev.processed %}style="display:none"{% endif %}
-                >{{ ev.task_log }}</pre>
+        </div>
+        <pre id="show_log-{{ ev.id }}" class="well" {% if ev.processed %}style="display:none"{% endif %}>
+          {{ ev.task_log }}
+        </pre>
       {% endif %}
     {% endif %}
 
     {% if ev.processed %}
       {% for mod in ev.modules|sort %}
         <div class="well well-small">
-          <h2>Module: {{ mod.name }}</h2>
+          <h2 class="pull-left">Module: {{ mod.name }}</h2>
+          <span href="#" rel="popover" class="btn btn-large pull-right"
+                id="eval-{{ ev.id }}-mod-{{ mod.id }}-desc"
+                data-content="{{ mod.description }}"
+                data-original-title="{{ mod.name }}"
+                data-placement="left">MODULE DESCRIPTION</span>
+          <script type="text/javascript">
+            $(function () {
+              $("#eval-{{ ev.id }}-mod-{{ mod.id }}-desc").popover();
+            });
+          </script>
+          <div class="clearfix"></div>
           {% render_results ev mod %}
         </div>
       {% endfor %}

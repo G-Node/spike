@@ -7,9 +7,10 @@ register = template.Library()
 
 ##---CONSTANTS
 
-Evaluation = models.get_model('spike', 'Evaluation')
-Module = models.get_model('spike', 'Module')
-Result = models.get_model('spike', 'Result')
+Benchmark = models.get_model('spike', 'benchmark')
+Evaluation = models.get_model('spike', 'evaluation')
+Module = models.get_model('spike', 'module')
+Result = models.get_model('spike', 'result')
 
 ##---FILTER
 
@@ -29,10 +30,23 @@ def render_results(ev, mod, **kwargs):
     assert isinstance(ev, Evaluation), 'got ev: %s, expected %s' % (ev.__class__, Evaluation)
     assert isinstance(mod, Module), 'got mod: %s, expected %s' % (mod.__class__, Module)
 
-    tempalte_name = 'spike/module/%s.html' % mod.path
+    tempalte_name = 'spike/module/%s/result.html' % mod.path
     res_list = Result.objects.filter(evaluation=ev, module=mod).select_subclasses()
 
     return {'template': tempalte_name, 'ev': ev, 'res_list': res_list}
+
+
+@register.inclusion_tag('spike/module/summary_base.html')
+def render_summary(bm, mod, **kwargs):
+    """render tag for summary of benchmark for specific module"""
+
+    assert isinstance(bm, Benchmark), 'got ev: %s, expected %s' % (bm.__class__, Benchmark)
+    assert isinstance(mod, Module), 'got mod: %s, expected %s' % (mod.__class__, Module)
+
+    tempalte_name = 'spike/module/%s/summary.html' % mod.path
+    res_list = Result.objects.filter(evaluation__trial__benchmark=bm, module=mod).select_subclasses()
+
+    return {'template': tempalte_name, 'bm': bm, 'mod': mod, 'res_list': res_list}
 
 ##---MAIN
 

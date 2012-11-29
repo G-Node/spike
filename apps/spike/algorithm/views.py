@@ -75,7 +75,6 @@ def detail(request, pk):
 
     # response
     return {'al': al,
-            'appendix': al.datafile_set.filter(kind='appendix'),
             'al_form': al_form or AlgorithmForm(instance=al),
             'ap_form': ap_form or AppendixForm(obj=al)}
 

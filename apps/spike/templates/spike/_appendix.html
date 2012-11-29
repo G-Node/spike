@@ -14,6 +14,7 @@
         <th>{% trans "Size" %}</th>
         <th>{% trans "Date" %}</th>
         <th>{% trans "Attached" %}</th>
+        user:{{ user }}
         {% if obj.owner == user or user.is_superuser %}
           <th>{% trans "Actions" %}</th>
         {% endif %}
@@ -40,9 +41,7 @@
           {% if obj.owner == user or user.is_superuser %}
             <td>
               <div class="btn-group">
-                {% with ap as obj %}
-                  {% include "spike/_delete.html" %}
-                {% endwith %}
+                {% delete ap %}
               </div>
             </td>
           {% endif %}
