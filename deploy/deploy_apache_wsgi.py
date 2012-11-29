@@ -3,8 +3,6 @@
 import os
 import pinax.env
 
-##---ENVIRONMENT
-
 pinax.env.setup_environ(__file__)
 
 from django.conf import settings
@@ -14,6 +12,7 @@ from django.conf import settings
 CELERY_TEXT = ''
 if getattr(settings, 'USE_CELERY'):
     CELERY_TEXT = """
+# celery setup
 import djcelery
 djcelery.setup_loader()
 """
