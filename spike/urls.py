@@ -6,6 +6,7 @@ from django.views.generic import TemplateView
 ##---URLS
 
 urlpatterns = patterns('',
+    url(r'^$', TemplateView.as_view(template_name='spike/home.html'), name='spike_home'),
     url(r'^algorithm/', include('spike.algorithm.urls')),
     url(r'^benchmark/', include('spike.benchmark.urls')),
     url(r'^evaluation/', include('spike.evaluation.urls')),

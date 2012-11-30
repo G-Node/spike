@@ -239,14 +239,21 @@ DEBUG_TOOLBAR_CONFIG = {
 # settings_local
 
 try:
-    from spike_g_node_org.settings_local import *
+    from .settings_local import *
+except Exception, ex:
+    print ex
+
+# settings_db
+
+try:
+    from .settings_db import *
 except Exception, ex:
     print ex
 
 # settings_celery
 
 try:
-    from spike_g_node_org.settings_celery import *
+    from .settings_celery import *
 except Exception, ex:
     print ex
 

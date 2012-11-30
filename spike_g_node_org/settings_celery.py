@@ -3,7 +3,7 @@
 # local celery settings - extending the settings.py
 #
 
-from settings import *
+from .settings import *
 
 def default_celery_db_uri():
     rval = "mysql://{USER}".format(**DATABASES['default'])

@@ -18,7 +18,7 @@ admin.autodiscover()
 ## core
 
 urlpatterns = patterns('',
-    url(r'^$', TemplateView.as_view(template_name='homepage.html'), name='home'),
+    url(r'^$', TemplateView.as_view(template_name='home.html'), name='home'),
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^account/', include("account.urls")),
@@ -34,7 +34,7 @@ urlpatterns += patterns('',
 ## spike
 
 urlpatterns += patterns('',
-    url(r'^', include('spike.urls')),
+    url(r'^spike/', include('spike.urls')),
     url(r'^imprint/$', TemplateView.as_view(template_name='about/imprint.html'), name='imprint'),
     url(r'^team/$', TemplateView.as_view(template_name='about/team.html'), name='team'),
 )

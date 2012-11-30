@@ -9,14 +9,12 @@
   <link href="{% static "css/gnode.css" %}" rel="stylesheet">
 {% endblock %}
 
-{% block site_brand %}
-  <img src="{% static "img/logo_gnode.png" %}" style="height:100%"/>
-  <a class="brand" href="{% url "home" %}">{{ SITE_NAME }}</a>
-{% endblock %}
-
 {% block nav %}
   <ul class="nav">
     <li class="divider-vertical"></li>
+    <li id="tab_spike_home">
+      <a href="{% url "spike_home" %}">{% trans "Spike" %}</a>
+    </li>
     <li id="tab_benchmark">
       <a href="{% url "bm_list" %}">{% trans "Benchmark" %}</a>
     </li>
@@ -34,24 +32,22 @@
       <a href="{% url "imprint" %}">{% trans "Imprint" %}</a>
     </li>
     <li class="divider-vertical"></li>
+    <li>
+      <p class="navbar-text">
+        <span class="st_facebook"></span>
+        <span class="st_twitter"></span>
+        <span class="st_googleplus"></span>
+        <span class="st_yahoo"></span>
+        <span class="st_email"></span>
+      </p>
+    </li>
+    <li class="divider-vertical"></li>
   </ul>
 {% endblock %}
 
-{% block header %}
-  {% include "_header.html" %}
-{% endblock %}
-
-{% block footer %}
-  {% include "_footer.html" %}
-{% endblock %}
-
-{% block body %}
-  <header class="jumbotron subhead">
-    <h1>{% block heading %}{% endblock %}</h1>
-    <hr>
-    {% block subnav %}{% endblock %}
-  </header>
-  {% block content %}{% endblock %}
+{% block extra_head %}
+  <script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+  <script type="text/javascript">stLight.options({publisher:"ur-204b1c8-1bf2-5bf9-56ec-9c789af349c9"}); </script>
 {% endblock %}
 
 {% block extra_body_base %}
