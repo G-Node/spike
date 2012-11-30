@@ -1,0 +1,60 @@
+{% extends "theme_bootstrap/base.html" %}
+
+{% load metron_tags %}
+{% load i18n %}
+{% load staticfiles %}
+{% load url from future %}
+
+{% block extra_style %}
+  <link href="{% static "css/gnode.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block site_brand %}
+  <img src="{% static "img/logo_gnode.png" %}" style="height:100%"/>
+  <a class="brand" href="{% url "home" %}">{{ SITE_NAME }}</a>
+{% endblock %}
+
+{% block nav %}
+  <ul class="nav">
+    <li class="divider-vertical"></li>
+    <li id="tab_benchmark">
+      <a href="{% url "bm_list" %}">{% trans "Benchmark" %}</a>
+    </li>
+    <li id="tab_evaluation">
+      <a href="{% url "ev_list" %}">{% trans "Evaluation" %}</a>
+    </li>
+    <li id="tab_algorithm">
+      <a href="{% url "al_list" %}">{% trans "Algorithm" %}</a>
+    </li>
+    <li class="divider-vertical"></li>
+    <li id="tab_team">
+      <a href="{% url "team" %}">{% trans "Team" %}</a>
+    </li>
+    <li id="tab_imprint">
+      <a href="{% url "imprint" %}">{% trans "Imprint" %}</a>
+    </li>
+    <li class="divider-vertical"></li>
+  </ul>
+{% endblock %}
+
+{% block header %}
+  {% include "_header.html" %}
+{% endblock %}
+
+{% block footer %}
+  {% include "_footer.html" %}
+{% endblock %}
+
+{% block body %}
+  <header class="jumbotron subhead">
+    <h1>{% block heading %}{% endblock %}</h1>
+    <hr>
+    {% block subnav %}{% endblock %}
+  </header>
+  {% block content %}{% endblock %}
+{% endblock %}
+
+{% block extra_body_base %}
+  {% analytics %}
+  {% block extra_body %}{% endblock %}
+{% endblock %}

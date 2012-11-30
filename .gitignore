@@ -13,4 +13,3 @@ apache/
 
 # django
 settings_local.py
-wsgi.py

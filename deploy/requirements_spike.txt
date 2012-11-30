@@ -1,0 +1,3 @@
+# spike_eval
+
+-e git://github.com/pmeier82/SpikEval.git#egg=SpikeEval

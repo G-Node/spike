@@ -22,7 +22,7 @@
       "username":"admin",
       "first_name":"Admin",
       "last_name":"User",
-      "password":"sha1$7febf$862adfde3dc554fd3ef0dd9f412b25f24ba8ea4f",
+      "password":"pbkdf2_sha256$10000$TqaU2ks5C3so$YB7cftUTFsGRRmYKKk3bu3ofojf3XGbbzXLTtQTLzQU=",
       "is_active":true,
       "is_superuser":true,
       "is_staff":true,

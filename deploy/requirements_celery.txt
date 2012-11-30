@@ -1,3 +1,3 @@
 # celery - distributed task queue
 
-django-celery>=2.5.5
+django-celery>=3.0.11
