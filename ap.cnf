@@ -1,0 +1,15 @@
+## apache config file for maintenance
+
+<VirtualHost *:80>
+
+  # server and doc-root
+  ServerName spike.g-node.org
+  ServerAlias spike.g-node.org
+  ServerAdmin pmeier82 [at] gmail
+  DocumentRoot /opt/maintenance
+
+  # logs
+  ErrorLog /opt/maintenance/error.log
+  customLog /opt/maintenance/access.log combined
+
+</VirtualHost>
