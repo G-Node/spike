@@ -61,10 +61,7 @@ def create_apache_conf():
     svr_email = raw_input('please provide a server email [noname@%s]:' % svr_name) or 'noname@%s' % svr_name
     svr_port = int(raw_input('pleases provide a server port[80]:') or '80')
     wsgi_name = raw_input('please provide a name for the process [spike]:') or 'spike'
-    apache_dir = os.path.join(getattr(settings, 'PROJECT_ROOT'), 'apache')
-    if not os.path.isdir(apache_dir):
-        os.mkdir(apache_dir)
-    with open(os.path.join(apache_dir, 'apache.conf'), 'w') as ap_cfg:
+    with open(os.path.join(getattr(settings, 'PROJECT_ROOT'), 'deploy', 'apache.conf'), 'w') as ap_cfg:
         ap_cfg.write(
             AP_CFG_TEXT.format(
                 svr_name=svr_name,
