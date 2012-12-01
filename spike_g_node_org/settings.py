@@ -222,6 +222,12 @@ ACCOUNT_LOGOUT_REDIRECT_URL = "home"
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 2
 ACCOUNT_UNIQUE_EMAIL = EMAIL_CONFIRMATION_UNIQUE_EMAIL = True
 
+METRON_SETTINGS = {
+    "google": {
+        1: "UA-36729385-1",
+    },
+}
+
 # debug toolbar
 
 def dbt_visible(request):
