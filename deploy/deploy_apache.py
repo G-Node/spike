@@ -37,9 +37,8 @@ AP_CFG_TEXT = """## apache config file for the spikesorting evaluation website
 
   # wsgi script
   WSGIScriptAlias / {PACKAGE_ROOT}/wsgi.py
-  WSGIDaemonProcess spike display-name=spike home={PACKAGE_ROOT} processes=5 threads=1 maximum-requests=32 inactivity-timeout=300
+  WSGIDaemonProcess spike display-name=spike home={PROJECT_ROOT} processes=5 threads=1 maximum-requests=32 inactivity-timeout=300
   WSGIProcessGroup spike
-  WSGIRestrictEmbedded On
   <Directory {PACKAGE_ROOT}>
     <Files wsgi.py>
       Order allow,deny
