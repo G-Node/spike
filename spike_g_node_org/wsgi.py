@@ -16,6 +16,9 @@ framework.
 
 import os, sys
 
+for item in sys.path:
+    print item
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spike_g_node_org.settings")
 
 # redirect prints to apache log
