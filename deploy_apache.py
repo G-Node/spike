@@ -15,6 +15,7 @@ AP_CFG_TEXT = """## apache config file for the spikesorting evaluation website
 
 Listen {svr_port}
 NameVirtualHost *:{svr_port}
+
 <VirtualHost *:{svr_port}>
 
   # server and doc-root
@@ -41,11 +42,12 @@ NameVirtualHost *:{svr_port}
 
   # wsgi script
   WSGIScriptAlias / {PACKAGE_ROOT}/wsgi.py
+  WSGIPythonPath {PROJECT_ROOT}
   WSGIDaemonProcess {WSGI_NAME} display-name={WSGI_NAME} home={PROJECT_ROOT} processes=5 threads=1 maximum-requests=32 inactivity-timeout=300
   WSGIProcessGroup {WSGI_NAME}
   <Directory {PACKAGE_ROOT}>
     <Files wsgi.py>
-      Order allow,deny
+      Order deny,allow
       Allow from all
     </Files>
   </Directory>
