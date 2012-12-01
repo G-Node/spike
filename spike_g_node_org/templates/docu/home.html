@@ -1,13 +1,13 @@
-{% extends "spike/base.html" %}
+{% extends "docu/base.html" %}
 
-{% load staticfiles %}
+{% load i18n %}
+{% load static %}
 
-{% block head_title %}Mission Statement{% endblock %}
+{% block head_title %}{% trans "Introduction" %}{% endblock %}
 
-{% block heading %}Mission Statement: Spikesorting Evaluation{% endblock %}
+{% block heading %}{% trans "Introduction" %}{% endblock %}
 
 {% block content %}
-  <h2>Introduction</h2>
   <p>Extracellular recordings are a standard procedure to analyzing the activity of neurons. A problem with this kind of
     recording is the simultaneous recording of not a single neuron but a small local population of neurons. It is not
     straight-forward to reconstruct the single neuronal activities. To estimate the single neuron activity (the so

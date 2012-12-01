@@ -1,115 +1,72 @@
 {% extends "theme_bootstrap/banner_base.html" %}
 
+{% load static %}
+{% load url from future %}
+
 {% block banner %}
-  <h1>Hello, world!</h1>
-  <p>Vestibulum id ligula porta felis euismod semper. Integer posuere erat a ante venenatis dapibus posuere velit
-    aliquet. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.</p>
-  <p><a class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+  <div class="clearfix" xmlns="http://www.w3.org/1999/html">
+    <div class="pull-left">
+      {% block logo_pre_main %}{% endblock %}
+      {% block logo_main %}
+        <img src="{% static "img/logo_gnode.png" %}" alt="Logo Main">
+      {% endblock %}
+    </div>
+    <div class="pull-right">
+      <div class="row pull-right" style="height:2em; padding:.5em;">
+        <img src="{% static "img/logo_incf.png" %}" alt="INCF Logo" style="max-height: 100%;">
+        <img src="{% static "img/logo_bmbf.png" %}" alt="BMBF Logo" style="max-height: 100%;">
+      </div>
+      <div class="row pull-right" style="height:4em; padding:.5em;">
+        <img src="{% static "img/logo_tub.png" %}" alt="TUB Logo" style="max-height: 100%;">
+        <img src="{% static "img/logo_bel.png" %}" alt="BEL Logo" style="max-height: 100%;">
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block column-1 %}
-  <h2>Heading</h2>
-  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sed viverra dui. Aenean blandit faucibus tincidunt.
-    Phasellus fermentum elit ut erat varius cursus. Nunc posuere mauris sit amet enim congue quis elementum lectus
-    tincidunt. Cras vel tempus metus.</p>
-  <p><a class="btn" href="#">View details &raquo;</a></p>
+  <h2>Benchmark Datasets</h2>
+  <p><span class="label label-info">What is this?</span>
+    Benchmark datasets consist of one or more trials of extracellular recordings. They are immutable and have known, yet
+    undisclosed groundtruth.</p>
+  <p><span class="label label-info">What is it good for?</span>
+    A variety of datasets are provided for public download. You can immediately download one for yourself and
+    apply your favorite spikesorting algorithm.</p>
+  <p><span class="label label-info">What to do next?</span>
+    We encourage you to come back and upload your results to contribute to the success of this platform.</p>
+  <p><span class="label label-info">I have a benchmark dataset!</span>
+    Very well! We are glad to host your benchmark dataset for public use on this platform. Please learn about the
+    details in the documentation section.</p>
+  <p><a class="btn" href="{% url "bm_list" %}">benchmark overview</a></p>
 {% endblock %}
 
 {% block column-2 %}
-  <h2>Heading</h2>
-  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sed viverra dui. Aenean blandit faucibus tincidunt.
-    Phasellus fermentum elit ut erat varius cursus. Nunc posuere mauris sit amet enim congue quis elementum lectus
-    tincidunt. Cras vel tempus metus.</p>
-  <p><a class="btn" href="#">View details &raquo;</a></p>
+  <h2>Evaluation and Modules</h2>
+  <p><span class="label label-success">What is this?</span>
+    When you upload your results, we will store and evaluate them against the groundtruth.</p>
+  <p><span class="label label-success">What about modules?</span>
+    The evaluation is a modular process. Each module provides a piece of evaluation and or visualisation of your
+    uploaded results.</p>
+  <p><span class="label label-success">Will others see my results?</span>
+    All your evaluations will be private if you do not disclose them. Although, private evaluations do not factor into
+    the public summaries!</p>
+  <p><span class="label label-success">I am missing a metric!</span>
+    We like to include every metric possible! You would need to provide a reference to a paper or an implementation of
+    the metric.</p>
+  <p><span class="label label-success">I want to propose a module!</span>
+    Perfect! Same as for metrics, a reference or a sketch of plots will be needed.</p>
+  <p><a class="btn" href="{% url "ev_list" %}">evaluation overview</a></p>
 {% endblock %}
 
 {% block column-3 %}
-  <h2>Heading</h2>
+  <h2>Behind the Scenes</h2>
   <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sed viverra dui. Aenean blandit faucibus tincidunt.
     Phasellus fermentum elit ut erat varius cursus. Nunc posuere mauris sit amet enim congue quis elementum lectus
     tincidunt. Cras vel tempus metus.</p>
   <p><a class="btn" href="#">View details &raquo;</a></p>
-{% endblock %}
-
-{% block content %}
-  <h2>Welcome to the Spike Sorting Evaluation Project</h2>
-  <p>Extracellular recordings are a standard procedure to analyzing the activity of neurons. A problem with this kind of
-    recording is the simultaneous recording of not a single neuron but a small local population of neurons. It is not
-    straight-forward to reconstruct the single neuronal activities. To estimate the single neuron activity (the so
-    called
-    spike train) from this multi neuron activity, spike sorting is applied. Many different algorithms for spike sorting
-    were proposed. However, despite many efforts to tackle this problem, it is still difficult to tell under which
-    circumstances which spike sorting algorithm is the best.
-
-    If you are interested in some basic reading about spike sorting please consult the following references.</p>
-  <blockquote>
-    <a href="http://www.tsolab.org/jclub/20090429/lewicki.pdf">
-      "A review of methods for spike sorting: the detection and classification
-      of neural action potentials"</a>
-    <small>M. S. Lewicki (1998),
-      <cite title>Network: Computation in Neural Systems, Vol. 9, No. 4. (1998),
-        pp. 53-78</cite>
-    </small>
-  </blockquote>
-  <blockquote>
-    <a href="http://www.sciencedirect.com/science/article/pii/S0959438811001565">
-      "Towards reliable spike-train recordings from thousands of neurons with multielectrodes."</a>
-    <small>Einevoll GT, Franke F, Hagen E, Pouzat C, Harris KD (2011),
-      <cite title>Curr Opin Neurobiol. 2011 Oct 22. </cite>
-    </small>
-  </blockquote>
-
-  In May 2011, a workshop on <a href="http://spike.ni.tu-berlin.de/workshop/">Validation of Automatic Spike Sorting
-  Methods</a> took place in Ski, Norway.
-
-
-  <h2>The Problem - No Benchmark</h2>
-  <p>In our opinion the lack of systematic evaluations of different spike
-    sorting algorithms derives from the fact that there is no common benchmark
-    dataset used in the spike sorting literature, rendering comparisons of the
-    results of different publications virtually impossible. <br> However, a good
-    benchmark dataset is difficult to establish - since it is currently
-    impossible to record the true activity of a larger number of neurons
-    simultaneously with extracellular recordings.</p>
-
-  <h2>Aim of this project</h2>
-  <p>We want to establish a platform for spike sorting with two different goals:
-    First, we want to provide a sophisticated benchmark data set which could be
-    used for future publications on this topic. Second, we want to give
-    researchers using spike sorting software the possibility to evaluate their
-    software under different conditions and compare their results to other spike
-    sorters.</p>
-
-  <h2>How this website works</h2>
-  <p>This website provides extracellular data of various types for download.
-    Common to this data is, that we know the ground truth i.e. we know how many
-    neurons are present in the data and when which neuron fired an action
-    potential. The datasets vary in their underlying questions.</p>
-  <img src="{% static "img/spike/home_page_1.png" %}" alt="Download Benchmark Data"/>
-  <p>If you have decided which dataset you are interested in, go to the download
-    page and download the datafiles in the format which is most convinient to
-    you.</p>
-  <img src="{% static "img/spike/home_page_2.png" %}" alt="Sort Benchmark Data"/>
-  <p>You can now apply the spike sorter of your choice to the dataset. Keep in
-    mind, that we do not publish the ground-truth for the datafiles.</p>
-  <img src="{% static "img/spike/home_page_3.png" %}" alt="Upload Sorted Data"/>
-  <p>The result of your sorting can then be uploaded via the website. This data
-    will be treated confidential, we will not publish it, unless you say so. You
-    will retrieve a unique key for your upload.</p>
-  <img src="{% static "img/spike/home_page_4.png" %}" alt="View Your Evaluations"/>
-  <p>The website now automatically calculates an evaluation of your sorting using
-    the hidden ground truth information. However, this may take a while. Once
-    finished you can access the results under the MyResults page using the key
-    provided under 3.</p>
-  <img src="{% static "img/spike/home_page_5.png" %}" alt="Publish Your Results"/>
-  <p>If you are comfortable with the results you can help us by allowing us to
-    publish your results on the Summary Page for this dataset. You will have to
-    provide some additional information about the algorithm you used.
-    Furthermore, only complete results (for all files of the benchmark dataset)
-    can be published. Published results can be seen by everybody and are compared
-    to the published results of other users.</p>
-
-  <h2>What this website is not</h2>
-  <p>This website is not providing spike sorting algorithms or the functionality to actually sort your data. It is just
-    about validation of spike sorting methods.</p>
+  <h2>Behind the Scenes</h2>
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sed viverra dui. Aenean blandit faucibus tincidunt.
+    Phasellus fermentum elit ut erat varius cursus. Nunc posuere mauris sit amet enim congue quis elementum lectus
+    tincidunt. Cras vel tempus metus.</p>
+  <p><a class="btn" href="#">View details &raquo;</a></p>
 {% endblock %}
