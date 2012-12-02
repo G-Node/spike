@@ -16,8 +16,7 @@ AP_CFG_TEXT = """## apache config file for the spikesorting evaluation website
 Listen {svr_port}
 NameVirtualHost *:{svr_port}
 
-WSGIPythonPath {PROJECT_ROOT}
-WSGIPythonHome /opt/spike-env
+WSGIPythonPath {PROJECT_ROOT}:/opt/spike-env/lib/python2.6/site-packages
 
 <VirtualHost *:{svr_port}>
 
