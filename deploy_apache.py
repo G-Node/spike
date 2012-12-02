@@ -15,7 +15,9 @@ AP_CFG_TEXT = """## apache config file for the spikesorting evaluation website
 
 Listen {svr_port}
 NameVirtualHost *:{svr_port}
+
 WSGIPythonPath {PROJECT_ROOT}
+WSGIPythonHome /opt/spike-env
 
 <VirtualHost *:{svr_port}>
 
@@ -47,7 +49,7 @@ WSGIPythonPath {PROJECT_ROOT}
   WSGIProcessGroup {WSGI_NAME}
   <Directory {PACKAGE_ROOT}>
     <Files wsgi.py>
-      Order deny,allow
+      Order allow,deny
       Allow from all
     </Files>
   </Directory>
