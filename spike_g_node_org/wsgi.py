@@ -16,10 +16,8 @@ framework.
 
 import os, sys
 
-for item in sys.path:
-    print item
-
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spike_g_node_org.settings")
+sys.path.insert(0,os.path.join(__file__, os.path.pardir, os.path.pardir))
 
 # redirect prints to apache log
 sys.stdout = sys.stderr

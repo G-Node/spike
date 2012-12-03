@@ -16,7 +16,7 @@ AP_CFG_TEXT = """## apache config file for the spikesorting evaluation website
 Listen {svr_port}
 NameVirtualHost *:{svr_port}
 
-WSGIPythonPath {PROJECT_ROOT}:/opt/spike-env/lib/python2.6/site-packages
+WSGIPythonHome /opt/spike-env
 
 <VirtualHost *:{svr_port}>
 
@@ -28,7 +28,7 @@ WSGIPythonPath {PROJECT_ROOT}:/opt/spike-env/lib/python2.6/site-packages
 
   # logs
   ErrorLog {PROJECT_ROOT}/deploy/error.log
-  customLog {PROJECT_ROOT}/deploy/access.log combined
+  CustomLog {PROJECT_ROOT}/deploy/access.log combined
 
   # directories
   Alias {MEDIA_URL} {MEDIA_ROOT}
@@ -44,7 +44,7 @@ WSGIPythonPath {PROJECT_ROOT}:/opt/spike-env/lib/python2.6/site-packages
 
   # wsgi script
   WSGIScriptAlias / {PACKAGE_ROOT}/wsgi.py
-  WSGIDaemonProcess {WSGI_NAME} display-name={WSGI_NAME} home={PROJECT_ROOT} processes=5 threads=1 maximum-requests=32 inactivity-timeout=300
+  WSGIDaemonProcess {WSGI_NAME} display-name={WSGI_NAME} home={PROJECT_ROOT} processes=1 threads=5 maximum-requests=32 inactivity-timeout=300
   WSGIProcessGroup {WSGI_NAME}
   <Directory {PACKAGE_ROOT}>
     <Files wsgi.py>
