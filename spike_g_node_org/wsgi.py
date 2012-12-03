@@ -1,5 +1,4 @@
-"""
-WSGI config for spike_g_node_org project.
+"""WSGI config for spike_g_node_org project.
 
 This module contains the WSGI application used by Django's development server
 and any production WSGI deployments. It should expose a module-level variable
@@ -14,15 +13,17 @@ framework.
 
 """
 
+##---IMPORTS
+
 import os, sys
 
-for item in sys.path:
-    print item
+##---PATH-AND-IO-REDIRECTION
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spike_g_node_org.settings")
-
-# redirect prints to apache log
+sys.path.insert(0, os.path.abspath(os.path.join(__file__, os.path.pardir, os.path.pardir)))
 sys.stdout = sys.stderr
+
+##---WSGI-APPLICATION
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
