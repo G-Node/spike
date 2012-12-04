@@ -230,13 +230,13 @@ if __name__ == '__main__':
 
     def all_tasks():
         create_apache_conf()
-        create_celery_worker_conf()
+        create_celery_beat_conf()
         create_celery_worker_conf()
         create_rabbitmq_conf()
 
     sys.exit(
         {'apache': create_apache_conf,
-         'celery_beat': create_celery_worker_conf,
+         'celery_beat': create_celery_beat_conf,
          'celery_worker': create_celery_worker_conf,
          'rabbitmq': create_rabbitmq_conf,
          'all': all_tasks
