@@ -102,7 +102,7 @@ def create_apache_conf():
     svr_email = raw_input('server email [noname@%s]:' % svr_name) or 'noname@%s' % svr_name
     svr_port = int(raw_input('server port [80]:') or '80')
     wsgi_name = raw_input('process identifier [spike]:') or 'spike'
-    python_home = raw_input('python home path [/opt/spike-env]')
+    python_home = raw_input('python home path [/opt/spike-env]') or '/opt/spike-env'
     with open(conf_path, 'w') as cfg_file:
         cfg_file.write(
             APACHE_CONF.format(
@@ -154,7 +154,7 @@ def create_celery_beat_conf():
         print 'done'
     print 'Please provide some information:'
     svr_name = raw_input('server name [spike.g-node.org]:') or 'spike.g-node.org'
-    python_home = raw_input('python home path [/opt/spike-env]')
+    python_home = raw_input('python home path [/opt/spike-env]') or '/opt/spike-env'
     with open(conf_path, 'w') as cfg_file:
         cfg_file.write(
             CELERY_WORKER_CONF.format(
@@ -205,7 +205,7 @@ def create_celery_worker_conf():
         print 'done'
     print 'Please provide some information:'
     svr_name = raw_input('server name [spike.g-node.org]:') or 'spike.g-node.org'
-    python_home = raw_input('python home path [/opt/spike-env]')
+    python_home = raw_input('python home path [/opt/spike-env]') or '/opt/spike-env'
     with open(conf_path, 'w') as cfg_file:
         cfg_file.write(
             CELERY_WORKER_CONF.format(
