@@ -8,12 +8,12 @@ from celery.task import task
 
 @task
 def DjangoMailer_send_mail():
-    print 'call django-mailer send_mail'
+    call_command('send_mail', interactive=True)
 
 
 @task
 def DjangoMailer_retry_deferred():
-    print 'call django-mailer retry_deferred'
+    call_command('retry_deferred', interactive=True)
 
 ##---MAIN
 
