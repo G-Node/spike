@@ -1,2 +1,0 @@
-* * * * * www-data cd /opt/spike; (echo "----"; date ; /opt/spike-env/bin/python manage.py send_mail; date) >> /opt/spike/log/cron_mail.log 2>&1
-00,20,40 * * * * www-data cd /opt/spike; (echo "----"; date ; /opt/spike-env/bin/python manage.py retry_deferred; date) >> /opt/spike/log/cron_mail_deferred.log 2>&1
