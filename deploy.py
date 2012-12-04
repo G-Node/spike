@@ -149,7 +149,7 @@ def create_celery_beat_conf():
     print 'starting celery_beat.conf'
     conf_path = os.path.join(getattr(settings, 'PROJECT_ROOT'), 'deploy', 'celery_beat.conf')
     if os.path.exists(conf_path):
-        print 'removing old celery_worker.conf .. ',
+        print 'removing old celery_beat.conf .. ',
         os.remove(conf_path)
         print 'done'
     print 'Please provide some information:'
