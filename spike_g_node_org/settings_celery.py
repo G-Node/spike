@@ -25,16 +25,21 @@ try:
 
     INSTALLED_APPS += ['djcelery']
     BROKER_URL = 'amqp://guest@localhost:5672//'
+
     CELERY_RESULT_BACKEND = "database"
     CELERY_RESULT_DBURI = default_celery_db_uri()
-    USE_CELERY = True
 
-    # DEBUG
-    # raise ImportError
-    # BUGED
+    #CELERY_RESULT_BACKEND = "amqp"
+    #CELERY_TASK_RESULT_EXPIRES = 18000 # 5 hours
+
+    CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
+    CELERY_SEND_TASK_ERROR_EMAILS = True
+
+    USE_CELERY = True
 
 except ImportError:
     USE_CELERY = False
 
 # override celery usage
-CELERY_USE_PRIORITY = False
+CELERY_USE_PRIORITY = None
