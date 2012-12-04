@@ -35,6 +35,7 @@ try:
     CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
     CELERY_SEND_TASK_ERROR_EMAILS = True
+    CELERYD_MAX_TASKS_PER_CHILD = 50 # as long as memleaking is still an issue
 
     USE_CELERY = True
 

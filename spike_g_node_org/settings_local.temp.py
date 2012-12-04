@@ -30,6 +30,7 @@ INSTALLED_APPS += [
     "taggit",
     "taggit_templatetags",
     "django_extensions",
+    "crontab",
 
     # spike core
     "spike",
