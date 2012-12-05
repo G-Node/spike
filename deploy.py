@@ -125,9 +125,9 @@ def create_apache_conf():
 ##---CELERY-BEAT-CONF
 
 CELERY_BEAT_CONF = """
-; ========================================
-;  celery beat supervisor conf for Django
-; ========================================
+# ========================================
+#  celery beat supervisor conf for Django
+# ========================================
 
 [program:celery_beat]
 command={PROJECT_ROOT}/manage.py celery beat --loglevel=INFO --events
@@ -141,7 +141,7 @@ autostart=true
 autorestart=true
 startsecs=10
 
-; rabbitmq @ 1001, set its priority lower
+# rabbitmq @ 1001, set its priority lower
 priority=1002
 """
 
@@ -187,11 +187,11 @@ autostart=true
 autorestart=true
 startsecs=10
 
-; Need to wait for currently executing tasks to finish at shutdown.
-; Increase this if you have very long running tasks.
+# Need to wait for currently executing tasks to finish at shutdown.
+# Increase this if you have very long running tasks.
 stopwaitsecs = 600
 
-; rabbitmq @ 1001, set this priority higher!
+# rabbitmq @ 1001, set this priority higher!
 priority=1002
 
 """
