@@ -22,15 +22,9 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^$', TemplateView.as_view(template_name='home.html'), name='home'),
     url(r'^admin/', include(admin.site.urls)),
-    url(r"^account/signup/$", SignupView.as_view(form_class=CaptchaSignupForm), name="account_signup"),
-    url(r"^account/", include("account.urls")),
+    url(r'^account/signup/$', SignupView.as_view(form_class=CaptchaSignupForm), name="account_signup"),
+    url(r'^account/', include("account.urls")),
 )
-
-## custom
-
-#urlpatterns += patterns('',
-#    url(r'^captcha/', include('captcha.urls')),
-#)
 
 ## spike
 
