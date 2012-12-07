@@ -37,7 +37,7 @@ urlpatterns = patterns("",
     url(r'^announcements/', include('announcements.urls')),
 
     # captcha
-    url(r'^captcha/', include('captcha.urls')),
+    #url(r'^captcha/', include('captcha.urls')),
     url(r"^account/signup/$", signup_view, {'form_class': CaptchaSignupForm}, name="acct_signup"),
 
     # spike-eval
