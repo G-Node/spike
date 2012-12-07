@@ -40,12 +40,14 @@
         <a href="{% url profile_detail user.username %}">
           {% trans "Profile" %}</a>
       </li>
+      {% comment %}
       <li id="tab_notices">
         <a href="{% url notification_notices %}">{% trans "Notices" %}
           {% if notice_unseen_count %}
             ({{ notice_unseen_count }})
           {% endif %}</a>
       </li>
+      {% endcomment %}
     {% endif %}
   {% endspaceless %}</ul>
 {% endblock %}

@@ -168,7 +168,7 @@ INSTALLED_APPS = [
     "django_forms_bootstrap",
 
     # external
-    "notification", # must be first
+    #"notification", # must be first
     "staticfiles",
     "compressor",
     "mailer",
