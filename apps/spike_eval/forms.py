@@ -1,6 +1,6 @@
 ##---IMPORTS
 
-from captcha.fields import CaptchaField
+from captcha.fields import ReCaptchaField as CaptchaField
 from datetime import datetime
 from django import forms
 from .benchmark.models import Benchmark, Trial
