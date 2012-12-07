@@ -1,6 +1,6 @@
 ##---IMPORTS
 
-from captcha.fields import CaptchaField
+from captcha.fields import ReCaptchaField as CaptchaField
 from django import forms
 from account.forms import SignupForm
 

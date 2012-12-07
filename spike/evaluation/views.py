@@ -125,7 +125,7 @@ def zip(request, pk):
         arc_buf = StringIO()
         arc = zipfile.ZipFile(arc_buf, mode='w')
 
-        # write introduction | TODO: add a proper README file
+        # write introduction
         arc.writestr(
             'README',
             '\n'.join([

@@ -11,15 +11,13 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 SERVE_MEDIA = DEBUG
 
-##---ADMIN-EMAILS
+##---SITE-SPECIFIC
 
 ADMINS = [
     # ("Your Name", "your_email@domain.com"),
 ]
 MANAGERS = ADMINS
 CONTACT_EMAIL = "contact_email@project.com"
-
-##---CSRF-TOKEN
 
 SECRET_KEY = "change-this-to-something-with-more-entropy"
 
