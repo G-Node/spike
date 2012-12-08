@@ -1,8 +1,8 @@
 ##---IMPORTS
 
-from captcha.fields import ReCaptchaField as CaptchaField
 from django import forms
 from django.db import models
+from toolkit.forms import form_with_captcha
 
 ##---MODEL-REFS
 
@@ -114,15 +114,11 @@ class BatchEditForm(forms.ModelForm):
         exclude = ('status', 'status_changed', 'benchmark')
 
 
+@form_with_captcha
 class BatchSubmitForm(forms.ModelForm):
     class Meta:
         model = Batch
-        fields = ['description', 'algorithm', 'captcha']
         exclude = ('owner', 'status', 'status_changed', 'benchmark')
-
-    ## fields
-
-    captcha = CaptchaField()
 
     ## constructor
 
@@ -130,13 +126,11 @@ class BatchSubmitForm(forms.ModelForm):
         self.benchmark = kwargs.pop('benchmark')
         super(BatchSubmitForm, self).__init__(*args, **kwargs)
         self.sub_ids = []
-        captcha = self.fields.pop('captcha')
         for tr in self.benchmark.trial_set_valid():
             self.sub_ids.append('sub-tr-%s' % tr.id)
             self.fields['sub-tr-%s' % tr.id] = forms.FileField(
                 label='Upload Trial: %s' % tr.name,
                 required=False)
-        self.fields['captcha'] = captcha
 
     def save(self, *args, **kwargs):
         # init and checks

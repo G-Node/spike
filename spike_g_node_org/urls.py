@@ -5,15 +5,21 @@ from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
 
 from django.views.generic import TemplateView
-from spike_g_node_org.captcha_signup import CaptchaSignupForm
+from account.forms import SignupForm
 from account.views import SignupView
-
+from toolkit.forms import form_with_captcha
 
 ##---ADMIN
 
 from django.contrib import admin
 
 admin.autodiscover()
+
+##---FORMS
+
+@form_with_captcha
+class CaptchaSignupForm(SignupForm):
+    pass
 
 ##---URLS
 
