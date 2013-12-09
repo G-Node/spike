@@ -74,8 +74,8 @@ STATICFILES_FINDERS = [
 
 FILE_UPLOAD_PERMISSIONS = 0644
 
-ROOT_URLCONF = "spike_g_node_org.urls"
-WSGI_APPLICATION = "spike_g_node_org.wsgi.application"
+ROOT_URLCONF = "host_gnode.urls"
+WSGI_APPLICATION = "host_gnode.wsgi.application"
 FIXTURE_DIRS = [
     os.path.join(PROJECT_ROOT, "fixtures"),
 ]

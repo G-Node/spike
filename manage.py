@@ -2,7 +2,7 @@
 import os, sys
 
 if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spike_g_node_org.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "host_gnode.settings")
 
     from django.core.management import execute_from_command_line
 

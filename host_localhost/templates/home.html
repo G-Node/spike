@@ -1,0 +1,72 @@
+{% extends "theme_bootstrap/banner_base.html" %}
+
+{% load static %}
+{% load url from future %}
+
+{% block banner %}
+  <div class="clearfix" xmlns="http://www.w3.org/1999/html">
+    <div class="pull-left">
+      {% block logo_pre_main %}{% endblock %}
+      {% block logo_main %}
+        <img src="{% static "img/logo_gnode.png" %}" alt="Logo Main">
+      {% endblock %}
+    </div>
+    <div class="pull-right">
+      <div class="row pull-right" style="height:2em; padding:.5em;">
+        <img src="{% static "img/logo_incf.png" %}" alt="INCF Logo" style="max-height: 100%;">
+        <img src="{% static "img/logo_bmbf.png" %}" alt="BMBF Logo" style="max-height: 100%;">
+      </div>
+      <div class="row pull-right" style="height:4em; padding:.5em;">
+        <img src="{% static "img/logo_tub.png" %}" alt="TUB Logo" style="max-height: 100%;">
+        <img src="{% static "img/logo_bel.png" %}" alt="BEL Logo" style="max-height: 100%;">
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block column-1 %}
+  <h2>Benchmark Datasets</h2>
+  <p><span class="label label-info">What is this?</span>
+    Benchmark datasets consist of one or more trials of extracellular recordings. They are immutable and have known, yet
+    undisclosed groundtruth.</p>
+  <p><span class="label label-info">What is it good for?</span>
+    A variety of datasets are provided for public download. You can immediately download one for yourself and
+    apply your favorite spikesorting algorithm.</p>
+  <p><span class="label label-info">What to do next?</span>
+    We encourage you to come back and upload your results to contribute to the success of this platform.</p>
+  <p><span class="label label-info">I have a benchmark dataset!</span>
+    Very well! We are glad to host your benchmark dataset for public use on this platform. Please learn about the
+    details in the documentation section.</p>
+  <p><a class="btn" href="{% url "bm_list" %}">benchmark overview</a></p>
+{% endblock %}
+
+{% block column-2 %}
+  <h2>Evaluation and Modules</h2>
+  <p><span class="label label-success">What is this?</span>
+    When you upload your results, we will store and evaluate them against the groundtruth.</p>
+  <p><span class="label label-success">What about modules?</span>
+    The evaluation is a modular process. Each module provides a piece of evaluation and or visualisation of your
+    uploaded results.</p>
+  <p><span class="label label-success">Will others see my results?</span>
+    All your evaluations will be private if you do not disclose them. Although, private evaluations do not factor into
+    the public summaries!</p>
+  <p><span class="label label-success">I am missing a metric!</span>
+    We like to include every metric possible! You would need to provide a reference to a paper or an implementation of
+    the metric.</p>
+  <p><span class="label label-success">I want to propose a module!</span>
+    Perfect! Same as for metrics, a reference or a sketch of plots will be needed.</p>
+  <p><a class="btn" href="{% url "ev_list" %}">evaluation overview</a></p>
+{% endblock %}
+
+{% block column-3 %}
+  <h2>Behind the Scenes</h2>
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sed viverra dui. Aenean blandit faucibus tincidunt.
+    Phasellus fermentum elit ut erat varius cursus. Nunc posuere mauris sit amet enim congue quis elementum lectus
+    tincidunt. Cras vel tempus metus.</p>
+  <p><a class="btn" href="#">View details &raquo;</a></p>
+  <h2>Behind the Scenes</h2>
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sed viverra dui. Aenean blandit faucibus tincidunt.
+    Phasellus fermentum elit ut erat varius cursus. Nunc posuere mauris sit amet enim congue quis elementum lectus
+    tincidunt. Cras vel tempus metus.</p>
+  <p><a class="btn" href="#">View details &raquo;</a></p>
+{% endblock %}

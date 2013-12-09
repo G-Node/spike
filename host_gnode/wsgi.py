@@ -20,7 +20,7 @@ import os, sys
 
 ##---PATH-AND-IO-REDIRECTION
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spike_g_node_org.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "host_gnode.settings")
 sys.path.insert(0, os.path.abspath(os.path.join(__file__, os.path.pardir, os.path.pardir)))
 sys.stdout = sys.stderr
 

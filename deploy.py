@@ -6,7 +6,8 @@ import os, sys
 import argparse
 import datetime
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "spike_g_node_org.settings")
+# change this to the settings folder you want to use!
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "host_localhost.settings")
 
 from django.conf import settings
 
