@@ -91,7 +91,7 @@ def task_run_modules(ev, **kwargs):
                 logger.log_delimiter_line()
                 del module, module_pkg
         except Exception, ex:
-            logger.log('ERROR: %s' % str(ex))
+            logger.log('ERROR: (%s) %s' % (ex.__class__.__name__, str(ex)))
             success = False
             ev.status = ev.STATUS.failure
         else:
