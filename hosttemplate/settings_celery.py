@@ -43,4 +43,4 @@ except ImportError:
     USE_CELERY = False
 
 # override celery usage
-CELERY_USE_PRIORITY = None
+CELERY_USE_PRIORITY = False

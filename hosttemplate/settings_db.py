@@ -8,7 +8,7 @@
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "spike3",
+        "NAME": "spike",
         "USER": "spike",
         "PASSWORD": "spike",
         "HOST": "",

@@ -12,5 +12,5 @@ apache/
 .idea
 
 # django
-settings_local.py
 deploy/celery.conf
+host_*/
