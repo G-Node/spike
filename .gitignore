@@ -13,3 +13,4 @@ apache/
 
 # django
 settings_local.py
+deploy/celery.conf
