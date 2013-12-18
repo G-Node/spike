@@ -1,0 +1,12 @@
+{% load default_visual_tags %}
+
+{% if res_list %}
+  <div>
+    {% for res in res_list|sort %}
+      <div class="row-fluid" style="margin-bottom: 10px">
+        <div class="span6"><img src="{{ res.file.url }}"/></div>
+        <div class="span6">{% desc res %}</div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

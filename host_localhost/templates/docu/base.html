@@ -1,0 +1,15 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block body_class %}spike{% endblock %}
+
+{% block head_title %}{% trans 'Documentation' %}{% endblock %}
+
+{% block body %}
+  <header class="jumbotron subhead">
+    <h1>{% block heading %}{% endblock %}</h1>
+    <hr>
+  </header>
+  {% block content %}{% endblock %}
+{% endblock %}

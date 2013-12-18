@@ -1,0 +1,52 @@
+{% extends "theme_bootstrap/base.html" %}
+
+{% load metron_tags %}
+{% load i18n %}
+{% load static %}
+{% load url from future %}
+
+{% block extra_style %}
+  <link href="{% static "css/gnode.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block site_brand %}
+  <a class="brand" href="{% url "home" %}">
+    <img src="{% static "img/logo_gnode_small.png" %}" style="height:20px;width:20px;">
+    {{ SITE_NAME }}
+  </a>
+{% endblock %}
+
+{% block nav %}
+  <ul class="nav">
+    <li class="divider-vertical"></li>
+    <li id="tab_spike">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans "Documentation" %}&nbsp;<b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        <li><a href="{% url "spike_docu" %}">{% trans "Introduction" %}</a></li>
+      </ul>
+    </li>
+    <li class="divider-vertical"></li>
+    <li id="tab_benchmark">
+      <a href="{% url "bm_list" %}">{% trans "Benchmark" %}</a>
+    </li>
+    <li id="tab_evaluation">
+      <a href="{% url "ev_list" %}">{% trans "Evaluation" %}</a>
+    </li>
+    <li id="tab_algorithm">
+      <a href="{% url "al_list" %}">{% trans "Algorithm" %}</a>
+    </li>
+    <li class="divider-vertical"></li>
+    <li class="dropdown" id="tab_about">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans "About" %}&nbsp;<b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        <li><a href="{% url "team" %}">{% trans "Team" %}</a></li>
+        <li><a href="{% url "imprint" %}">{% trans "Imprint" %}</a></li>
+      </ul>
+    </li>
+  </ul>
+{% endblock %}
+
+{% block extra_body_base %}
+  {% analytics %}
+  {% block extra_body %}{% endblock %}
+{% endblock %}

@@ -1,0 +1,57 @@
+{% load i18n %}
+{% load sorting_tags %}
+{% load spike_tags %}
+
+<div>
+  <div>
+    <h3>DEBUG</h3>
+
+    <p>bm : {{ bm }}</p>
+
+    <p>mod : {{ mod }}</p>
+
+    <p>res_list : {{ res_list }}</p>
+  </div>
+  <div class="span8 pull-left">
+    <img src="{% url bm_summary_plot bm.id mod.id detail_mode %}"
+         alt="Summary Plot ({{ detail_mode }})"
+         border="1px"
+         width="100%"/>
+
+    <div class="well"> BUTTONS HERE</div>
+  </div>
+  <div class="span4 pull-left" style="max-height: inherit;">
+    {% if not eb_list %}
+      <p>There are no evaluations available to summarise.</p>
+    {% else %}
+      <div class="well">FILTER OPTIONS HERE</div>
+      {% autosort eb_list %}
+      <table class="table" style="overflow-y: auto;">
+        <thead>
+        <tr>
+          <th>{% trans "Colour" %}</th>
+          <th>{% trans "ID, Algorithm" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for bt in bt_list %}
+          {% if bt.evaluation_set.all %}
+            <tr>
+              <td>
+              <span class="badge" style="color: #ffffff; background-color: {% plot_color forloop.counter0 %};">
+                {% plot_color forloop.counter0 %}
+              </span>
+              </td>
+              <td>
+                <a href="{{ bt.get_absolute_url }}">
+                  <strong style="{% zero_red bt.status %}"> #{{ bt.id }}, {{ bt.algorithm }}</strong>
+                </a>
+              </td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+</div>

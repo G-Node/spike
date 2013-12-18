@@ -1,0 +1,9 @@
+{% extends "site_base.html" %}
+
+{% block body %}
+  <header class="jumbotron subhead">
+    <h1>{% block heading %}{% endblock %}</h1>
+    <hr>
+  </header>
+  {% block content %}{% endblock %}
+{% endblock %}

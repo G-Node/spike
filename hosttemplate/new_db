@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo -n "droping database:"
+mysql -uspike -pspike -e "drop schema spike3; create schema spike3;"
+echo "done!"
+./manage.py syncdb && ./manage.py migrate
+./manage.py clean_pyc

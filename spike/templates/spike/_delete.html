@@ -1,0 +1,22 @@
+{% load spike_tags %}
+
+<a href="#delete-modal-{{ obj|ident }}" role="button" data-toggle="modal"
+   class="btn btn-mini{% if disabled %} disabled{% endif %}">
+  {{ btn_name }}
+</a>
+<div id="delete-modal-{{ obj|ident }}" class="modal hide fade"
+     tabindex="-1" role="dialog" aria-labelledby="delete-modal-label-{{ obj|ident }}" aria-hidden="true">
+  <div class="modal-header">
+    <h3 id="delete-modal-label-{{ obj|ident }}">Delete {{ obj|cls_name }}: &quot;{{ obj.name }}&quot;</h3>
+  </div>
+  <div class="modal-body">
+    <p>Are you sure you want to delete: {{ obj|cls_name }}: &quot;{{ obj.name }}&quot;?! This will delete any attached
+      or related data!</p>
+
+    <p>Proceed with caution!</p>
+  </div>
+  <div class="modal-footer">
+    <a class="btn" href="{{ delete_url }}">Delete</a>
+    <a class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Cancel</a>
+  </div>
+</div>
