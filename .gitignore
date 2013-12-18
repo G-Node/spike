@@ -3,14 +3,11 @@
 *.pyc
 
 # dirs
-cron/
-log/
-site_media/
-apache/
+log/*
 
 # ide
 .idea
 
 # django
-deploy/celery.conf
+deploy/*.conf
 host_*/
