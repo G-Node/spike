@@ -1,14 +1,16 @@
 ##---IMPORTS
 
+from StringIO import StringIO
+import scipy as sp
+
 from django.conf import settings
 from django.db import models
-from celery.task import task
-from StringIO import StringIO
+
+from hosttemplate.celery.task import task
 from spikeval.datafiles import read_gdf_sts, read_hdf5_arc
 from spikeval.logging import Logger
-import scipy as sp
 from .signals import spike_validate_st, spike_validate_rd
-from .log.models import Log
+
 
 ##---CELERY-USAGE
 

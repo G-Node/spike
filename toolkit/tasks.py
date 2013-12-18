@@ -1,8 +1,7 @@
 ##---IMPORTS
 
-from django.conf import settings
 from django.core.management import call_command
-from celery.task import task
+from hosttemplate.celery.task import task
 
 ##---TASKS
 

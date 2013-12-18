@@ -1,21 +1,22 @@
-#!/usr/bin/env python
+from __future__ import absolute_import
 
 ## IMPORTS
 
-import os, sys
+import os
 from celery import Celery
-from numpy.random import uniform
+from django.conf import settings
 
-app = Celery('check', backend='amqp', broker='amqp://guest@localhost//')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'NAME.settings')
+
+app = Celery('NAME')
+app.config_from_object('django.conf:settings')
+app.autodiscover_tasks(lambda: settings.INSTALLES_APPS)
 
 ## TASK
 
-@app.task
-def sample_task(n, min, max):
-    rval = 0.0
-    for i in xrange(n):
-        rval += uniform(min, max, 1)
-    return rval
+@app.task(bind=True)
+def debug_task(self):
+    print('Request: {0!r}'.format(self.request))
 
 ## MAIN
 

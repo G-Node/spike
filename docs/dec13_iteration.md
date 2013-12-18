@@ -53,13 +53,17 @@ A watchdog application that controlling all parts of the stack on a daily basis 
 
 ### 3.2 Monitoring and control
 
-Installed `monit`, monitoring dashboard is reachable under http://spike.g-node.org:2812 . Need to be fleshed with monitors for:
+Installed `monit`, monitoring dashboard is reachable under http://spike.g-node.org:2812 . Needs to be fleshed out with monitors for:
+
 * apache
 * rabbitmq
 * celery workers
 * sshd
+* supervisord (if used)
 
 ### 3.3 Celery version upgrade and changes
+
+
 
 ## 4. SEW2 anatomy
 

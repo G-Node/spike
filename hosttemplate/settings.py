@@ -5,11 +5,11 @@
 # do no not edit! instead edit settings_local.py, settings_db.py and settings_celery.py
 #
 
-##---IMPORTS
+## IMPORTS
 
 import os
 
-##---PROJECT-SETTINGS
+## PROJECT-SETTINGS
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -25,7 +25,7 @@ MANAGERS = ADMINS
 
 SECRET_KEY = "change-this-to-something-with-more-entropy"
 
-##---DATABASE
+## DATABASE
 
 DATABASES = {
     "default": {
@@ -38,12 +38,12 @@ DATABASES = {
     }
 }
 
-##---CACHE
+## CACHE
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
+    "default": {
+        "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
+        "LOCATION": "127.0.0.1:11211",
     }
 }
 
@@ -79,7 +79,7 @@ FIXTURE_DIRS = [
     os.path.join(PROJECT_ROOT, "fixtures"),
 ]
 
-##---TEMPLATES
+## TEMPLATES
 
 TEMPLATE_LOADERS = [
     "django.template.loaders.filesystem.Loader",
@@ -141,14 +141,16 @@ INSTALLED_APPS = [
     "django_forms_bootstrap",
 
     # external
+    "captcha",
+    "debug_toolbar",
+
+    "south",
+
+    "pagination",
+    "django_sorting",
     "account",
     "metron",
     "mailer",
-    "captcha",
-    "pagination",
-    "django_sorting",
-    "debug_toolbar",
-    "south",
 ]
 
 ##---LOGGING
@@ -177,9 +179,12 @@ LOGGING = {
     }
 }
 
-##---EMAIL
+## EMAIL
 
-EMAIL_BACKEND = "mailer.backend.DbBackend"
+EMAIL_BACKEND = {
+    False: 'django.core.mail.backends.smtp.EmailBackend',
+    True: 'django.core.mail.backends.console.EmailBackend',
+}[DEBUG]
 
 EMAIL_HOST = "localhost"
 EMAIL_PORT = 25
@@ -219,6 +224,7 @@ RECAPTCHA_USE_SSL = True
 
 def dbt_visible(request):
     return request.user.is_authenticated and (DEBUG or request.user.is_superuser or request.user.is_staff)
+
 
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,

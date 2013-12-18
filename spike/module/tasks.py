@@ -1,15 +1,17 @@
 ##---IMPORTS
 
+from datetime import datetime
+from StringIO import StringIO
+
 from django.conf import settings
 from django.db import models
 from django.utils import importlib
-from celery.task import task
-from datetime import datetime
-from StringIO import StringIO
+
+from hosttemplate.celery.task import task
 from spikeval.datafiles import read_gdf_sts, read_hdf5_arc
 from spikeval.logging import Logger
-
 from ..signals import spike_evaluation_run
+
 
 ##---MODEL-REFS
 
